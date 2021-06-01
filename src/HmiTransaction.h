@@ -35,11 +35,11 @@ namespace symbol {
 	protected:
 	    static constexpr char Grab_Flag{'g'};
 
-		void rewrite(v_t& p) const override;
+		void rewrite(ParamPath&) const override;
 
 	private:
-		section* create_section_tx_transfer() override;
-		bool tx_transfer(const Params&, ostream&) override;
+		ptr<Section> createSectionTxTransfer() override;
+		bool txTransfer(const Params&, ostream&) override;
 
 
 

@@ -18,28 +18,8 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "HmiKeys.h"
 
-namespace symbol {
+#pragma once
 
-	using c = HmiKeys;
-
-	ptr<symbol::PublicKey> c::resolvePublicKey(const symbol::UnresolvedAddress& addr0) const {
-		string a=addr0.formatAccount();
-		dto::account_t o;
-		auto r=o.fetch(getUrl(), a);
-		if (!r) return nullptr;
-		
-		//public key, address
-		ptr<symbol::PublicKey> pk{nullptr};
-		ptr<symbol::UnresolvedAddress> addr{nullptr};
-		string e=network().parse(o.account.publicKey, pk, addr);
-		if (!e.empty()) {
-		    return nullptr;
-		}
-		delete addr;
-		return pk;    
-	}
-
-}
+#include <symbol/core/Hmi.h>
 

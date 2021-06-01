@@ -28,86 +28,82 @@ namespace symbol {
 	using namespace std;
 	using namespace restc_cpp;
 
-	//auto endpoint="http://nem.mm-studios.com:3000";
-	c::HmiFetch(): b(Params { flagdef_url() }) {
-
+	c::HmiFetch(): b(Params { flagdefUrl() }) {
 	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add_section(CmdDef{"fetch", "Obtaing remote data from an API node."}, create_section_fetch());
+		add(CmdDef{"fetch", "Obtaing remote data from an API node."}, createSectionFetch());
 	}
 
-	c::FlagDef c::flagdef_url() {
-		return FlagDef{url_flag, "url", true, true, Def_Url, "API node URL."};
+	c::FlagDef c::flagdefUrl() {
+		return FlagDef{Url_Flag, "url", true, true, Def_Url, "API node URL."};
 	}
 
 	bool c::fetch(const Params& p, ostream& os) {
 		return true;
 	}
 
-	c::section* c::create_section_fetch() {
-		auto s=new section(Params{});
+	ptr<c::Section> c::createSectionFetch() {
+		auto s=new Section(Params{});
 		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch(p, os); });
-
-		s->add_section(CmdDef{"node", "Node information."}, create_section_fetch_node());
-		s->add_section(CmdDef{"chain", "Chain information."}, create_section_fetch_chain());
-		s->add_section(CmdDef{"nodes", "List of network nodes."}, create_section_fetch_nodes());
-		s->add_section(CmdDef{"account", "Account Info."}, create_section_fetch_account());
-
+		s->add(CmdDef{"node", "Node information."}, createSectionFetchNode());
+		s->add(CmdDef{"chain", "Chain information."}, createSectionFetchChain());
+		s->add(CmdDef{"nodes", "List of network nodes."}, createSectionFetchNodes());
+		s->add(CmdDef{"account", "Account Info."}, createSectionFetchAccount());
 		return s;
 	}
 
-	bool c::fetch_node(const Params& p, ostream& os) {
+	bool c::fetchNode(const Params& p, ostream& os) {
 		return true;
 	}
 
-	c::section* c::create_section_fetch_nodes() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_nodes(p, os); });
+	ptr<c::Section> c::createSectionFetchNodes() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodes(p, os); });
 		return s;
 	}
 
-	c::section* c::create_section_fetch_account() {
-		auto s=new section(Params{
-		    {acc_flag, "address", false, true, "", "Account/Address/Public key."},
+	ptr<c::Section> c::createSectionFetchAccount() {
+		auto s=new Section(Params{
+		    {Acc_Flag, "address", false, true, "", "Account/Address/Public key."},
 		});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_account(p, os); });
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchAccount(p, os); });
 		return s;
 	}
 
-	c::section* c::create_section_fetch_node() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_node(p, os); });
-		s->add_section(CmdDef{"health", "Node health."}, create_section_fetch_node_health());
-		s->add_section(CmdDef{"info", "Node info."}, create_section_fetch_node_info());
-		s->add_section(CmdDef{"peers", "Peers."}, create_section_fetch_node_peers());
+	ptr<c::Section> c::createSectionFetchNode() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNode(p, os); });
+		s->add(CmdDef{"health", "Node health."}, createSectionFetchNodeHealth());
+		s->add(CmdDef{"info", "Node info."}, createSectionFetchNodeInfo());
+		s->add(CmdDef{"peers", "Peers."}, createSectionFetchNodePeers());
 		return s;
 	}
 
-	c::section* c::create_section_fetch_node_health() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_node_health(p, os); });
+	ptr<c::Section> c::createSectionFetchNodeHealth() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodeHealth(p, os); });
 		return s;
 	}
 
-	c::section* c::create_section_fetch_node_info() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_node_info(p, os); });
+	ptr<c::Section> c::createSectionFetchNodeInfo() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodeInfo(p, os); });
 		return s;
 	}
 
-	c::section* c::create_section_fetch_node_peers() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_node_peers(p, os); });
+	ptr<c::Section> c::createSectionFetchNodePeers() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodePeers(p, os); });
 		return s;
 	}
 
-	bool c::fetch_node_health(const Params& p, ostream& os) {
+	bool c::fetchNodeHealth(const Params& p, ostream& os) {
 		dto::node_health o;
-		auto r=o.fetch(url);
+		auto r=o.fetch(m_url);
 		if (!r) return false;
-		if (json) {
+		if (json()) {
 		    o.to_json(os);
 		}
 		else {
@@ -116,25 +112,25 @@ namespace symbol {
 		return true;    
 	}
 
-	bool c::fetch_node_peers(const Params& p, ostream& os) {
+	bool c::fetchNodePeers(const Params& p, ostream& os) {
 		dto::node_peers o;
-		auto r=o.fetch(url);
+		auto r=o.fetch(m_url);
 		if (!r) return false;
-		if (json) {
+		if (json()) {
 		    o.to_json(os);
 		}
 		else {
-		    if (!hide_labels) o.dump_fields(os);
+		    if (!hideLabels()) o.dump_fields(os);
 		    o.dump(os);
 		}
 		return true;    
 	}
 
-	bool c::fetch_node_info(const Params& p, ostream& os) {
+	bool c::fetchNodeInfo(const Params& p, ostream& os) {
 		dto::node_info o;
-		auto r=o.fetch(url);
+		auto r=o.fetch(m_url);
 		if (!r) return false;
-		if (json) {
+		if (json()) {
 		    o.to_json(os);
 		}
 		else {
@@ -143,23 +139,22 @@ namespace symbol {
 		return true;    
 	}
 
-	bool c::fetch_account(const Params& p, ostream& os) {
-		//public key, address
-		symbol::keys::pub* pk{nullptr};
-		symbol::net::address* addr{nullptr};
-		string e=get_net().parse(p.get(acc_flag), pk, addr, is_net_overriden());
+	bool c::fetchAccount(const Params& p, ostream& os) {
+		ptr<symbol::PublicKey> pk{nullptr};
+		ptr<symbol::UnresolvedAddress> addr{nullptr};
+		string e = network().parse(p.get(Acc_Flag), pk, addr, networkOverriden());
 		if (!e.empty()) {
 		    os << e << '\n';
 		    return false;
 		}
-		string a=addr->format_account(); //"NASYMBOLLK6FSL7GSEMQEAWN7VW55ZSZU25TBOA";
+		auto a=addr->formatAccount(); //"NASYMBOLLK6FSL7GSEMQEAWN7VW55ZSZU25TBOA";
 		delete pk;
 		delete addr;    
 		    
 		dto::account_t o;
-		auto r=o.fetch(url, a);
+		auto r=o.fetch(m_url, a);
 		if (!r) return false;
-		if (json) {
+		if (json()) {
 		    o.to_json(os);
 		}
 		else {
@@ -168,16 +163,16 @@ namespace symbol {
 		return true;    
 	}
 
-	bool c::fetch_nodes(const Params& p, ostream& os) {
-		auto url=get_net().nodes_url();
+	bool c::fetchNodes(const Params& p, ostream& os) {
+		auto url = network().nodesUrl();
 		if (url.empty()) {
-		    os << "Unknown Url for network '" << get_net() << "'.";
+		    os << "Unknown Url for network '" << network() << "'.";
 		    return false;
 		}
 		dto::net_list o;
-		auto r=o.fetch(url);
+		auto r = o.fetch(url);
 		if (!r) return false;
-		if (json) {
+		if (json()) {
 		    o.to_json(os);
 		}
 		else {
@@ -186,14 +181,14 @@ namespace symbol {
 		return true;    
 	}
 
-	c::section* c::create_section_fetch_chain() {
-		auto s=new section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetch_chain(p, os); });
+	c::section* c::createSectionFetchChain() {
+		auto s = new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchChain(p, os); });
 		return s;
 	}
 
 
-	void chain_info(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
+	void chainInfo(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
 /*
 		auto reply = ctx.Get(string(endpoint)+"/chain/info"); //http://jsonplaceholder.typicode.com/posts/1");
 		auto json = reply->GetBodyAsString();
@@ -201,14 +196,14 @@ namespace symbol {
 */
 	}
 
-	bool c::fetch_chain(const Params& p, ostream& os) {
+	bool c::fetchChain(const Params& p, ostream& os) {
 		os << "XXXXXXXXXXXChain\n";
 		return true;
 	}
 
-	bool c::main_handler(const Params& p, ostream& os) {
-		url=p.get(url_flag);
-		return b::main_handler(p, os);
+	bool c::mainHandler(const Params& p, ostream& os) {
+		m_url = p.get(Url_Flag);
+		return b::mainHandler(p, os);
 	}
 
 }

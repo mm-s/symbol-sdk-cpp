@@ -20,6 +20,7 @@
 **/
 #pragma once
 
+#include "base.h"
 #include "HmiFetch.h"
 #include "dto/dto.h"
 
@@ -33,7 +34,7 @@ namespace symbol {
 		using b::HmiFetch;
 
 	private:
-		symbol::keys::pub* resolve_public_key(const symbol::net::address&) const override;
+		ptr<symbol::PublicKey> resolvePublicKey(const symbol::UnresolvedAddress&) const override;
 
 	};
 

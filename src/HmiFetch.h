@@ -20,62 +20,73 @@
 **/
 #pragma once
 
-#include <symbol/core/Hmi.h>
+#include "base.h"
 #include "dto/dto.h"
 
 namespace symbol {
 
 	/// Human-Machine Interface. Fetch REST API section command processor (online+offline)
 	class HmiFetch: public core::Hmi {
+		/// Base class b.
 		using b = core::Hmi;
-		
-		static constexpr char url_flag{'r'};
-		static constexpr char acc_flag{'a'};
+
+	private:		
+		static constexpr char Url_Flag{'r'};
+		static constexpr char Acc_Flag{'a'};
 		#ifdef DEBUG
 			static constexpr auto Def_Url="http://nem.mm-studios.com:3000";
 		#else
 			static constexpr auto Def_Url="http://127.0.0.1:3000";
 		#endif
 	public:
-	
+		/// Constructor, Initialization	
 		HmiFetch();
-
-		section* create_section_fetch();
-		bool fetch(const Params&, ostream&);
-
-		section* create_section_fetch_node();
-		bool fetch_node(const Params&, ostream&);
-
-		section* create_section_fetch_nodes();
-		bool fetch_nodes(const Params&, ostream&);
-
-		section* create_section_fetch_node_health();
-		bool fetch_node_health(const Params&, ostream&);
-
-		section* create_section_fetch_node_info();
-		bool fetch_node_info(const Params&, ostream&);
-
-		section* create_section_fetch_node_peers();
-		bool fetch_node_peers(const Params&, ostream&);
-
-		section* create_section_fetch_chain();
-		bool fetch_chain(const Params&, ostream&);
-
-		section* create_section_fetch_account();
-		bool fetch_account(const Params&, ostream&);
-
-
 		void init(const string& name, const string& desc) override;
 
-		inline const string& getUrl() const { return url; }
+		/// menu command: fetch
+		ptr<Section> createSectionFetch(); /// init
+		bool fetch(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch node
+		ptr<Section> createSectionFetchNode(); /// init
+		bool fetchNode(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch nodes
+		ptr<Section> createSectionFetchNodes(); /// init
+		bool fetchNodes(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch node health
+		ptr<Section> createSectionFetchNodeHealth(); /// init
+		bool fetchNodeHealth(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch node info
+		ptr<Section> createSectionFetchNodeInfo(); /// init
+		bool fetchNodeInfo(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch node peers
+		ptr<Section> createSectionFetchNodePeers(); /// init
+		bool fetchNodePeers(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch chain
+		ptr<Section> createSectionFetchChain(); /// init
+		bool fetchChain(const Params&, ostream&); /// Handler
+
+		/// menu command: fetch account
+		ptr<Section> createSectionFetchAccount(); /// init
+		bool fetchAccount(const Params&, ostream&); /// Handler
+
+	public:
+		/// Getters & Setters
+		inline const string& getUrl() const { return m_url; }
+
 	protected:
-		bool main_handler(const Params&, ostream&) override;
+		bool mainHandler(const Params&, ostream&) override;
 
 	private:
-		static FlagDef flagdef_url();
+		static FlagDef flagdefUrl();
 		   
 	private:
-		string url;
+		string m_url; /// REST endpoint
 
 	};
 
