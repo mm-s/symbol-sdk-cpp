@@ -7,16 +7,32 @@ file(GLOB symbol_dto_SRC "dto/*.cpp")
 set(Boost_USE_STATIC_LIBS OFF)
 set(Boost_USE_MULTITHREADED ON)
 set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.45.0 REQUIRED COMPONENTS log thread filesystem)
+find_package(Boost 1.45.0 REQUIRED COMPONENTS log thread filesystem coroutine)
 
 if(NOT Boost_FOUND)
 	message(FATAL_ERROR "Boost required.")
 endif()
 
+#-------------OpenSSL
+find_package(OpenSSL 1.1.1 EXACT REQUIRED)
+message("OpenSSL   ver: ${OPENSSL_VERSION}")
+message("OpenSSL  root: ${OPENSSL_ROOT_DIR}")
+message("OpenSSL   inc: ${OPENSSL_INCLUDE_DIR}")
+message("OpenSSL  libs: ${OPENSSL_LIBRARIES}")
+
+#-------------ZLIB
+find_package(ZLIB REQUIRED)
+
 #-------------restc-cpp
 find_package (RESTCCPP)
 if (NOT RESTCCPP_FOUND)
 	message(FATAL_ERROR "restc-cpp required.")
+endif()
+
+#-------------symbolcore
+find_package (SYMBOLCORE)
+if (NOT SYMBOLCORE_FOUND)
+	message(FATAL_ERROR "symbolcore required.")
 endif()
 
 
@@ -32,6 +48,11 @@ target_link_libraries(symbolrpc ${Boost_LIBRARIES})
 include_directories(${RESTCCPP_INCLUDE_DIRS})
 target_link_libraries (symbolrpc ${RESTCCPP_LIBRARIES})
 
+include_directories(${SYMBOLCORE_INCLUDE_DIRS})
+target_link_libraries (symbolrpc ${SYMBOLCORE_LIBRARIES})
+
+target_link_libraries(symbolrpc OpenSSL::SSL)
+target_link_libraries(symbolrpc ZLIB::ZLIB)
 
 
 set_property(TARGET symbolrpc PROPERTY POSITION_INDEPENDENT_CODE ON)
