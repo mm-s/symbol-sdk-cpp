@@ -25,11 +25,13 @@
 namespace symbol {
 
 	using c = HmiFetch;
-	using namespace std;
-	using namespace restc_cpp;
+	using string = std::string;
+	//using namespace restc_cpp;
 
+/*
 	c::HmiFetch(): b(Params { flagdefUrl() }) {
 	}
+*/
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
@@ -188,13 +190,13 @@ namespace symbol {
 	}
 
 
-	void chainInfo(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
+//	void c::chainInfo(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
 /*
 		auto reply = ctx.Get(string(endpoint)+"/chain/info"); //http://jsonplaceholder.typicode.com/posts/1");
 		auto json = reply->GetBodyAsString();
 		cout << "Received data: " << json << endl;
 */
-	}
+//	}
 
 	bool c::fetchChain(const Params& p, ostream& os) {
 		os << "XXXXXXXXXXXChain\n";

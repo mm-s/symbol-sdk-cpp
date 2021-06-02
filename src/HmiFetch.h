@@ -22,6 +22,7 @@
 
 #include "base.h"
 #include "dto/dto.h"
+#include <symbol/core/Hmi.h>
 
 namespace symbol {
 
@@ -33,14 +34,15 @@ namespace symbol {
 	private:		
 		static constexpr char Url_Flag{'r'};
 		static constexpr char Acc_Flag{'a'};
-		#ifdef DEBUG
+		#ifndef NDEBUG
 			static constexpr auto Def_Url="http://nem.mm-studios.com:3000";
 		#else
 			static constexpr auto Def_Url="http://127.0.0.1:3000";
 		#endif
 	public:
 		/// Constructor, Initialization	
-		HmiFetch();
+		using core::Hmi::Hmi;
+		
 		void init(const string& name, const string& desc) override;
 
 		/// menu command: fetch
