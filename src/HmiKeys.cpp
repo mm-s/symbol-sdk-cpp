@@ -27,7 +27,7 @@ namespace symbol {
 	ptr<symbol::PublicKey> c::resolvePublicKey(const symbol::UnresolvedAddress& addr0) const {
 		string a=addr0.formatAccount();
 		dto::account_t o;
-		auto r=o.fetch(getUrl(), a);
+		auto r=o.fetch(url(), a);
 		if (!r) return nullptr;
 		
 		//public key, address

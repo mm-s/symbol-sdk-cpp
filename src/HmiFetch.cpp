@@ -29,10 +29,11 @@ namespace symbol {
 	//using namespace restc_cpp;
 
 
-	c::HmiFetch(): b(Params { flagdefUrl() }) {
+	c::HmiFetch(): b(Params { flagdefOffline(), flagdefUrl() }) {
 	}
 
 	c::HmiFetch(Params&&p): b(move(p)) {
+		add(flagdefOffline());
 		add(flagdefUrl());
 	}
 
@@ -45,7 +46,15 @@ namespace symbol {
 		return FlagDef{Url_Flag, "url", true, true, Def_Url, "API node URL."};
 	}
 
+	c::FlagDef c::flagdefOffline() {
+		return FlagDef{Offline_Flag, "offline", true, true, "", "Work offline."};
+	}
+
 	bool c::fetch(const Params& p, ostream& os) {
+		if (p.is_set(Offline_Flag)) {
+			os << "Cannot access the network in offline mode.";
+			return false;
+		}
 		return true;
 	}
 
@@ -206,7 +215,19 @@ namespace symbol {
 		return true;
 	}
 
+	void c::pass1(ParamPath& v) {
+		b::pass1(v);
+		auto p = v.lookup({""});
+		if (p != nullptr) {    
+		    if ( p->is_set(Offline_Flag) ) {
+		    	m_offline = true;
+			}
+		}
+		
+	}
+
 	bool c::mainHandler(const Params& p, ostream& os) {
+
 		m_url = p.get(Url_Flag);
 		return b::mainHandler(p, os);
 	}

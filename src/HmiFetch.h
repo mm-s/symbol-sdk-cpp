@@ -32,6 +32,7 @@ namespace symbol {
 		using b = core::Hmi;
 
 	private:		
+	    static constexpr char Offline_Flag{'x'};
 		static constexpr char Url_Flag{'r'};
 		static constexpr char Acc_Flag{'a'};
 		#ifndef NDEBUG
@@ -81,16 +82,22 @@ namespace symbol {
 
 	public:
 		/// Getters & Setters
-		inline const string& getUrl() const { return m_url; }
+		inline const string& url() const { return m_url; }
+		inline bool offline() const { return m_offline; }
 
 	protected:
 		bool mainHandler(const Params&, ostream&) override;
+ 
+ 		///Opportunity to rewrite Params before command execution.
+ 		void pass1(ParamPath&) override;
 
 	private:
+		static FlagDef flagdefOffline();
 		static FlagDef flagdefUrl();
-		   
+
 	private:
 		string m_url; /// REST endpoint
+   		bool m_offline{false};
 
 	};
 

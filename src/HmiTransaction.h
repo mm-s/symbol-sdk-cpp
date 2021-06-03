@@ -33,12 +33,12 @@ namespace symbol {
 		using b::HmiKeys;
 
 	protected:
-	    static constexpr char Grab_Flag{'g'};
 
-		void rewrite(ParamPath&) const override;
+ 		///Opportunity to rewrite Params before command execution.
+ 		void pass1(ParamPath&) override;
 
 	private:
-		ptr<Section> createSectionTxTransfer() override;
+		//ptr<Section> createSectionTxTransfer() override;
 		bool txTransfer(const Params&, ostream&) override;
 
 

@@ -25,33 +25,35 @@ namespace symbol {
 	using c = HmiTransaction;
 	using namespace std;
 
-	void c::rewrite(ParamPath& v) const {
-		b::rewrite(v);
-		auto p = v.lookup({"tx", "transfer"});
-		if (p != nullptr) {    
-		    if ( p->is_set(Grab_Flag) ) {
-		        p->set_optional(Mosaic_Flag);
-		        p->set_optional(Deadline_Flag);
-		        auto r = v.lookup({});
-		        assert(r != nullptr);
-		        r->set_optional(Seed_Flag);
-		    }
-		}    
+
+	void c::pass1(ParamPath& v) {
+		b::pass1(v);
+		if (!offline()) {
+			auto p = v.lookup({"tx", "transfer"});
+			if (p != nullptr) {    
+			    p->set_optional(Mosaic_Flag);
+			    p->set_optional(Deadline_Flag);
+			    auto r = v.lookup({});
+			    assert(r != nullptr);
+			    r->set_optional(Seed_Flag);
+			}    
+		}
 	}
 
+/*
 	ptr<c::Section> c::createSectionTxTransfer() {
 		auto s = b::createSectionTxTransfer();
-		s->add({Grab_Flag, "grab", true, false, "", "Obtain params from API node."});
 		return s;
 	}
-
+*/
 	bool c::txTransfer(const Params&p, ostream& os) {
-		if ( p.is_set(Grab_Flag) ) {
-		    dto::node_info o;
-		    if ( !o.fetch(getUrl()) ) {
-		        os << "Unable to fetch from " << getUrl() << ".";
-		        return false;
-		    }
+		if ( !offline() ) {
+			dto::node_info o;
+			if ( !o.fetch( url() ) ) {
+			    os << "Unable to fetch from " << url() << ".";
+			    return false;
+			}
+			/// 
 		}
 		return b::txTransfer(p, os);
 	}
