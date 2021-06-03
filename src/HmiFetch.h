@@ -41,10 +41,12 @@ namespace symbol {
 		#endif
 	public:
 		/// Constructor, Initialization	
-		using core::Hmi::Hmi;
+		HmiFetch();
+		HmiFetch(Params&&p);
 		
 		void init(const string& name, const string& desc) override;
 
+	private:
 		/// menu command: fetch
 		ptr<Section> createSectionFetch(); /// init
 		bool fetch(const Params&, ostream&); /// Handler

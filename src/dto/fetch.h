@@ -6,9 +6,14 @@
 #include <restc-cpp/SerializeJson.h>
 #include <functional>
 
-namespace symbol {
-namespace dto {
-    using namespace std;
+namespace symbol { namespace dto {
+	using std::ostream;
+	using std::string;
+	using std::vector;
+	using std::function;
+	using std::exception;
+	using std::move;
+	using std::istringstream;
     using Context=restc_cpp::Context;
 
     template<typename t>
@@ -39,5 +44,5 @@ namespace dto {
         return true;
     }
 
-}
-}
+}} // namespace
+

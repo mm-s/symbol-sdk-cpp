@@ -4,9 +4,10 @@
 #include <iostream>
 #include <vector>
 
-namespace symbol {
-namespace dto {
-    using namespace std;
+namespace symbol { namespace dto {
+	using std::ostream;
+	using std::string;
+	using std::vector;
 
     struct account_t {
         struct account_data_t {
@@ -47,5 +48,5 @@ namespace dto {
         
     };
 
-}
-}
+}} // namespaces
+

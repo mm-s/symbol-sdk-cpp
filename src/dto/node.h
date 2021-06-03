@@ -4,9 +4,10 @@
 #include <iostream>
 #include <vector>
 
-namespace symbol {
-namespace dto {
-    using namespace std;
+namespace symbol { namespace dto {
+	using std::ostream;
+	using std::string;
+	using std::vector;
 
     struct node_health {
         struct status_t {   
@@ -69,5 +70,5 @@ namespace dto {
 
    };
 
-}
-}
+}} // namespaces
+

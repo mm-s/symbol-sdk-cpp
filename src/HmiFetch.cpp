@@ -28,10 +28,13 @@ namespace symbol {
 	using string = std::string;
 	//using namespace restc_cpp;
 
-/*
+
 	c::HmiFetch(): b(Params { flagdefUrl() }) {
 	}
-*/
+
+	c::HmiFetch(Params&&p): b(move(p)) {
+		add(flagdefUrl());
+	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
