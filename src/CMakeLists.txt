@@ -28,12 +28,17 @@ find_package (RESTCCPP)
 if (NOT RESTCCPP_FOUND)
 	message(FATAL_ERROR "restc-cpp required.")
 endif()
+message("Restc-Cpp  headers: ${RESTCCPP_INCLUDE_DIRS}")
+message("           libs: ${RESTCCPP_LIBRARIES}")
 
 #-------------symbolcore
 find_package (SYMBOLCORE)
 if (NOT SYMBOLCORE_FOUND)
 	message(FATAL_ERROR "symbolcore required.")
 endif()
+message("Symbol-Core  headers: ${SYMBOLCORE_INCLUDE_DIRS}")
+message("             libs: ${SYMBOLCORE_LIBRARIES}")
+
 
 
 #------------- libsymbolrpc.so
