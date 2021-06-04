@@ -1,6 +1,7 @@
-lib
-bin
-_build
+lib/
+bin/
+_build/
+symbol-sdk-core-cpp/
 
 # Prerequisites
 *.d

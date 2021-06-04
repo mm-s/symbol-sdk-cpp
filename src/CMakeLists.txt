@@ -24,6 +24,7 @@ message("OpenSSL  libs: ${OPENSSL_LIBRARIES}")
 find_package(ZLIB REQUIRED)
 
 #-------------restc-cpp
+message("RESTCCPP_PREFIX: ${RESTCCPP_PREFIX}")
 find_package (RESTCCPP)
 if (NOT RESTCCPP_FOUND)
 	message(FATAL_ERROR "restc-cpp required.")

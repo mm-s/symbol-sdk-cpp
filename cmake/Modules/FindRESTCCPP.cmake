@@ -6,18 +6,18 @@
 #  RESTCCPP_FOUND          - True if found.
 
 find_path(RESTCCPP_INCLUDE_DIR restc-cpp/SerializeJson.h
-  /usr/include
-  /usr/local/include
-  DOC "Directory containing restc-cpp headers"
+	/usr/include
+	/usr/local/include
+	DOC "Directory containing restc-cpp headers"
 )
 mark_as_advanced(RESTCCPP_INCLUDE_DIR)
 
 FIND_LIBRARY( RESTCCPP_LIBRARY
-  NAMES restc-cpp
-  PATHS /usr/lib
-        /usr/local/lib
-	/usr/lib/i386-linux-gnu/
-	/usr/lib/x86_64-linux-gnu/
+	NAMES	restc-cpp
+	PATHS	/usr/lib
+		/usr/local/lib
+		/usr/lib/i386-linux-gnu/
+		/usr/lib/x86_64-linux-gnu/
 )
 
 mark_as_advanced(RESTCCPP_LIBRARY)
