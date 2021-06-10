@@ -1,0 +1,18 @@
+RELEASE NOTES symbol-sdk-cpp
+============================
+
+BackLog
+=======
+
+  * Transfer Money to recipient account.
+
+
+
+History of Releases
+===================
+
+0.0.2 Current
+      Added NFT Section
+
+0.0.1 2-Jun-2021
+      Initial version. 

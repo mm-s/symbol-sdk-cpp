@@ -1,5 +1,18 @@
-add_executable(symbol main.cpp)
+add_executable(symbol-core main_core.cpp)
+target_include_directories(symbol-core
+  INTERFACE
+    # Headers used from source/build location:
+    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+    # Headers used from installed location:
+    "$<INSTALL_INTERFACE:include>"
+)
 
+target_link_libraries(symbol-core PUBLIC symbolcore)
+install(TARGETS symbol-core DESTINATION bin)
+
+
+
+add_executable(symbol main.cpp)
 target_include_directories(symbol
   INTERFACE
     # Headers used from source/build location:
@@ -8,7 +21,6 @@ target_include_directories(symbol
     "$<INSTALL_INTERFACE:include>"
 )
 
-target_link_libraries(symbol PUBLIC symbolrpc)
-
+target_link_libraries(symbol PUBLIC symbolcore symbolrpc)
 install(TARGETS symbol DESTINATION bin)
 

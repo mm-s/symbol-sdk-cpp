@@ -1,7 +1,7 @@
 lib/
 bin/
 _build/
-symbol-sdk-core-cpp/
+catapult-server/
 
 # Prerequisites
 *.d

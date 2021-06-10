@@ -1,0 +1,5 @@
+#pragma once
+
+#define SYMBOL_SDK_CORE_VERSION_MAJOR @symbol_sdk_core_VERSION_MAJOR@
+#define SYMBOL_SDK_CORE_VERSION_MINOR @symbol_sdk_core_VERSION_MINOR@
+

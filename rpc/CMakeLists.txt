@@ -33,12 +33,12 @@ message("Restc-Cpp  headers: ${RESTCCPP_INCLUDE_DIRS}")
 message("           libs: ${RESTCCPP_LIBRARIES}")
 
 #-------------symbolcore
-find_package (SYMBOLCORE)
-if (NOT SYMBOLCORE_FOUND)
-	message(FATAL_ERROR "symbolcore required.")
-endif()
-message("Symbol-Core  headers: ${SYMBOLCORE_INCLUDE_DIRS}")
-message("             libs: ${SYMBOLCORE_LIBRARIES}")
+#find_package (SYMBOLCORE)
+#if (NOT SYMBOLCORE_FOUND)
+#	message(FATAL_ERROR "symbolcore required.")
+#endif()
+#message("Symbol-Core  headers: ${SYMBOLCORE_INCLUDE_DIRS}")
+#message("             libs: ${SYMBOLCORE_LIBRARIES}")
 
 
 
@@ -54,8 +54,9 @@ target_link_libraries(symbolrpc ${Boost_LIBRARIES})
 include_directories(${RESTCCPP_INCLUDE_DIRS})
 target_link_libraries (symbolrpc ${RESTCCPP_LIBRARIES})
 
-include_directories(${SYMBOLCORE_INCLUDE_DIRS})
-target_link_libraries (symbolrpc ${SYMBOLCORE_LIBRARIES})
+#include_directories(${SYMBOLCORE_INCLUDE_DIRS})
+#target_link_libraries (symbolrpc ${SYMBOLCORE_LIBRARIES})
+target_link_libraries (symbolrpc symbolcore)
 
 target_link_libraries(symbolrpc OpenSSL::SSL)
 target_link_libraries(symbolrpc ZLIB::ZLIB)
@@ -67,14 +68,14 @@ set_property(TARGET symbolrpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 target_include_directories(symbolrpc
   INTERFACE
     # Headers used from source/build location:
-    "${PROJECT_BINARY_DIR}/src"
+    "${PROJECT_BINARY_DIR}/rpc"
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
     # Headers used from installed location:
     "$<INSTALL_INTERFACE:include>"
 )
 install(TARGETS symbolrpc DESTINATION lib)
 
-install(DIRECTORY "${CMAKE_SOURCE_DIR}/src/" # source directory
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/rpc/" # source directory
         DESTINATION "include/symbol" # target directory
         FILES_MATCHING # install only matched files
         PATTERN "*.h" # select header files

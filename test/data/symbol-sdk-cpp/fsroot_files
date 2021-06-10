@@ -1,0 +1,14 @@
+fsroot/bin/symbol
+fsroot/include/symbol/base.h
+fsroot/include/symbol/dto/account.h
+fsroot/include/symbol/dto/dto.h
+fsroot/include/symbol/dto/fetch.h
+fsroot/include/symbol/dto/net.h
+fsroot/include/symbol/dto/node.h
+fsroot/include/symbol/HmiFetch.h
+fsroot/include/symbol/Hmi.h
+fsroot/include/symbol/HmiKeys.h
+fsroot/include/symbol/HmiTransaction.h
+fsroot/include/symbol/rpc.h
+fsroot/lib/libsymbolrpc.so
+fsroot/share/cmake/SYMBOLRPC/FindSYMBOLRPC.cmake

@@ -1,0 +1,5 @@
+fsroot/bin/my_project
+fsroot/include/my_project/core.h
+fsroot/include/my_project/MyHmi.h
+fsroot/lib/libmy_projectcore.so
+fsroot/share/cmake/MY_PROJECT/FindMY_PROJECT.cmake

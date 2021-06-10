@@ -1,2 +1,2 @@
-#include <symbol/core.h>
+#include "core/core.h"
 #include "rpc/rpc.h"
