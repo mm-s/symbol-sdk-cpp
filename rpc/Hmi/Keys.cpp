@@ -18,25 +18,28 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#pragma once
+#include "Keys.h"
 
-#include "base.h"
-#include "HmiFetch.h"
-#include "dto/dto.h"
+namespace symbol { namespace hmi {
 
-namespace symbol {
+	using c = symbol::hmi::Keys;
 
-	/// Human-Machine Interface. Keys section command processor (online+offline)
-	class HmiKeys: public HmiFetch {
-		using b = HmiFetch;
+	ptr<symbol::PublicKey> c::resolvePublicKey(const symbol::UnresolvedAddress& addr0) const {
+		string a=addr0.formatAccount();
+		dto::account_t o;
+		auto r=o.fetch(url(), a);
+		if (!r) return nullptr;
+		
+		//public key, address
+		ptr<symbol::PublicKey> pk{nullptr};
+		ptr<symbol::UnresolvedAddress> addr{nullptr};
+		string e=network().parse(o.account.publicKey, pk, addr);
+		if (!e.empty()) {
+		    return nullptr;
+		}
+		delete addr;
+		return pk;    
+	}
 
-	public:    
-		using b::HmiFetch;
-
-	private:
-		ptr<symbol::PublicKey> resolvePublicKey(const symbol::UnresolvedAddress&) const override;
-
-	};
-
-}
+}}
 

@@ -20,16 +20,16 @@
 **/
 #pragma once
 
-#include "base.h"
-#include "dto/dto.h"
+#include "../base.h"
+#include "../dto/dto.h"
 #include <symbol/core/Hmi.h>
 
-namespace symbol {
+namespace symbol { namespace hmi {
 
 	/// Human-Machine Interface. Fetch REST API section command processor (online+offline)
-	class HmiFetch: public core::Hmi {
+	class Fetch: public symbol::core::Hmi {
 		/// Base class b.
-		using b = core::Hmi;
+		using b = symbol::core::Hmi;
 
 	private:		
 	    static constexpr char Offline_Flag{'x'};
@@ -42,8 +42,8 @@ namespace symbol {
 		#endif
 	public:
 		/// Constructor, Initialization	
-		HmiFetch();
-		HmiFetch(Params&&p);
+		Fetch();
+		Fetch(Params&&p);
 		
 		void init(const string& name, const string& desc) override;
 
@@ -87,9 +87,9 @@ namespace symbol {
 
 	protected:
 		bool mainHandler(const Params&, ostream&) override;
- 
- 		///Opportunity to rewrite Params before command execution.
- 		void pass1(ParamPath&) override;
+
+		///Opportunity to rewrite Params before command execution.
+		void pass1(ParamPath&) override;
 
 	private:
 		static FlagDef flagdefOffline();
@@ -97,9 +97,9 @@ namespace symbol {
 
 	private:
 		string m_url; /// REST endpoint
-   		bool m_offline{false};
+		bool m_offline{false};
 
 	};
 
-}
+}}
 

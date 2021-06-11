@@ -18,28 +18,47 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "HmiKeys.h"
+#include "Transaction.h"
+#include "../dto/dto.h"
 
-namespace symbol {
+namespace symbol { namespace hmi {
 
-	using c = HmiKeys;
+	using c = symbol::hmi::Transaction;
+	using namespace std;
 
-	ptr<symbol::PublicKey> c::resolvePublicKey(const symbol::UnresolvedAddress& addr0) const {
-		string a=addr0.formatAccount();
-		dto::account_t o;
-		auto r=o.fetch(url(), a);
-		if (!r) return nullptr;
-		
-		//public key, address
-		ptr<symbol::PublicKey> pk{nullptr};
-		ptr<symbol::UnresolvedAddress> addr{nullptr};
-		string e=network().parse(o.account.publicKey, pk, addr);
-		if (!e.empty()) {
-		    return nullptr;
+
+	void c::pass1(ParamPath& v) {
+		b::pass1(v);
+		if (!offline()) {
+			auto p = v.lookup({"tx", "transfer"});
+			if (p != nullptr) {
+				p->set_optional(Mosaic_Flag);
+				p->set_optional(Deadline_Flag);
+				auto r = v.lookup({});
+				assert(r != nullptr);
+				r->set_optional(Seed_Flag);
+			}
 		}
-		delete addr;
-		return pk;    
 	}
 
-}
+/*
+	ptr<c::Section> c::createSectionTxTransfer() {
+		auto s = b::createSectionTxTransfer();
+		return s;
+	}
+*/
+
+	bool c::txTransfer(const Params&p, ostream& os) {
+		if ( !offline() ) {
+			dto::node_info o;
+			if ( !o.fetch( url() ) ) {
+				os << "Unable to fetch from " << url() << ".";
+				return false;
+			}
+			/// 
+		}
+		return b::txTransfer(p, os);
+	}
+
+}}
 

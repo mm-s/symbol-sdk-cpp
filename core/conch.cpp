@@ -395,7 +395,18 @@ bool params::check_unique() const {
 	int n = 0;
 	for (auto& i: *this) {
 		s.emplace(i.short_name);
-		if (s.size() != n++) cerr << "Error: " << i.short_name << " flag already defined.\n";
+		++n;
+		if (s.size() != n) {
+			s.clear();
+			for (auto& i: *this) {
+				s.emplace(i.short_name);
+				if (s.size() != n) {
+					cerr << "Error: " << i.short_name << " --" << i.name << " flag already defined.\n";
+					break;
+				}
+				cerr << "Ok: " << i.short_name << " --" << i.name << " flag defined.\n";
+			}
+		}
 	}
 	return s.size() == size();
 }

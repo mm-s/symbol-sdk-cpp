@@ -18,45 +18,25 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "HmiTransaction.h"
+#pragma once
 
-namespace symbol {
+#include "../base.h"
+#include "Fetch.h"
+//#include "dto/dto.h"
 
-	using c = HmiTransaction;
-	using namespace std;
+namespace symbol { namespace hmi {
 
+	/// Human-Machine Interface. Keys section command processor (online+offline)
+	class Keys: public symbol::hmi::Fetch {
+		using b = symbol::hmi::Fetch;
 
-	void c::pass1(ParamPath& v) {
-		b::pass1(v);
-		if (!offline()) {
-			auto p = v.lookup({"tx", "transfer"});
-			if (p != nullptr) {    
-			    p->set_optional(Mosaic_Flag);
-			    p->set_optional(Deadline_Flag);
-			    auto r = v.lookup({});
-			    assert(r != nullptr);
-			    r->set_optional(Seed_Flag);
-			}    
-		}
-	}
+	public:    
+		using b::Fetch;
 
-/*
-	ptr<c::Section> c::createSectionTxTransfer() {
-		auto s = b::createSectionTxTransfer();
-		return s;
-	}
-*/
-	bool c::txTransfer(const Params&p, ostream& os) {
-		if ( !offline() ) {
-			dto::node_info o;
-			if ( !o.fetch( url() ) ) {
-			    os << "Unable to fetch from " << url() << ".";
-			    return false;
-			}
-			/// 
-		}
-		return b::txTransfer(p, os);
-	}
+	private:
+		ptr<symbol::PublicKey> resolvePublicKey(const symbol::UnresolvedAddress&) const override;
 
-}
+	};
+
+}}
 

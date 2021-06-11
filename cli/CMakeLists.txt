@@ -21,6 +21,7 @@ target_include_directories(symbol
     "$<INSTALL_INTERFACE:include>"
 )
 
-target_link_libraries(symbol PUBLIC symbolcore symbolrpc)
+target_link_libraries(symbol PUBLIC symbolcore)
+target_link_libraries(symbol PUBLIC symbolrpc)
 install(TARGETS symbol DESTINATION bin)
 

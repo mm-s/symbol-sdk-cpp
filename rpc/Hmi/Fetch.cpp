@@ -18,21 +18,20 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "HmiFetch.h"
+#include "Fetch.h"
 #include <restc-cpp/restc-cpp.h>
-#include "dto/dto.h"
+#include "../dto/dto.h"
 
-namespace symbol {
+namespace symbol { namespace hmi {
 
-	using c = HmiFetch;
+	using c = symbol::hmi::Fetch;
 	using string = std::string;
 	//using namespace restc_cpp;
 
-
-	c::HmiFetch(): b(Params { flagdefOffline(), flagdefUrl() }) {
+	c::Fetch(): b(Params { flagdefOffline(), flagdefUrl() }) {
 	}
 
-	c::HmiFetch(Params&&p): b(move(p)) {
+	c::Fetch(Params&&p): b(move(p)) {
 		add(flagdefOffline());
 		add(flagdefUrl());
 	}
@@ -232,5 +231,5 @@ namespace symbol {
 		return b::mainHandler(p, os);
 	}
 
-}
+}}
 

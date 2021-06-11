@@ -3,28 +3,10 @@ configure_file(config.h.in config.h)
 file(GLOB symbol_core_SRC *.cpp)
 file(GLOB symbol_core_catapult_SRC "catapult/*.cpp")
 file(GLOB symbol_core_hmi_SRC "Hmi/*.cpp")
-file(GLOB symbol_core_donna_SRC "donna/*.c") # "donna/*.h")
+file(GLOB symbol_core_donna_SRC "donna/*.c")
 
 add_definitions(-DNO_MISALIGNED_ACCESSES) # sha3
 #SOURCE_GROUP("donna" FILES ${external_donna_SRC})
-
-#-------------Boost
-set(Boost_USE_STATIC_LIBS OFF)
-set(Boost_USE_MULTITHREADED ON)
-set(Boost_USE_STATIC_RUNTIME OFF)
-find_package(Boost 1.45.0 REQUIRED COMPONENTS log thread filesystem)
-
-if(NOT Boost_FOUND)
-	message(FATAL_ERROR "Boost required.")
-endif()
-
-#-------------OpenSSL
-find_package(OpenSSL 1.1.1 EXACT REQUIRED)
-message("OpenSSL   ver: ${OPENSSL_VERSION}")
-message("OpenSSL  root: ${OPENSSL_ROOT_DIR}")
-message("OpenSSL   inc: ${OPENSSL_INCLUDE_DIR}")
-message("OpenSSL  libs: ${OPENSSL_LIBRARIES}")
-
 
 #------------- libsymbolcore.so
 add_library(symbolcore SHARED ${symbol_core_SRC}

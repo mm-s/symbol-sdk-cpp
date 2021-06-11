@@ -20,22 +20,21 @@
 **/
 #pragma once
 
-#include "HmiKeys.h"
-#include "dto/dto.h"
+#include "Keys.h"
 
-namespace symbol {
+namespace symbol { namespace hmi {
 
 	/// Human-Machine Interface. Transactions (tx) section command processor (online+offline)
-	class HmiTransaction: public HmiKeys {
-		using b = HmiKeys;
+	class Transaction: public symbol::hmi::Keys {
+		using b = symbol::hmi::Keys;
 
-	public:    
-		using b::HmiKeys;
+	public:
+		using b::Keys;
 
 	protected:
 
- 		///Opportunity to rewrite Params before command execution.
- 		void pass1(ParamPath&) override;
+		///Opportunity to rewrite Params before command execution.
+		void pass1(ParamPath&) override;
 
 	private:
 		//ptr<Section> createSectionTxTransfer() override;
@@ -45,5 +44,5 @@ namespace symbol {
 
 	};
 
-}
+}}
 

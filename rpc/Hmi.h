@@ -20,11 +20,11 @@
 **/
 
 #pragma once
-#include "HmiTransaction.h"
+#include "Hmi/Transaction.h"
 
-namespace symbol {
+namespace symbol { 
 
-	using Hmi = HmiTransaction;
+	using Hmi = symbol::hmi::Transaction;
 
 }
 
