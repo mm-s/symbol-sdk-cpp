@@ -1,3 +1,6 @@
+fsroot/bin/symbol
+fsroot/bin/symbol-core
+fsroot/include/symbol/base.h
 fsroot/include/symbol/core/base.h
 fsroot/include/symbol/core/catapult/AccountAddressRestrictionBuilder.h
 fsroot/include/symbol/core/catapult/AccountAddressRestrictionTransaction.h
@@ -186,6 +189,7 @@ fsroot/include/symbol/core/donna/ed25519-donna-portable-identify.h
 fsroot/include/symbol/core/donna/ed25519.h
 fsroot/include/symbol/core/donna/ed25519-hash.h
 fsroot/include/symbol/core/donna/modm-donna-64bit.h
+fsroot/include/symbol/core.h
 fsroot/include/symbol/core/Hmi/DigitalAssets.h
 fsroot/include/symbol/core/Hmi.h
 fsroot/include/symbol/core/Hmi/Keys.h
@@ -196,4 +200,17 @@ fsroot/include/symbol/core/Keys.h
 fsroot/include/symbol/core/Network.h
 fsroot/include/symbol/core/NonFungibleToken.h
 fsroot/include/symbol/core/Transaction.h
+fsroot/include/symbol/dto/account.h
+fsroot/include/symbol/dto/dto.h
+fsroot/include/symbol/dto/fetch.h
+fsroot/include/symbol/dto/net.h
+fsroot/include/symbol/dto/node.h
+fsroot/include/symbol/HmiFetch.h
+fsroot/include/symbol/Hmi.h
+fsroot/include/symbol/HmiKeys.h
+fsroot/include/symbol/HmiTransaction.h
+fsroot/include/symbol/rpc.h
 fsroot/lib/libsymbolcore.so
+fsroot/lib/libsymbolrpc.so
+fsroot/share/cmake/SYMBOLCORE/FindSYMBOLCORE.cmake
+fsroot/share/cmake/SYMBOLRPC/FindSYMBOLRPC.cmake

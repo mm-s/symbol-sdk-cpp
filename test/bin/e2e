@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Tests a chain build:	core -> rpc -> skel
+# Tests a chain build:	sdk -> skel
 
 workDir="_e2e"
 jobs=8
@@ -45,6 +45,8 @@ function testBuild {
 	modules=""
 	ch=""
 	modules0="-DCMAKE_MODULE_PATH="
+	echo "pwd="`pwd`
+	echo "rep=$rep"
 	while [ true ]; do
 		rep=$1
 		shift
@@ -52,13 +54,19 @@ function testBuild {
 			break
 		fi
 		fsRoot=$rep/${buildDir}/fsroot
-		cmakeFindName=`find $fsRoot/share/cmake -mindepth 1 -type d | sed "s~.*/\(.*\)~\1~"`
+		cmakeFindName=`find $fsRoot/share/cmake -mindepth 1 -type d | sed "s~.*/\(.*\)~\1~" | xargs`
 		modules=${modules0}${ch}${pwd}/${fsRoot}/cmake/Modules
 		modules0=${modules}
 		ch=":"
-		cmakeop="${cmakeop}-D${cmakeFindName}_ROOT=${pwd}/${fsRoot} "
+		for x in ${cmakeFindName}; do
+			cmakeop="${cmakeop}-D${x}_ROOT=${pwd}/${fsRoot} "
+		done
+		echo "  fsRoot=$fsRoot"
+		echo "  cmakeFindName=$cmakeFindName"
+		echo "  modules=$modules"
 	done
 	cmakeop="$modules $cmakeop"
+	echo "cmakeop=$cmakeop"
 	pushd ${gitn} > /dev/null
 		if [[ -x scripts/configure.sh ]]; then
 			echo "Executing project's configure script."
@@ -73,6 +81,8 @@ function testBuild {
 			cmake $cmakeOpts ..
 			make -j${jobs} install
 			find fsroot -type f | sort > fsroot_files
+			echo `pwd`"/fsroot_files:"
+			cat fsroot_files
 		popd > /dev/null
 		echo "Comparing \"test/data/${gitn}/fsroot_files\" and \"${buildDir}/fsroot_files\"."
 		pwd
@@ -106,6 +116,16 @@ function testBuild0 {
 	testBuild3 https://github.com/nemtech ${gitSymbolSdk} ""
 	testBuild3 https://github.com/mm-s ${gitSymbolSkel} "${gitSymbolSdk}"
 }
+
+function testBuild1 {
+	pushd ${workDir} > /dev/null
+		ln -s ../../../${gitSymbolSdk}
+		testBuild https://github.com/mm-s ${gitSymbolSkel} "${gitSymbolSdk}"
+	popd > /dev/null
+}
+
+#testBuild1
+#exit
 
 testBuild0
 
