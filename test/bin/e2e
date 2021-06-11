@@ -1,0 +1,143 @@
+#!/bin/bash
+
+# Tests a chain build:	core -> rpc -> skel
+
+workDir="_e2e"
+jobs=8
+testpwd=`pwd`
+
+function help {
+	echo "bin/e2e [-j <jobs>] <branch>"
+	echo "Example: "
+	echo "$> bin/e2e main"
+	exit 1
+}
+
+gitSymbolSdk="symbol-sdk-cpp"
+gitSymbolSkel="symbol-skel-cpp"
+
+while [[ true ]]; do
+	opt=$1
+	shift
+	if [[ "_$opt" == "_-j" ]]; then
+		jobs=$1
+		shift
+		continue
+	fi
+	break
+done
+branch=$opt
+
+if [[ "_$branch" == "_" ]]; then
+	echo "Error: Specify branch."
+	help
+	exit 1
+fi
+
+buildDir="_build"
+
+function testBuild {
+	pwd=$1
+	shift
+	gitn=$1
+	shift
+	cmakeop=""
+	modules=""
+	ch=""
+	modules0="-DCMAKE_MODULE_PATH="
+	while [ true ]; do
+		rep=$1
+		shift
+		if [[ "_$rep" == "_" ]]; then
+			break
+		fi
+		fsRoot=$rep/${buildDir}/fsroot
+		cmakeFindName=`find $fsRoot/share/cmake -mindepth 1 -type d | sed "s~.*/\(.*\)~\1~"`
+		modules=${modules0}${ch}${pwd}/${fsRoot}/cmake/Modules
+		modules0=${modules}
+		ch=":"
+		cmakeop="${cmakeop}-D${cmakeFindName}_ROOT=${pwd}/${fsRoot} "
+	done
+	cmakeop="$modules $cmakeop"
+	pushd ${gitn} > /dev/null
+		if [[ -x scripts/configure.sh ]]; then
+			echo "Executing project's configure script."
+			scripts/configure.sh
+		fi
+		mkdir -p ${buildDir}
+		pushd ${buildDir} > /dev/null
+			cmakeOpts="-DCMAKE_INSTALL_PREFIX=fsroot ${cmakeop}"
+			echo "Invoking CMake"
+			echo "   with: $cmakeOpts"
+			echo "   from: `pwd`"
+			cmake $cmakeOpts ..
+			make -j${jobs} install
+			find fsroot -type f | sort > fsroot_files
+		popd > /dev/null
+		echo "Comparing \"test/data/${gitn}/fsroot_files\" and \"${buildDir}/fsroot_files\"."
+		pwd
+		diff ${testpwd}/data/${gitn}/fsroot_files ${buildDir}/fsroot_files
+		er=$?
+		if [[ $er -ne 0 ]]; then
+			echo "FAIL: Files don't match"
+			exit 1
+		fi
+	popd > /dev/null
+}
+
+function testBuild3 {
+	bz=$1
+	gitrep=$2
+	gitrepdeps=$3
+	pushd ${workDir} > /dev/null
+		git clone --depth 1 -b ${branch} ${bz}/${gitrep}.git
+		pwd=`pwd`
+		testBuild ${pwd} ${gitrep} ${gitrepdeps}
+	popd > /dev/null
+}
+
+function testBuild0 {
+	if [[ "_${workDir:0:1}" == "_/" ]]; then
+		echo "workDir must be relative path."
+		exit 1
+	fi
+	rm -rf ${workDir}
+	mkdir -p ${workDir}
+	testBuild3 https://github.com/nemtech ${gitSymbolSdk} ""
+	testBuild3 https://github.com/mm-s ${gitSymbolSkel} "${gitSymbolSdk}"
+}
+
+testBuild0
+
+LD_LIBRARY_PATH="${workDir}/${gitSymbolSdk}/${buildDir}/fsroot/lib:${workDir}/${gitSymbolSkel}/${buildDir}/fsroot/lib"
+x="LD_LIBRARY_PATH=$LD_LIBRARY_PATH ${workDir}/${gitSymbolSkel}/${buildDir}/fsroot/bin/my_project"
+
+echo "Installation dirs:"
+echo "  Sdk: ${workDir}/${gitSymbolSdk}/${buildDir}/fsroot"
+echo "  Skel: ${workDir}/${gitSymbolSkel}/${buildDir}/fsroot"
+
+function xtest {
+	cmd="$1"
+	exp=$2
+	desc="$3"
+	echo ""
+	echo "Test name: $desc"
+	echo "cmd = $cmd"
+	eval $cmd
+	r=$?
+	if [[ "_$r" != "_$exp" ]]; then
+		echo "$cmd"
+		echo "Expected exit code $exp got $r."
+		exit 1
+	fi
+}
+
+xtest "$x" 1 "Exit-code fail."
+xtest "$x -h" 0 "Exit-code success."
+
+echo ""
+echo "====================="
+echo "Success: Test PASSED."
+echo "====================="
+exit 0
+
