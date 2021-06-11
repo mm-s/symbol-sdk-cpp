@@ -392,8 +392,10 @@ bool params::check_req(ostream& os) const {
 
 bool params::check_unique() const {
 	set<char> s;
+	int n = 0;
 	for (auto& i: *this) {
 		s.emplace(i.short_name);
+		if (s.size() != n++) cerr << "Error: " << i.short_name << " flag already defined.\n";
 	}
 	return s.size() == size();
 }
