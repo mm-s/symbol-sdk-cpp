@@ -185,20 +185,31 @@ bool c::fillv(param_path& v, istream& is) const {
 	}
 	string cmd;
 	is >> cmd;
+	if (cmd.empty() && empty()) return true;
 	auto s = lookup(cmd);
 	if (s == nullptr) {
+		if (!cmd.empty()) {
+			print_error(string("Unexpected command. '") + cmd + "'.");
+			help(v);
+			return false;
+		}
+		return true; //ok
+/*
 		if (empty()) { /// Section hasn't commands
 			if (cmd.empty()) {
 				return true; //ok
 			}
 		}
-		print_error(string("Unexpected command. '") + cmd + "'.");
-		help(v);
-		return false;
+		if (!cmd.empty()) {
+			print_error(string("Unexpected command. '") + cmd + "'.");
+			help(v);
+			return false;
+		}
+*/
 	}
-	if (cmd.empty()) {
-		return true;
-	}
+	//if (cmd.empty()) {
+	//	return true;
+	//}
 	return s->fillv(v, is);
 }
 
