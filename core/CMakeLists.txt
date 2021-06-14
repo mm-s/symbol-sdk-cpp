@@ -43,5 +43,6 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/core/" # source directory
 )
 
 install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/core.h" DESTINATION "include/symbol/")
+install(FILES "${CMAKE_BINARY_DIR}/core/config.h" DESTINATION "include/symbol/core/")
 
 

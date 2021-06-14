@@ -53,3 +53,6 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/rpc/" # source directory
         FILES_MATCHING # install only matched files
         PATTERN "*.h" # select header files
 )
+
+install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/rpc.h" DESTINATION "include/symbol/")
+install(FILES "${CMAKE_BINARY_DIR}/rpc/config.h" DESTINATION "include/symbol/rpc/")
