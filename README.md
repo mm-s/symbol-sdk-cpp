@@ -19,11 +19,14 @@ scripts/configure.sh
 
 Configure will clone catapult-server and cherry-pick files from it.
 
-### Supported Operating Systems
+### Prerequisites on the supported Operating Systems
 
 The library shall build on any platform supported by CMake. Currently, the following systems have been tested:
 
   * Debian / Ubuntu Linux
+```
+apt install g++ cmake git libboost1.74-all-dev
+```
 
 ### Run-time dependencies:
 
@@ -40,7 +43,7 @@ sudo apt install cmake git g++
 Once configured proceed to build the project.
 
 * nemtech/[catapult-server](https://github.com/nemtech/catapult-server "GitHub link")  -  Catapult core algorithms.
-* mm-s/[restc-cpp](https://github.com/mm-s/restc-cpp "GitHub link")  -  Patched original jgaa/[restc-cpp](https://github.com/jgaa/restc-cpp.
+* mm-s/[restc-cpp](https://github.com/mm-s/restc-cpp "GitHub link")  -  branch marc-os. Patched original jgaa/[restc-cpp](https://github.com/jgaa/restc-cpp.
 
 ### Build:
 Once configured proceed to build the project.

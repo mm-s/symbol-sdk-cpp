@@ -19,15 +19,16 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "DigitalAssets.h"
-#include "../DigitalAssets.h"
-#include "../catapult/Logging.h"
+#include "../../DigitalAssets.h"
+#include "../../catapult/Logging.h"
+#include "../Keys.h"
 
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::DigitalAssets; /// Implementation for class c 
 	using symbol::ko;
 
-	static constexpr const char* Main_Command = "da";
-	static constexpr const char* Main_Command_Desc = "Digital assets...";
+	static constexpr const char* DA_Command = "da";
+	static constexpr const char* DA_Command_Desc = "Digital assets...";
 
 	static constexpr const char* Digest_Command = "digest";
 	static constexpr const char* Digest_Command_Desc = "Computes RIPEMD160+base58 to the content of the file.";
@@ -41,11 +42,11 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::pass1(ParamPath& v) {
 		b::pass1(v);
-		auto p=v.lookup({"da", "sign"});
+		auto p=v.lookup({DA_Command, Sign_Command});
 		if (p!=nullptr) {
-			auto r=v.lookup({"da"});
-			assert(r->has(Privkey_Flag));
-			r->set_mandatory(Privkey_Flag);
+			auto r=v.lookup({DA_Command});
+			assert(r->has(Keys::Privkey_Flag));
+			r->set_mandatory(Keys::Privkey_Flag);
 		}
 	}
 
@@ -76,7 +77,7 @@ namespace symbol { namespace core { namespace hmi {
 		auto s=new Section(Params{});
 		/// Add a handler for command sign
 		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerDigest(p, os); });
-		s->ignoreFlags.insert(Privkey_Flag);
+		s->ignoreFlags.insert(Keys::Privkey_Flag);
 		return s;
 	}
 
@@ -84,13 +85,13 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{File_Flag, "file", false, true, "", "Select file."};
 	}
 
-	bool c::handlerMain(const Params& p, ostream& os) {
+	bool c::handlerDA(const Params& p, ostream& os) {
 		assert(p.is_set(File_Flag));
 		m_file = p.get(File_Flag);
 		
 		assert(m_privateKey == nullptr);
-		if(p.is_set(Privkey_Flag)) {
-			m_privateKey = symbol::Keys::createPrivateKey( p.get(Privkey_Flag) );
+		if(p.is_set(Keys::Privkey_Flag)) {
+			m_privateKey = symbol::Keys::createPrivateKey( p.get(Keys::Privkey_Flag) );
 			if (m_privateKey == nullptr) {
 				os << "Input is not a private key.\n";
 				return false;
@@ -99,23 +100,23 @@ namespace symbol { namespace core { namespace hmi {
 		return true;
 	}
 
-	ptr<c::Section> c::createSectionMain() {
-		auto s=new Section(Params{flagdefFile(), flagdefPrivkey(false)});
+	ptr<c::Section> c::createSectionDA() {
+		auto s = new Section(Params{flagdefFile(), Keys::flagdefPrivkey(false)});
 		s->add(CmdDef{Sign_Command, Sign_Command_Desc}, createSectionSign());
 		s->add(CmdDef{Digest_Command, Digest_Command_Desc}, createSectionDigest());
 		/// Add more commands here.
 		/// Add a handler for this command.
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerMain(p, os); });
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerDA(p, os); });
 		/// s->set_handler([&](const Params& p, ostream& os) -> bool { return you_handler_function(p, os); });
-		s->ignoreFlags.insert(Network_Flag);
-		s->ignoreFlags.insert(Seed_Flag);
+		s->ignoreFlags.insert(Main::Network_Flag);
+		s->ignoreFlags.insert(Main::Seed_Flag);
 		return s;
 	}
 
 	void c::init(const string& name, const string& desc) {
 		CATAPULT_LOG(trace) << "Test Log";
 		b::init(name, desc);
-		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
+		add(CmdDef{DA_Command, DA_Command_Desc}, createSectionDA());
 		/// Add more commands here.
 		/// Add a handler for this command.
 	}

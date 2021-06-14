@@ -20,14 +20,26 @@
 **/
 #pragma once
 
-#include "Transaction.h"
+#include "../../base.h"
+#include "../../conch.h"
+#include "../../Keys.h"
+#include <string>
 
 namespace symbol { namespace core { namespace hmi {
-
+	using std::string;
+	using std::pair;
+	using std::ostream;
 	/// Human-Machine Interface. NFT section command processor (offline)
-	class DigitalAssets: public hmi::Transaction {
+	class DigitalAssets: public conch::section {
 		/// Base class b.
-		using b = hmi::Transaction;
+		using b = conch::section;
+		using PrivateKey = symbol::Keys::PrivateKey;
+	public:
+		using Section = b;
+		using Params = conch::params;
+		using CmdDef = conch::cmddef;
+		using FlagDef = conch::flagdef;
+		using ParamPath = b::param_path;
 
 	protected:
 		/// Flags, Options
@@ -35,7 +47,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	public:	
 		/// constructors, initialization, destructor
-		using b::Transaction;
+		using b::section;
 		~DigitalAssets();
 
 		/// Provide the program name and a description.
@@ -43,13 +55,13 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// menu command: tx
-		ptr<Section> createSectionMain();
+		ptr<Section> createSectionDA();
 		ptr<Section> createSectionSign();
 		ptr<Section> createSectionDigest();
 		static FlagDef flagdefFile();
 
 	protected: /// menu command: tx transfer
-		bool handlerMain(const Params& p, ostream&);
+		bool handlerDA(const Params& p, ostream&);
 		bool handlerSign(const Params&, ostream&); /// Command Handler
 		bool handlerDigest(const Params&, ostream&); /// Command Handler
 		void pass1(ParamPath& v) override;

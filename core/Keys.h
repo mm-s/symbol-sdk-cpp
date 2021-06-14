@@ -26,16 +26,16 @@
 #include "catapult/KeyPair.h"
 
 namespace symbol {
-    using std::string;
-    using std::pair;
-    using std::ostream;
+	using std::string;
+	using std::pair;
+	using std::ostream;
 
 	/// Functions related to Cryptographic Keys
 	class Keys: public catapult::crypto::KeyPair {
 		/// Base class is b
-	    using b = catapult::crypto::KeyPair;
-	    //using priv = b::PrivateKey;
-	    //using pub = b::PublicKey;
+		using b = catapult::crypto::KeyPair;
+		//using priv = b::PrivateKey;
+		//using pub = b::PublicKey;
 
 	public:
 		/// Construction, Initialization, Destruction
@@ -70,7 +70,7 @@ namespace symbol {
 		/// Getters and Setters
 		const PublicKey& publicKey() const;
 		const PrivateKey& privateKey() const;
-	    
+
 	public:
 		/// Serialization
 		void to_stream(ostream&) const;

@@ -18,24 +18,22 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#pragma once
-#include "Hmi/Wallet.h"
 
-namespace symbol { namespace core { namespace hmi {
+#include "Wallet.h"
+#include "NonFungibleToken.h"
+#include <string>
+#include <sstream>
 
-	/// Human-Machine Interface. All sections command processor (offline)
-	class Hmi : public hmi::Wallet {
-		using b = Hmi::Wallet;
+namespace symbol {
+	using c = Wallet; /// Implementation for the class c 
+	using string = std::string;
+	using ostringstream = std::ostringstream;
 
-	public:
-		using b::Wallet;
-		void init(const string& name, const string& desc) override;
+	c::Wallet(const string& home): m_home(home) {
+	}
 
-	};
+	c::~Wallet() {
+	}
 
-}
-	/// Publish hmi::Hmi on parent namespace
-	using Hmi = hmi::Hmi;
-
-}}
+} // Namespace symbol
 

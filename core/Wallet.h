@@ -19,23 +19,30 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #pragma once
-#include "Hmi/Wallet.h"
+#include "base.h"
+#include <map>
+#include <iostream>
+#include "catapult/types.h"
+#include "catapult/KeyPair.h"
 
-namespace symbol { namespace core { namespace hmi {
+namespace symbol {
+	using std::string;
+	using std::pair;
+	using std::ostream;
 
-	/// Human-Machine Interface. All sections command processor (offline)
-	class Hmi : public hmi::Wallet {
-		using b = Hmi::Wallet;
+	/// Functions related to Cryptographic Keys
+	class Wallet {
+		/// Base class is b
 
 	public:
-		using b::Wallet;
-		void init(const string& name, const string& desc) override;
+		/// Construction, Initialization, Destruction
+		Wallet(const string& home);
+		~Wallet();
 
+		string m_home;
 	};
 
-}
-	/// Publish hmi::Hmi on parent namespace
-	using Hmi = hmi::Hmi;
 
-}}
+} // namespace symbol
+
 

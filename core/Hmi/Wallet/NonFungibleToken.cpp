@@ -18,24 +18,33 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#pragma once
-#include "Hmi/Wallet.h"
+#include "NonFungibleToken.h"
+#include "../../NonFungibleToken.h"
 
 namespace symbol { namespace core { namespace hmi {
+	using c = hmi::NonFungibleToken; /// Implementation for class c 
 
-	/// Human-Machine Interface. All sections command processor (offline)
-	class Hmi : public hmi::Wallet {
-		using b = Hmi::Wallet;
+	void c::init(const string& name, const string& desc) {
+		b::init(name, desc);
+		add(CmdDef{"nft", "Functions related to N.F.T. (Non Fungible Tokens)."}, createSectionNft());
+	}
 
-	public:
-		using b::Wallet;
-		void init(const string& name, const string& desc) override;
+	bool c::nftInfo(const Params& p, ostream& os) {
+		os << "Info about NFT: not implemented." << '\n';
+		return false;
+	}
 
-	};
+	ptr<c::Section> c::createSectionNftInfo() {
+		auto s=new Section(Params{});
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return nftInfo(p, os); });
+		return s;
+	}
 
-}
-	/// Publish hmi::Hmi on parent namespace
-	using Hmi = hmi::Hmi;
+	ptr<c::Section> c::createSectionNft() {
+		auto s=new Section(Params{});
+		s->add(CmdDef{"info", "Non Fungible Token info."}, createSectionNftInfo());
+		return s;
+	}
 
-}}
+}}}
 

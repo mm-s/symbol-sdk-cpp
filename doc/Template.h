@@ -18,33 +18,31 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "NonFungibleToken.h"
-#include "../NonFungibleToken.h"
+#pragma once
+#include "base.h"
+#include <map>
+#include <iostream>
+#include "catapult/types.h"
+#include "catapult/KeyPair.h"
 
-namespace symbol { namespace core { namespace hmi {
-	using c = hmi::NonFungibleToken; /// Implementation for class c 
+namespace symbol {
+    using std::string;
+    using std::pair;
+    using std::ostream;
 
-	void c::init(const string& name, const string& desc) {
-		b::init(name, desc);
-		add(CmdDef{"nft", "Functions related to N.F.T. (Non Fungible Tokens)."}, createSectionNft());
-	}
+	/// Functions related to Cryptographic Keys
+	class Wallet {
+		/// Base class is b
 
-	bool c::nftInfo(const Params& p, ostream& os) {
-		os << "Info about NFT: not implemented." << '\n';
-		return false;
-	}
+	public:
+		/// Construction, Initialization, Destruction
+		Wallet(const string& home);
+		~Wallet();
 
-	ptr<c::Section> c::createSectionNftInfo() {
-		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return nftInfo(p, os); });
-		return s;
-	}
+		string m_home;
+	};
 
-	ptr<c::Section> c::createSectionNft() {
-		auto s=new Section(Params{});
-		s->add(CmdDef{"info", "Non Fungible Token info."}, createSectionNftInfo());
-		return s;
-	}
 
-}}}
+} // namespace symbol
+
 

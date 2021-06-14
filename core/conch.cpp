@@ -74,8 +74,8 @@ void c::constructor() {
 }
 
 void c::init(const string& nm, const string& dc) {
-	name=nm;
-	desc=dc;
+	m_name = nm;
+	m_desc = dc;
 }
 
 void c::add(flagdef&& fd) {
@@ -95,15 +95,15 @@ c& c::add(cmddef&& a, section* s) {
 	assert( s != this );
 	assert( s->parent == nullptr );
 	s->parent = this;
-	s->name = a.name;
-	s->desc = a.desc;
+	s->m_name = m_name;
+	s->m_desc = m_desc;
 	emplace_back(make_pair(a, s));
 	return *s;
 }
 
 string c::scope() const {
-	if (parent == nullptr) return name;
-	return parent->scope() + " " + name;
+	if (parent == nullptr) return m_name;
+	return parent->scope() + " " + m_name;
 }
 
 void c::help(const param_path& v) const {
@@ -128,7 +128,7 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 	string sc = s->scope();
 	os << sc << "  r" << version << '\n';
 	os << '\n';
-	os << desc << '\n';
+	os << m_desc << '\n';
 	os << '\n';
 	{
 		ostringstream buf;
@@ -140,7 +140,7 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 				string ind; /// Print section name.
 				if (!(*j).first->isRoot()) {
 					ind = "  ";
-					buf << ind << (*j).first->name << ":\n";
+					buf << ind << (*j).first->name() << ":\n";
 				}
 				(*j).second->dump_set(ind + "  ", secignore, buf); /// Print flag
 			//}
@@ -218,7 +218,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) const {
 	if (p->is_set('h')) {
 		auto n = i+1;
 		if (n != v.end()) {
-			print_error(string("Invoking help caused command '") + n->first->name + "' to be ignored.");
+			print_error(string("Invoking help caused command '") + n->first->name() + "' to be ignored.");
 			help(v, i);
 			return false;
 		}
@@ -282,7 +282,7 @@ params* c::param_path::lookup(const vector<string>& cmdpath) {
 	++i;
 	auto j = cmdpath.begin();
 	while(i != end()) {
-		if (i->first->name != *j) return nullptr;
+		if (i->first->name() != *j) return nullptr;
 		++j;
 		if (j == cmdpath.end()) break;
 		++i;

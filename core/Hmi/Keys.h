@@ -29,6 +29,7 @@ namespace symbol { namespace core { namespace hmi {
 		/// Base class b
 		using b = hmi::Main;
 
+	public:
 		/// Flags and Options
 		static constexpr char Privkey_Flag{'s'};
 		static constexpr char Acc_Flag{'a'};

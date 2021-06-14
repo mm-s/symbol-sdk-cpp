@@ -31,6 +31,9 @@ namespace symbol { namespace hmi {
 		/// Base class b.
 		using b = symbol::core::Hmi;
 
+	public:
+		using b::Section;
+
 	private:		
 	    static constexpr char Offline_Flag{'x'};
 		static constexpr char Url_Flag{'r'};

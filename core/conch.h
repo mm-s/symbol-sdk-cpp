@@ -101,7 +101,7 @@ namespace conch {
 		void constructor();
 		virtual ~section();
 
-		void init(const string& name, const string& description);
+		virtual void init(const string& name, const string& description);
 
 	public:
 		///Composing the choices tree
@@ -131,15 +131,19 @@ namespace conch {
 		static void print_error(const string& msg);
 
 	public:
+		inline const string& name() const { return m_name; }
+		inline const string& desc() const { return m_desc; }
+		
+	public:
 		bool ignore(char flag) const;
 		set<char> ignoreFlags; /// Used to hide unused contextual flags (coming from inherited sections) in the help screen.
 		
 	private:
-		static ostream*pos;
-		static ostream*peos;
+		static ostream* pos;
+		static ostream* peos;
 		static string version;
-		string name;
-		string desc;
+		string m_name;
+		string m_desc;
 		const params pdef;
 		function<bool(const params&, ostream&)> handler;
 		bool skip_handler{true};

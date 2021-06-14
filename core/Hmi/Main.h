@@ -30,10 +30,10 @@ namespace symbol { namespace core { namespace hmi {
 	/// Human-Machine Interface (HMI). Main-menu command processor (offline)
 	class Main: public conch::section {
 		/// Base class b
-		typedef conch::section b;
+		using b = conch::section;
 		
 	public:
-		using Section = b;
+		using Section = conch::section;
 		using Params = conch::params;
 		using CmdDef = conch::cmddef;
 		using FlagDef = conch::flagdef;
@@ -54,7 +54,7 @@ namespace symbol { namespace core { namespace hmi {
 		Main(Params&&);
 		~Main() override;
 
-		virtual void init(const string& name, const string& desc);
+		void init(const string& name, const string& desc) override;
 
 	public: //hmi
  		///Opportunity to rewrite Params before command execution.
@@ -85,9 +85,9 @@ namespace symbol { namespace core { namespace hmi {
 		/// String converter
 		template<typename T>
 		static string toString(const T& o) {
-		    ostringstream os;
-		    os << o;
-		    return os.str();
+			ostringstream os;
+			os << o;
+			return os.str();
 		}
 
 	protected:

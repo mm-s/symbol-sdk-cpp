@@ -22,6 +22,10 @@
 #pragma once
 #include "Hmi/Transaction.h"
 
+// StackTest: Transaction -> 
+
+
+
 namespace symbol { 
 
 	using Hmi = symbol::hmi::Transaction;
