@@ -2,14 +2,44 @@
 
 # symbol-sdk-cpp
 
-TL; DR: Foundation C++ library for interacting with REST API nodes on the NEM's Symbol Blockchain.
+TL; DR: Foundation C++ library for:
+  * using the NEM's Symbol Blockchain core (offline) algorithms, like key management and creating or signing transactions.
+  * interacting with REST API nodes of the NEM's Symbol Blockchain.
 
 ## Why Symbol-sdk-cpp
 
 The SDK Provides a foundation for C++ Application Development on the NEM's Symbol blockchain.
 
-### Dependencies:
-* nemtech/[symbol-sdk-core-cpp](https://github.com/nemtech/symbol-sdk-core-cpp "GitHub link")  -  Symbol algorithms.
+### Clone and configure:
+```sh
+git clone https://github.com/nemtech/symbol-sdk-cpp
+cd symbol-sdk-cpp
+scripts/configure.sh
+```
+
+Configure will clone catapult-server and cherry-pick files from it.
+
+### Supported Operating Systems
+
+The library shall build on any platform supported by CMake. Currently, the following systems have been tested:
+
+  * Debian / Ubuntu Linux
+
+### Run-time dependencies:
+
+Packages that are required before building symbol-sdk-core.
+
+#### Debian / Ubuntu
+
+```sh
+sudo apt install cmake git g++
+```
+
+### Build-time dependencies:
+
+Once configured proceed to build the project.
+
+* nemtech/[catapult-server](https://github.com/nemtech/catapult-server "GitHub link")  -  Catapult core algorithms.
 * mm-s/[restc-cpp](https://github.com/mm-s/restc-cpp "GitHub link")  -  Patched original jgaa/[restc-cpp](https://github.com/jgaa/restc-cpp.
 
 ### Build:
@@ -20,9 +50,9 @@ mkdir _build; cd _build
 cmake  ..
 make
 ```
-You can pass options to cmake to specify alternative locations of the symbol-sdk-core using
+You can pass options to cmake to specify alternative locations of the restc-cpp library using
 ```
-cmake -DSYMBOLCORE_ROOT=<path_to_symbol_sdk_core_cpp> ..
+cmake -DRESTCCPP_ROOT=<path_to_restc-cpp_cpp> ..
 ```
 Paths shall point to a directory containing standard directories bin, lib and include.
 
@@ -45,6 +75,5 @@ Ships:
 * branch dev:
   * developer marcos.mayorga@nem.software
   * [apply^]
-
 
 
