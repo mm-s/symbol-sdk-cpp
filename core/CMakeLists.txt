@@ -27,9 +27,9 @@ target_link_libraries(symbolcore ${Boost_LIBRARIES})
 set_property(TARGET symbolcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(symbolcore
-	INTERFACE
+	PUBLIC
 	# Headers used from source/build location:
-	"${PROJECT_BINARY_DIR}/core"
+	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core>"
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
 	# Headers used from installed location:
 	"$<INSTALL_INTERFACE:include>"

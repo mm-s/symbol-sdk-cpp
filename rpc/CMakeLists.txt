@@ -39,9 +39,9 @@ set_property(TARGET symbolrpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 
 target_include_directories(symbolrpc
-  INTERFACE
+  PUBLIC
     # Headers used from source/build location:
-    "${PROJECT_BINARY_DIR}/rpc"
+    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/rpc>"
     "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
     # Headers used from installed location:
     "$<INSTALL_INTERFACE:include>"
