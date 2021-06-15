@@ -22,7 +22,7 @@
 #pragma once
 #include "../base.h"
 #include "../Network.h"
-#include "../conch.h"
+#include "conch.h"
 #include <sstream>
 
 namespace symbol { namespace core { namespace hmi {

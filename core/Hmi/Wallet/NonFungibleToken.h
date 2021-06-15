@@ -21,7 +21,6 @@
 #pragma once
 
 #include "DigitalAssets.h"
-//#include "NonFungibleToken.h"
 
 namespace symbol { namespace core { namespace hmi {
 
