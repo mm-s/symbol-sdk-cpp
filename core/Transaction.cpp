@@ -27,7 +27,7 @@
 #include "catapult/TransactionExtensions.h"
 #include <vector>
 
-namespace symbol {
+namespace symbol { namespace core {
 	/// Implementation for the class c 
 	using c = Transaction;
 	using std::move;
@@ -112,9 +112,9 @@ namespace symbol {
 	//    os << "tx: sz " << sizeof(*u) << endl;
 	}
 
-} // namespace
+}} // namespaces
 
-std::ostream& operator << (std::ostream& os, const symbol::Transfer& o) {
+std::ostream& operator << (std::ostream& os, const symbol::core::Transfer& o) {
 	o.toStream(os);
 	return os;
 }

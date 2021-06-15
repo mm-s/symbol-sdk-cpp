@@ -33,7 +33,7 @@ namespace symbol { namespace core { namespace hmi {
 	class DigitalAssets: public conch::section {
 		/// Base class b.
 		using b = conch::section;
-		using PrivateKey = symbol::Keys::PrivateKey;
+		using PrivateKey = core::Keys::PrivateKey;
 
 	public:
 		using Section = b;

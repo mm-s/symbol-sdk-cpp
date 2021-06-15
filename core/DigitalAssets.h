@@ -44,7 +44,7 @@ namespace symbol { namespace core {
 		
 		static Hash digest(const vector<unsigned char>& buf);
 		static ko readFile(const string& filename, vector<unsigned char>& buf);
- 		static pair<ko, Hash> digestFile(const string& file);
+		static pair<ko, Hash> digestFile(const string& file);
 
 	public:
 		/// Serialization

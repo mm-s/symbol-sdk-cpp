@@ -42,13 +42,13 @@ namespace symbol { namespace core { namespace hmi {
 		void init(const string& name, const string& desc) override;
 
 	public: //hmi
- 		///Opportunity to rewrite Params before command execution.
- 		void pass1(ParamPath&) override;
+		///Opportunity to rewrite Params before command execution.
+		void pass1(ParamPath&) override;
 
 	public: // Options related to Network.
 		/// The Network instance the user wants to use.
-		inline const symbol::Network& network() const { return *m_network; }
-		inline symbol::Network& network() { return *m_network; }
+		inline const core::Network& network() const { return *m_network; }
+		inline core::Network& network() { return *m_network; }
 
 		/// Tells whether the user has explicitely set the network identifier.
 		inline bool networkOverriden() const { return m_networkOverriden; }
@@ -90,7 +90,7 @@ namespace symbol { namespace core { namespace hmi {
 		bool m_hideLabels{false};
 
 		/// Network instance
-		ptr<symbol::Network> m_network{nullptr};
+		ptr<core::Network> m_network{nullptr};
 		bool m_networkOverriden{false};
 		string m_home;
 	};

@@ -19,6 +19,7 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "Transaction.h"
+#include "Network.h"
 #include "../Transaction.h"
 #include "../catapult/TransferTransaction.h"
 
@@ -26,8 +27,8 @@ namespace symbol { namespace core { namespace hmi {
 	using c = hmi::Transaction; /// Implementation for class c 
 
 	bool c::txTransfer(const Params& p, ostream& os) {
-		symbol::Amount am;
-		if (!symbol::Transaction::parse(p.get(Amount_Flag), am)) {
+		Amount am;
+		if (!core::Transaction::parse(p.get(Amount_Flag), am)) {
 			os << "Invalid amount.";
 			return false;
 		}
@@ -36,20 +37,20 @@ namespace symbol { namespace core { namespace hmi {
 			return false;
 		}
 
-		symbol::MosaicId mo;
-		if (!symbol::Transaction::parse(p.get(Mosaic_Flag), mo)) {
+		MosaicId mo;
+		if (!core::Transaction::parse(p.get(Mosaic_Flag), mo)) {
 			os << "Invalid mosaic.";
 			return false;
 		}
 
-		symbol::Amount maxfee;
-		if (!symbol::Transaction::parse(p.get(Maxfee_Flag), maxfee)) {
+		Amount maxfee;
+		if (!core::Transaction::parse(p.get(Maxfee_Flag), maxfee)) {
 			os << "Invalid maxfee.";
 			return false;
 		}
 
-		symbol::TimeSpan deadline;
-		if (!symbol::Transaction::parse(p.get(Deadline_Flag), deadline)) {
+		TimeSpan deadline;
+		if (!core::Transaction::parse(p.get(Deadline_Flag), deadline)) {
 			os << "Invalid deadline.";
 			return false;
 		}
@@ -72,12 +73,12 @@ namespace symbol { namespace core { namespace hmi {
 		
 		ptr<PrivateKey> sk{nullptr};
 		if (p.is_set(Privkey_Flag)) {
-			sk=symbol::Keys::createPrivateKey( p.get(Privkey_Flag) );
-			if (sk==nullptr) {
+			sk = core::Keys::createPrivateKey( p.get(Privkey_Flag) );
+			if (sk == nullptr) {
 				os << "Input is not a private key.";
 				return false;
 			}
-			if (!tx->sign(*sk)) {
+			if ( !tx->sign(*sk) ) {
 				delete sk;
 				delete tx;
 				os << "Couldn't sign transaction with private key.";
@@ -87,7 +88,41 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		os << *tx << '\n';
 		delete tx;
-		return true;    
+		return true;
+	}
+
+	void c::pass1(ParamPath& v) {
+		b::pass1(v);
+		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
+		{
+			auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
+			if (p!=nullptr) {
+	//cout << "KKKKKKKK" << endl;
+				if(p->is_set(Mem_Flag)) {
+	//cout << "AAAAAAAAAA" << endl;
+					p->set_optional(Recipient_Flag);
+					p->set_optional(Amount_Flag);
+					p->set_optional(Mosaic_Flag);
+					p->set_optional(Maxfee_Flag);
+					p->set_optional(Deadline_Flag);
+					{
+						auto p=v.lookup({}); //TODO replace strings with their section name var
+						if (p!=nullptr) {
+							p->set_optional(Network::Seed_Flag);
+						}
+					}
+
+				}
+	//cout << "XXXXXXXXXXXXXXXXXX" << endl;
+			}
+		}
+	}
+
+	bool c::tx(const Params& p, ostream& os) {
+		if (p.is_set(Mem_Flag)) {
+//			return txTransferMem
+		}
+		//else {
 	}
 
 	ptr<c::Section> c::createSectionTxTransfer() {
@@ -107,6 +142,7 @@ namespace symbol { namespace core { namespace hmi {
 	ptr<c::Section> c::createSectionTx() {
 		auto s=new Section(Params{});
 		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTxTransfer());
+		s->set_handler([&](const Params& p, ostream& os) -> bool { return tx(p, os); });
 		return s;
 	}
 

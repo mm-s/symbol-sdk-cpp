@@ -52,22 +52,22 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Mosaic_Flag{'m'};
 		static constexpr auto Mosaic_Name{"mosaic"};
 		static constexpr auto Mosaic_Default{""};
-		static constexpr auto Mosaic_Desc{""};
+		static constexpr auto Mosaic_Desc{"Mosaic id."};
 
 		static constexpr auto Maxfee_Flag{'f'};
 		static constexpr auto Maxfee_Name{"maxfee"};
 		static constexpr auto Maxfee_Default{""};
-		static constexpr auto Maxfee_Desc{""};
+		static constexpr auto Maxfee_Desc{"Maximum fee to pay."};
 
 		static constexpr auto Deadline_Flag{'d'};
 		static constexpr auto Deadline_Name{"deadline"};
 		static constexpr auto Deadline_Default{""};
-		static constexpr auto Deadline_Desc{""};
+		static constexpr auto Deadline_Desc{"Deadline."};
 
 		static constexpr auto Mem_Flag{'M'};
 		static constexpr auto Mem_Name{"mem"};
 		static constexpr auto Mem_Default{""};
-		static constexpr auto Mem_Desc{"Transacyion memory representation in Hex format."};
+		static constexpr auto Mem_Desc{"Transaction memory representation in Hex format."};
 
 	public:		
 		/// Default constructors
@@ -75,12 +75,15 @@ namespace symbol { namespace core { namespace hmi {
 
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
+		void pass1(ParamPath&) override;
 
 	private:
 		/// menu command: tx
 		ptr<Section> createSectionTx();
 
 	protected: /// menu command: tx transfer
+		bool tx(const Params&, ostream&); /// Command Handler
+
 		ptr<Section> createSectionTxTransfer(); /// Init
 		virtual bool txTransfer(const Params&, ostream&); /// Command Handler
 		

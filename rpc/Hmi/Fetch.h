@@ -23,6 +23,7 @@
 #include "../base.h"
 #include "../dto/dto.h"
 #include <symbol/core/Hmi.h>
+#include <iostream>
 
 namespace symbol { namespace hmi {
 
@@ -32,10 +33,11 @@ namespace symbol { namespace hmi {
 		using b = symbol::core::Hmi;
 
 	public:
+		using ostream = std::ostream;
 		using b::Section;
 
-	private:		
-	    static constexpr char Offline_Flag{'x'};
+	public:
+		static constexpr char Offline_Flag{'x'};
 		static constexpr char Url_Flag{'r'};
 		static constexpr char Acc_Flag{'a'};
 		#ifndef NDEBUG

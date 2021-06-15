@@ -27,7 +27,7 @@
 
 /// TODO use catapult-server/tools/tools/KeyValueOutputBuilder.h
 
-namespace symbol {
+namespace symbol { namespace core {
 	using c = Keys; /// Implementation for the class c 
 	using std::move;
 	using std::ostringstream;
@@ -128,15 +128,15 @@ namespace symbol {
 		os << "Public Key: " << m_publicKey << '\n';
 	}
 
-} // Namespace symbol
+}} // Namespaces
 
 
-std::ostream& operator << (std::ostream& os, const symbol::Keys& o) {
+std::ostream& operator << (std::ostream& os, const symbol::core::Keys& o) {
 	o.to_stream(os);
 	return os;
 }
 
-std::ostream& operator << (std::ostream& os, const symbol::Keys::PrivateKey& o) {
+std::ostream& operator << (std::ostream& os, const symbol::core::Keys::PrivateKey& o) {
 	os << HexFormat(o);
 	return os;
 }

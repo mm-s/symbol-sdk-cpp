@@ -23,7 +23,7 @@
 #include "catapult/Address.h"
 #include "Transaction.h"
 
-namespace symbol {
+namespace symbol { namespace core {
 	/// Implementation for the class c 
 	using c = Network;
 	using std::move;
@@ -78,7 +78,7 @@ namespace symbol {
 		delete pk;
 		delete addr;
 		if (spk) {
-			pk = symbol::Keys::createPublicKey(input);
+			pk = core::Keys::createPublicKey(input);
 			addr = newAddress(*pk);
 		}
 		else {
@@ -234,13 +234,13 @@ namespace symbol {
 		return true;
 	}
 
-	ptr<symbol::Transfer> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d) {
+	ptr<symbol::core::Transfer> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d) {
 		return Transfer::create(*this, rcpt, a, m, f, d);
 	}
 
-} // Namespace Symbol
+}} // Namespaces
 
-std::ostream& operator << (std::ostream& os, const symbol::Network& o) {
+std::ostream& operator << (std::ostream& os, const symbol::core::Network& o) {
 	o.toStream(os);
 	return os;
 }

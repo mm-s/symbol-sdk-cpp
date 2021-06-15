@@ -586,7 +586,13 @@ void flagdef::dump(const string& pfx, ostream& os0) const {
 		}
 	}
 	os0 << pfx << fmt_field(os.str(), tabpos);
-	if (!optional) os0 << "(Required) ";
+	if (!optional) {
+		os0 << "(Required";
+		if (overriden) {
+			os0 << "-Ok";
+		}
+		os0 << ") ";
+	}
 	os0 << desc << '\n';
 }
 

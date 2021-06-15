@@ -22,8 +22,8 @@
 #include "Network.h"
 #include "catapult/Address.h"
 
-namespace symbol {
-	/// Implementation for the class c 
+namespace symbol { namespace core {
+	/// This file is the implementation for the class c 
 	using c = Network::UnresolvedAddress;
 	using std::move;
 	using std::ostringstream;
@@ -51,5 +51,5 @@ namespace symbol {
 		return catapult::model::AddressToString(m_network.resolver().resolve(*this));
 	}
 
-} // Namespace Symbol
+}} // Namespaces
 

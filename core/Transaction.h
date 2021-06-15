@@ -28,7 +28,7 @@
 #include "catapult/Mosaic.h"
 #include "catapult/TimeSpan.h"
 
-namespace symbol {
+namespace symbol { namespace core {
 	using namespace std;
 
 	class Network;
@@ -90,14 +90,17 @@ namespace symbol {
 
 	};
 
+}} //Namespaces
+
+namespace symbol { //publish on namespace symbol
+	using Transaction = ::symbol::core::Transaction;
 	using UnresolvedMosaicId = Transaction::Mosaic::UnresolvedId;
 	using MosaicId = Transaction::Mosaic::Id;
 	using Amount = Transaction::Amount;
 	using Timestamp = Transaction::Timestamp;
 	using TimeSpan = Transaction::TimeSpan;
-
+	
 }
-
-std::ostream& operator << (std::ostream&, const symbol::Transaction::Mosaic&);
-std::ostream& operator << (std::ostream&, const symbol::Transfer&);
+std::ostream& operator << (std::ostream&, const symbol::core::Transaction::Mosaic&);
+std::ostream& operator << (std::ostream&, const symbol::core::Transfer&);
 

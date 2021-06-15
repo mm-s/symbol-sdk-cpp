@@ -25,7 +25,7 @@
 #include "catapult/types.h"
 #include "catapult/KeyPair.h"
 
-namespace symbol {
+namespace symbol { namespace core {
 	using std::string;
 	using std::pair;
 	using std::ostream;
@@ -78,12 +78,19 @@ namespace symbol {
 	};
 
 	/// Types published on the main namespace
+	//using PublicKey = Keys::PublicKey;
+	//using PrivateKey = Keys::PrivateKey;
+
+}} // namespaces
+
+namespace symbol { //publish on namespace symbol
+	using Keys = ::symbol::core::Keys;
 	using PublicKey = Keys::PublicKey;
 	using PrivateKey = Keys::PrivateKey;
+}
 
-} // namespace symbol
 
 /// Streaming overloads
-std::ostream& operator << (std::ostream&, const symbol::Keys&);
-std::ostream& operator << (std::ostream&, const symbol::Keys::PrivateKey&);
+std::ostream& operator << (std::ostream&, const symbol::core::Keys&);
+std::ostream& operator << (std::ostream&, const symbol::core::Keys::PrivateKey&);
 

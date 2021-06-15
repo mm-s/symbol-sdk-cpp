@@ -49,7 +49,7 @@ namespace symbol { namespace core { namespace hmi {
 	c::FlagDef c::flagdefNetwork() {
 		ostringstream os;
 		os << "Network type. Value in (";
-		symbol::Network::list(os);
+		core::Network::list(os);
 		os << ").";
 		return FlagDef{Network_Flag, "network", true, true, "public-test", os.str()};
 	}
@@ -60,9 +60,9 @@ namespace symbol { namespace core { namespace hmi {
 
 	bool c::mainHandler(const Params& p, ostream& os) {
 		m_networkOverriden = p.is_set(Network_Flag);
-		symbol::Network::Identifier t = symbol::Network::identifier(p.get(Network_Flag));
+		core::Network::Identifier t = core::Network::identifier(p.get(Network_Flag));
 		delete m_network;
-		m_network = new symbol::Network(t);
+		m_network = new core::Network(t);
 		if (!network().isValidIdentifier()) {
 			os << "Network identifier '" << p.get(Network_Flag) << "' is invalid.";
 			return false;

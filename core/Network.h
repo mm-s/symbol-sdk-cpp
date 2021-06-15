@@ -28,7 +28,7 @@
 #include "catapult/ResolverContext.h"
 #include <iostream>
 
-namespace symbol {
+namespace symbol { namespace core {
 
 	/// Instance covering identified networks.
 	class Network {
@@ -65,86 +65,88 @@ namespace symbol {
 
 	public:
 		/// Construction, Initialization, Destruction
-        Network(const Identifier&);
-        Network(const string& identifier);
-        virtual ~Network();
+		Network(const Identifier&);
+		Network(const string& identifier);
+		virtual ~Network();
 
 	public:
-        /// List valid network Identifiers
-        static void list(ostream& os);
+		/// List valid network Identifiers
+		static void list(ostream& os);
 
-        /// Determine if the given Identifier is among the listed ones.
-        static bool listed(const Identifier&);
+		/// Determine if the given Identifier is among the listed ones.
+		static bool listed(const Identifier&);
 
 		/// Node list source
-        string nodesUrl() const;
+		string nodesUrl() const;
 
 	public:
-        /// Parsing NetworkIdentifier from name(e.g. "public")/ Hex string, or Formatted Account
-        static Identifier identifierFromName(const string& name);
-        static Identifier identifierFromAddressHex(const string& hex);
-        static Identifier identifierFromAccount(const string& enc);
+		/// Parsing NetworkIdentifier from name(e.g. "public")/ Hex string, or Formatted Account
+		static Identifier identifierFromName(const string& name);
+		static Identifier identifierFromAddressHex(const string& hex);
+		static Identifier identifierFromAccount(const string& enc);
 
 		/// Obtain PublicKey and/or Address from a string representing either an Hex PublicKey, an Hex Address or a formatted Account.
 		/// Fails when the network identifier encoded in the address -if any- doesn't match this instance Identifier.
 		/// Returns empty string on success, or error message.
-        string parse(const string& input, ptr<PublicKey>&, ptr<UnresolvedAddress>&) const;
+		string parse(const string& input, ptr<PublicKey>&, ptr<UnresolvedAddress>&) const;
 
 		/// Resets this instance's Identifier with the network identifier encoded in the address -if any-.
-        string parse(const string& input, ptr<PublicKey>&, ptr<UnresolvedAddress>&, bool as_const);
+		string parse(const string& input, ptr<PublicKey>&, ptr<UnresolvedAddress>&, bool as_const);
 
 	public:
 		/// Generation of a new address
-        [[nodiscard]] ptr<UnresolvedAddress> newAddress() const;
+		[[nodiscard]] ptr<UnresolvedAddress> newAddress() const;
 
 		/// New Address from Public Key
-        [[nodiscard]] ptr<UnresolvedAddress> newAddress(const PublicKey&) const;
+		[[nodiscard]] ptr<UnresolvedAddress> newAddress(const PublicKey&) const;
 
 		/// New Address from Key Pair
-        [[nodiscard]] ptr<UnresolvedAddress> newAddress(const Keys& k) const { return newAddress(k.publicKey()); }
+		[[nodiscard]] ptr<UnresolvedAddress> newAddress(const Keys& k) const { return newAddress(k.publicKey()); }
 
 		/// New Address from Hex string
-        [[nodiscard]] ptr<UnresolvedAddress> newAddress(const string& hex) const;
+		[[nodiscard]] ptr<UnresolvedAddress> newAddress(const string& hex) const;
 
 		/// New Address from formatted Account
-        [[nodiscard]] ptr<UnresolvedAddress> newAccount(const string& enc) const;
+		[[nodiscard]] ptr<UnresolvedAddress> newAccount(const string& enc) const;
 
 	public:
 		/// Validation
-        bool isValid(const UnresolvedAddress&) const;
-        bool isValidIdentifier() const;
-        static bool isValid(const Identifier&);
+		bool isValid(const UnresolvedAddress&) const;
+		bool isValidIdentifier() const;
+		static bool isValid(const Identifier&);
 
 	public: /// Serialization
 		/// Write state to output stream
-	    void toStream(ostream&) const;
+		void toStream(ostream&) const;
 
 	public: /// Getters and Setters
 		/// Set network GenerationHashSeed
-        bool setSeed(const string&);
-        string identifierHex() const;
-        const char* identifierStr() const;
-        static const char* identifierStr(Identifier t);
-        static Identifier identifier(const string&);
-        inline const Identifier& identifier() const { return m_identifier; }
-        inline const GenerationHashSeed& seed() const { return m_seed; }
+		bool setSeed(const string&);
+		string identifierHex() const;
+		const char* identifierStr() const;
+		static const char* identifierStr(Identifier t);
+		static Identifier identifier(const string&);
+		inline const Identifier& identifier() const { return m_identifier; }
+		inline const GenerationHashSeed& seed() const { return m_seed; }
 		inline const ResolverContext& resolver() const { return m_resolver; }
 
 	public:	/// Tranactions
 		/// Creates a Transfer transaction
-        [[nodiscard]] ptr<Transfer> createTransfer(const UnresolvedAddress& rcpt, const Amount&, const MosaicId&, const Amount& maxfee, const TimeSpan& deadline);
+		[[nodiscard]] ptr<Transfer> createTransfer(const UnresolvedAddress& rcpt, const Amount&, const MosaicId&, const Amount& maxfee, const TimeSpan& deadline);
 
 	private:
-        Identifier m_identifier;
-        GenerationHashSeed m_seed;
-        ResolverContext m_resolver;
+		Identifier m_identifier;
+		GenerationHashSeed m_seed;
+		ResolverContext m_resolver;
 
-    };
+	};
 
-	/// Types published on the main namespace
+}} // namespaces
+
+namespace symbol { //publish on namespace symbol
+	using Network = symbol::core::Network;
 	using UnresolvedAddress = Network::UnresolvedAddress;
+}
 
-} // namespace symbol
-
-std::ostream& operator << (std::ostream&, const symbol::Network&);
+std::ostream& operator << (std::ostream&, const symbol::core::Network&);
 
