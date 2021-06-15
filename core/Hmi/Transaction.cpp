@@ -92,12 +92,13 @@ namespace symbol { namespace core { namespace hmi {
 
 	ptr<c::Section> c::createSectionTxTransfer() {
 		auto s=new Section(Params{
-			{Recipient_Flag, "recipient", false, true, "", "Recipient address."},
-			{Amount_Flag, "amount", false, true, "0", "Amount of mosaics."},
-			{Mosaic_Flag, "mosaic", false, true, "", "mosaic id."},
-			{Maxfee_Flag, "maxfee", false, true, "", "Max fee."},
-			{Deadline_Flag, "deadline", false, true, "", "Deadline ms."},
-			{Privkey_Flag, "private-key", true, true, "", "Sign using the supplied private key in HEX format."},
+			{Recipient_Flag, Recipient_Name, false, true, Recipient_Default, Recipient_Desc},
+			{Amount_Flag, Amount_Name, false, true, Amount_Default, Amount_Desc},
+			{Mosaic_Flag, Mosaic_Name, false, true, Mosaic_Default, Mosaic_Desc},
+			{Maxfee_Flag, Maxfee_Name, false, true, Maxfee_Default, Maxfee_Desc},
+			{Deadline_Flag, Deadline_Name, false, true, Deadline_Default, Deadline_Desc},
+			{Privkey_Flag, Privkey_Name, true, true, Privkey_Default, Privkey_Desc},
+			{Mem_Flag, Mem_Name, true, true, Mem_Default, Mem_Desc},
 		});
 		s->set_handler([&](const Params& p, ostream& os) -> bool { return txTransfer(p, os); });
 		return s;
