@@ -1,7 +1,9 @@
 lib/
 bin/
 _build/
+_buildd/
 catapult-server/
+restc-cpp/
 
 # Prerequisites
 *.d
