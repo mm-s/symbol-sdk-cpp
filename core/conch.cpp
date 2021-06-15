@@ -53,19 +53,20 @@ namespace {
 	constexpr int tabpos=35;
 }
 
-c::section(params&& p): pdef(p) {
+c::section(params&& p): m_pdef(p) {
 	constructor();
 }
 
-c::section(): pdef({}) {
+c::section(): m_pdef({}) {
 	constructor();
 }
 
-c::section(function<bool(const params&, ostream&)>f): pdef({}), handler(f) {
+c::section(function<bool(const params&, ostream&)>f): m_pdef({}), handler(f) {
+	assert(m_pdef.check_unique());
 }
 
 void c::constructor() {
-	auto& def = const_cast<params&>(pdef);
+	auto& def = const_cast<params&>(m_pdef);
 	def.emplace_back(flagdef{'h', "help", true, false, "", "Prints this help."});
 	handler = [](const params& p, ostream& os) -> bool {
 		os << "Not implemented.\n";
@@ -79,11 +80,11 @@ void c::init(const string& nm, const string& dc) {
 }
 
 void c::add(flagdef&& fd) {
-	assert(!pdef.empty());
-	auto& def = const_cast<params&>(pdef);
+	assert(!m_pdef.empty());
+	auto& def = const_cast<params&>(m_pdef);
 	auto it = --(def.rbegin().base());
 	def.emplace(it, move(fd));
-	assert(def.check_unique());
+	assert(m_pdef.check_unique());
 }
 
 c::~section() {
@@ -94,9 +95,12 @@ c& c::add(cmddef&& a, section* s) {
 	assert( s != nullptr );
 	assert( s != this );
 	assert( s->parent == nullptr );
+	assert(s->m_pdef.check_unique());
 	s->parent = this;
 	s->init(a.name, a.desc);
 	emplace_back(make_pair(a, s));
+	assert(m_pdef.check_unique());
+	assert(s->m_pdef.check_unique());
 	return *s;
 }
 
@@ -177,7 +181,8 @@ void c::set_handler(function<bool(const params&, ostream&)> f) {
 }
 
 bool c::fillv(param_path& v, istream& is) const {
-	params* p = new params(pdef, is);
+	assert(m_pdef.check_unique());
+	params* p = new params(m_pdef, is);
 	v.emplace_back(make_pair(this, p));
 	if (!p->ko.empty()) {
 		print_error(p->ko);
@@ -366,9 +371,11 @@ void c::print_error(const string& msg) {
 //-------------------------------------------------params
 
 params::params(b&& fd): b(fd) {
+	assert(check_unique());
 }
 
 params::params(const params& fd, istream& is): b(fd) {
+	assert(check_unique());
 	while (is.good()) {
 		string flag;
 		auto g = is.tellg();

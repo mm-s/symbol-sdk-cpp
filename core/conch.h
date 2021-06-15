@@ -144,7 +144,7 @@ namespace conch {
 		static string version;
 		string m_name;
 		string m_desc;
-		const params pdef;
+		const params m_pdef;
 		function<bool(const params&, ostream&)> handler;
 		bool skip_handler{true};
 		section* parent{nullptr};

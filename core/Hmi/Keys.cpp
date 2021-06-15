@@ -29,7 +29,7 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	c::FlagDef c::flagdefAcc() {
-		return FlagDef{Privkey_Flag, "private-key", true, true, "", "Use the supplied private key in HEX format."};
+		return FlagDef{Acc_Flag, "account", true, true, "", "Use the supplied account id."};
 	}
 
 	bool c::keys(const Params& p, ostream& os) {
