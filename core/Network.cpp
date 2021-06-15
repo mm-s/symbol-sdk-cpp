@@ -48,51 +48,51 @@ namespace symbol {
 		bool spk{false}, sdd{false}, sad{false};
 		spk=Keys::isKey(input);
 		if (!spk) {
-		    sdd=UnresolvedAddress::isAddress(input);
-		    if (!sdd) {
-		        sad=true;
-		    }
+			sdd=UnresolvedAddress::isAddress(input);
+			if (!sdd) {
+				sad=true;
+			}
 		}
 		bool fail=false;
 		if (sdd || sad) {
-		    Identifier t=sdd ? identifierFromAddressHex(input) : identifierFromAccount(input);
-		    if (m_identifier != t) {
-		        if (as_const) {
-		            fail = true;
-		        }
-		        else {
-		            if (!isValid(t)) {
-		                fail = true;
-		            }
-		            else {
-		                m_identifier = t;
-		            }
-		        }
-		    }
+			Identifier t=sdd ? identifierFromAddressHex(input) : identifierFromAccount(input);
+			if (m_identifier != t) {
+				if (as_const) {
+					fail = true;
+				}
+				else {
+					if (!isValid(t)) {
+					    fail = true;
+					}
+					else {
+					    m_identifier = t;
+					}
+				}
+			}
 		}
 		if (fail) {
-		    ostringstream os;
-		    os << (sdd ? "Address" : "Account") << " is invalid for network type '" << identifierStr() << "'.";
-		    return os.str();
+			ostringstream os;
+			os << (sdd ? "Address" : "Account") << " is invalid for network type '" << identifierStr() << "'.";
+			return os.str();
 		}
 		delete pk;
 		delete addr;
 		if (spk) {
-		    pk = symbol::Keys::createPublicKey(input);
-		    addr = newAddress(*pk);
-		}    
+			pk = symbol::Keys::createPublicKey(input);
+			addr = newAddress(*pk);
+		}
 		else {
-		    pk=nullptr;
-		    addr=(sad ? newAccount(input) : newAddress(input));
+			pk=nullptr;
+			addr=(sad ? newAccount(input) : newAddress(input));
 		}
 		if (!addr->isValid()) {
-		    ostringstream os;
-		    os << "Invalid input";
-		    delete pk;
-		    pk = nullptr;
-		    delete addr;
-		    addr = nullptr;
-		    return os.str();
+			ostringstream os;
+			os << "Invalid input";
+			delete pk;
+			pk = nullptr;
+			delete addr;
+			addr = nullptr;
+			return os.str();
 		}
 		return "";
 	}
@@ -106,10 +106,10 @@ namespace symbol {
 	c::Identifier c::identifier(const string& s) {
 		Identifier x;
 		if (!catapult::model::TryParseValue(s, x)) {
-		    x = Identifier::Zero;
+			x = Identifier::Zero;
 		}
 		if (!listed(x)) {
-		    return Identifier::Zero;
+			return Identifier::Zero;
 		}
 		return x;
 	}
@@ -117,11 +117,11 @@ namespace symbol {
 	c::Identifier c::identifierFromAddressHex(const string& hex) {
 		catapult::Address x;
 		if (!catapult::utils::TryParseHexStringIntoContainer(hex.data(), hex.size(), x)) {
-		    return Identifier::Zero;
+			return Identifier::Zero;
 		}
 		auto r=static_cast<Identifier>(x[0]);
 		if (!listed(r)) {
-		    return Identifier::Zero;
+			return Identifier::Zero;
 		}
 		return r;
 	}
@@ -129,11 +129,11 @@ namespace symbol {
 	c::Identifier c::identifierFromAccount(const string& enc) {
 		catapult::Address x;
 		if (!catapult::model::TryParseValue(enc, x)) {
-		    return Identifier::Zero;
+			return Identifier::Zero;
 		}
 		auto r=static_cast<Identifier>(x[0]);
 		if (!listed(r)) {
-		    return Identifier::Zero;
+			return Identifier::Zero;
 		}
 		return r;
 	}
@@ -141,10 +141,10 @@ namespace symbol {
 	string c::nodesUrl() const {
 		using namespace catapult::model;
 		if (m_identifier == Identifier::Public_Test) {
-		    return "http://explorer.testnet.symboldev.network:4001/nodes";
+			return "http://explorer.testnet.symboldev.network:4001/nodes";
 		}
 		if (m_identifier == Identifier::Public) {
-		    return "http://explorer.symbolblockchain.io:4001/nodes";
+			return "http://explorer.symbolblockchain.io:4001/nodes";
 		}
 		return "";
 	}
@@ -156,13 +156,13 @@ namespace symbol {
 	bool c::listed(const Identifier& t) {
 		using namespace catapult::model;
 		switch(t) {
-		    case Identifier::Zero: return true;
-		    case Identifier::Public: return true;
-		    case Identifier::Private: return true;
-		    case Identifier::Mijin: return true;
-		    case Identifier::Public_Test: return true;
-		    case Identifier::Private_Test: return true;
-		    case Identifier::Mijin_Test: return true;
+			case Identifier::Zero: return true;
+			case Identifier::Public: return true;
+			case Identifier::Private: return true;
+			case Identifier::Mijin: return true;
+			case Identifier::Public_Test: return true;
+			case Identifier::Private_Test: return true;
+			case Identifier::Mijin_Test: return true;
 		}
 		return false;
 	}
@@ -174,13 +174,13 @@ namespace symbol {
 	const char* c::identifierStr(Identifier t) {
 		using namespace catapult::model;
 		switch(t) {
-		    case Identifier::Zero: return "zero";
-		    case Identifier::Public: return "public";
-		    case Identifier::Private: return "private";
-		    case Identifier::Mijin: return "mijin";
-		    case Identifier::Public_Test: return "public-test";
-		    case Identifier::Private_Test: return "private-test";
-		    case Identifier::Mijin_Test: return "mijin-test";
+			case Identifier::Zero: return "zero";
+			case Identifier::Public: return "public";
+			case Identifier::Private: return "private";
+			case Identifier::Mijin: return "mijin";
+			case Identifier::Public_Test: return "public-test";
+			case Identifier::Private_Test: return "private-test";
+			case Identifier::Mijin_Test: return "mijin-test";
 		}
 		return "";
 	}
@@ -213,7 +213,7 @@ namespace symbol {
 	ptr<c::UnresolvedAddress> c::newAccount(const string& acc) const {
 		catapult::Address a;
 		if (!catapult::model::TryParseValue(acc, a)) {
-		    return nullptr;
+			return nullptr;
 		}
 		return new UnresolvedAddress(a.copyTo<catapult::UnresolvedAddress>(), *this);
 	}
@@ -229,7 +229,7 @@ namespace symbol {
 
 	bool c::setSeed(const string& hex) {
 		if (!TryParseValue(hex, m_seed)) {
-		    return false;
+			return false;
 		}
 		return true;
 	}

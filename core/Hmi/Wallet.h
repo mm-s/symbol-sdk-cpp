@@ -32,6 +32,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	public:
 		using b::Section;
+		static constexpr const char* Command = "wallet";
 
 		/// Flags and Options
 //		static constexpr char Privkey_Flag{'s'};
@@ -42,6 +43,7 @@ namespace symbol { namespace core { namespace hmi {
 		using b::Transaction;
 
 		void init(const string& name, const string& desc) override;
+		void pass1(ParamPath& v) override;
 
 	public:
 //		static FlagDef flagdefPrivkey(bool mandatory);
@@ -49,7 +51,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// menu command: keys
-		ptr<Section> createSectionWallet(); /// init
+		//ptr<Section> createSectionWallet(); /// init
 		bool wallet(const Params&, ostream&); /// Handler, user hitting wallet
 
 	};

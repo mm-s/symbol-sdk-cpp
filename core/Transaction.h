@@ -29,69 +29,71 @@
 #include "catapult/TimeSpan.h"
 
 namespace symbol {
-    using namespace std;
+	using namespace std;
 
-    class Network;
-    
-    class Transaction {
-    public:
-        using UnresolvedAddress = catapult::UnresolvedAddress;
-        using Amount = catapult::Amount; 
-        using Timestamp = catapult::Timestamp; 
-        using TimeSpan = catapult::utils::TimeSpan; 
-        using Msg = vector<uint8_t>;
-        using NetworkIdentifier = catapult::model::NetworkIdentifier;
-        
-        class Mosaic: public catapult::model::Mosaic {
-            using b = catapult::model::Mosaic;
-	    public:
-            using Id = catapult::MosaicId;
-            using UnresolvedId = catapult::UnresolvedMosaicId;
-            
-            uint64_t amount() const { return Amount.unwrap(); } 
-            uint64_t id() const { return MosaicId.unwrap(); } 
-            
-            void toStream(ostream&) const;
-        };
+	class Network;
 
-        Transaction(const Network&, catapult::model::Transaction*);
-        Transaction(const Network&, Transaction&&);
-        virtual ~Transaction();
-
-        template<typename t>
-        static bool parse(const string& input, t&o) {
-            try {
-                catapult::utils::TryParseValue(input, o);
-                return true;
-            }
-            catch(...) {
-                return false;
-            }
-        }
-        
-        bool sign(const Keys::PrivateKey&);        
-        
-        ptr<catapult::model::Transaction> m_catapultTx{nullptr};
-        const Network& m_network;
-    };
-
-    class Transfer: public Transaction {
-        using b = Transaction;
+	class Transaction {
 	public:
-        Transfer(const Network&, ptr<catapult::model::Transaction>);
-        Transfer(const Network&, Transfer&&);
-        void toStream(ostream&) const;
-        
-        [[nodiscard]] static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
+		using UnresolvedAddress = catapult::UnresolvedAddress;
+		using Amount = catapult::Amount;
+		using Timestamp = catapult::Timestamp;
+		using TimeSpan = catapult::utils::TimeSpan;
+		using Msg = vector<uint8_t>;
+		using NetworkIdentifier = catapult::model::NetworkIdentifier;
+		
+		class Mosaic: public catapult::model::Mosaic {
+			using b = catapult::model::Mosaic;
+		public:
+			using Id = catapult::MosaicId;
+			using UnresolvedId = catapult::UnresolvedMosaicId;
+			
+			uint64_t amount() const { return Amount.unwrap(); }
+			uint64_t id() const { return MosaicId.unwrap(); }
+			
+			void toStream(ostream&) const;
+		};
+
+		Transaction(const Network&, catapult::model::Transaction*);
+		Transaction(Transaction&&);
+		virtual ~Transaction();
+
+		template<typename t>
+		static bool parse(const string& input, t&o) {
+			try {
+				catapult::utils::TryParseValue(input, o);
+				return true;
+			}
+			catch(...) {
+				return false;
+			}
+		}
+		
+		bool sign(const Keys::PrivateKey&);
+		
+		ptr<catapult::model::Transaction> m_catapultTx{nullptr};
+		const Network& m_network;
+	};
+
+	class Transfer: public Transaction {
+		using b = Transaction;
+		
+	public:
+		Transfer(const vector<uint8_t>&);
+		Transfer(const Network&, ptr<catapult::model::Transaction>);
+		Transfer(Transfer&&);
+		void toStream(ostream&) const;
+		
+		[[nodiscard]] static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
 
 
-    };
+	};
 
-    using UnresolvedMosaicId = Transaction::Mosaic::UnresolvedId;
-    using MosaicId = Transaction::Mosaic::Id;
-    using Amount = Transaction::Amount;
-    using Timestamp = Transaction::Timestamp;
-    using TimeSpan = Transaction::TimeSpan;
+	using UnresolvedMosaicId = Transaction::Mosaic::UnresolvedId;
+	using MosaicId = Transaction::Mosaic::Id;
+	using Amount = Transaction::Amount;
+	using Timestamp = Transaction::Timestamp;
+	using TimeSpan = Transaction::TimeSpan;
 
 }
 

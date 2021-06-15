@@ -22,6 +22,7 @@
 #include "../../DigitalAssets.h"
 #include "../../catapult/Logging.h"
 #include "../Keys.h"
+#include "../Wallet.h"
 
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::DigitalAssets; /// Implementation for class c 
@@ -41,10 +42,11 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	void c::pass1(ParamPath& v) {
+	//cout << "pass1" << endl;
 		b::pass1(v);
-		auto p=v.lookup({DA_Command, Sign_Command});
+		auto p=v.lookup({Wallet::Command, DA_Command, Sign_Command});
 		if (p!=nullptr) {
-			auto r=v.lookup({DA_Command});
+			auto r=v.lookup({Wallet::Command});
 			assert(r->has(Keys::Privkey_Flag));
 			r->set_mandatory(Keys::Privkey_Flag);
 		}

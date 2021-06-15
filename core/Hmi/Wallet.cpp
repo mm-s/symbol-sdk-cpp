@@ -20,11 +20,17 @@
 **/
 #include "Wallet.h"
 #include "Wallet/NonFungibleToken.h"
+#include "Keys.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	using c = symbol::core::hmi::Wallet;  /// Implementation for class c 
 
+	void c::pass1(ParamPath& v) {
+	//cout << "wpass1" << endl;
+		b::pass1(v);
+	}
+	
 /*
 	c::FlagDef c::flagdefPrivkey(bool mandatory) {
 		return FlagDef{Privkey_Flag, "private-key", !mandatory, true, "", "Use the supplied private key in HEX format."};
@@ -87,16 +93,13 @@ namespace symbol { namespace core { namespace hmi {
 //		return true;
 	//}
 
-	ptr<c::Section> c::createSectionWallet() {
-		auto s = new hmi::NonFungibleToken();
-		s->init(name(), desc());
-//		s->set_handler([&](const Params& p, ostream& os) -> bool { return nft(p, os); });
-		return s;
-	}
-
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{"wallet", "Privacy management."}, createSectionWallet());
+
+		using walletSection = hmi::NonFungibleToken;
+		add(CmdDef{Command, "Privacy management."}, new walletSection(Params{
+			//Keys::flagdefPrivkey(false),
+		}));
 	}
 
 }}}

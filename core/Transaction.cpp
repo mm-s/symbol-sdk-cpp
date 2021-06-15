@@ -39,7 +39,7 @@ namespace symbol {
 
 	}
 
-	c::Transaction(const Network& n, Transaction&& other): m_catapultTx(other.m_catapultTx), m_network(other.m_network) {
+	c::Transaction(Transaction&& other): m_catapultTx(other.m_catapultTx), m_network(other.m_network) {
 		other.m_catapultTx = nullptr;
 	}
 
@@ -50,7 +50,7 @@ namespace symbol {
 	Transfer::Transfer(const Network& n, ptr<catapult::model::Transaction> t): b(n, t) {
 	}
 
-	Transfer::Transfer(const Network& n, Transfer&& other): b(n, move(other)) {
+	Transfer::Transfer(Transfer&& other): b(move(other)) {
 	}
 
 	ptr<Transfer> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline) {
@@ -71,7 +71,7 @@ namespace symbol {
 
 	bool c::sign(const Keys::PrivateKey& sk) {
 		if (m_catapultTx != nullptr ) return false;
-		auto x=catapult::extensions::TransactionExtensions(m_network.seed());
+		auto x = catapult::extensions::TransactionExtensions(m_network.seed());
 		Keys k(sk);
 		x.sign(k, *m_catapultTx);
 		return x.verify(*m_catapultTx);

@@ -95,8 +95,7 @@ c& c::add(cmddef&& a, section* s) {
 	assert( s != this );
 	assert( s->parent == nullptr );
 	s->parent = this;
-	s->m_name = m_name;
-	s->m_desc = m_desc;
+	s->init(a.name, a.desc);
 	emplace_back(make_pair(a, s));
 	return *s;
 }
@@ -133,17 +132,19 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 	{
 		ostringstream buf;
 		const section& secignore = *v.rbegin()->first;
-//		cout << secignore.name << endl;
 		for (auto j = v.begin(); j != i; ++j) {
-//		cout << "=========" << (*j).first->name << endl;
-			//if ((*j).second->any_set(secignore)) {
-				string ind; /// Print section name.
-				if (!(*j).first->isRoot()) {
-					ind = "  ";
-					buf << ind << (*j).first->name() << ":\n";
-				}
-				(*j).second->dump_set(ind + "  ", secignore, buf); /// Print flag
-			//}
+			string ind; /// Print section name.
+			ostringstream bufT;
+			if (!(*j).first->isRoot()) {
+				ind = "  ";
+				bufT << ind << (*j).first->name() << ":\n";
+			}
+			ostringstream bufB;
+			(*j).second->dump_set(ind + "  ", secignore, bufB); /// Print flag
+			auto bb = bufB.str();
+			if (!bb.empty()) {
+				buf << bufT.str() << bb;
+			}
 		}
 		auto bufstr = buf.str();
 		if (!bufstr.empty()) {
@@ -219,12 +220,18 @@ bool c::exec(const param_path& v, param_path::const_iterator i) const {
 		auto n = i+1;
 		if (n != v.end()) {
 			print_error(string("Invoking help caused command '") + n->first->name() + "' to be ignored.");
+		}
+		help(v, i);
+		return true;
+	}
+	{
+		ostringstream os;
+		if (!i->second->check_req(os)) {
+//		auto it = check_req(v, os);
+//		if (it != v.end() && it <= i) {
+			print_error(os.str());
 			help(v, i);
 			return false;
-		}
-		else {
-			help(v, i);
-			return true;
 		}
 	}
 	if (!skip_handler) {
@@ -265,6 +272,7 @@ bool c::exec(const string& cmdline) {
 	return exec(is);
 }
 
+/*
 c::param_path::const_iterator c::check_req(const param_path& v, ostream&os) const {
 	auto it = v.end();
 	for (auto i = v.begin(); i!=v.end(); ++i) {
@@ -274,6 +282,7 @@ c::param_path::const_iterator c::check_req(const param_path& v, ostream&os) cons
 	}
 	return it;
 }
+*/
 
 params* c::param_path::lookup(const vector<string>& cmdpath) {
 	if (empty()) return nullptr;
@@ -293,6 +302,12 @@ params* c::param_path::lookup(const vector<string>& cmdpath) {
 	return nullptr;
 }
 
+void c::pass1(param_path& v) {
+	for (auto& i: *this) {
+		i.second->pass1(v);
+	}
+}
+
 bool c::exec(istream& is) const {
 	param_path v;
 	auto r = fillv(v, is);
@@ -300,14 +315,7 @@ bool c::exec(istream& is) const {
 		return false;
 	}
 	const_cast<c*>(this)->pass1(v); /// rewrite v and let specializations have a first look.
-	ostringstream os;
-	auto it = check_req(v, os);
-	if (it != v.end()) {
-		print_error(os.str());
-		help(v, it);
-		return false;
-	}
-	r=exec(v, v.begin());
+	r = exec(v, v.begin());
 	for (auto& i: v) delete i.second;
 	return r;
 }
@@ -408,6 +416,7 @@ bool params::check_unique() const {
 		s.emplace(i.short_name);
 		++n;
 		if (s.size() != n) {
+			//let's do it again verbose
 			s.clear();
 			n = 0;
 			for (auto& i: *this) {
@@ -415,9 +424,10 @@ bool params::check_unique() const {
 				++n;
 				if (s.size() != n) {
 					cerr << "Error: " << i.short_name << " --" << i.name << " flag already defined.\n";
+					assert(false);
 					break;
 				}
-				cerr << "Ok: " << i.short_name << " --" << i.name << " flag defined.\n";
+				cerr << "Ok: " << i.short_name << " --" << i.name << " flag defined at i.\n";
 			}
 		}
 	}
