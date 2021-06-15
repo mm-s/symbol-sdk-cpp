@@ -41,16 +41,17 @@ namespace symbol {
 		using TimeSpan = catapult::utils::TimeSpan;
 		using Msg = vector<uint8_t>;
 		using NetworkIdentifier = catapult::model::NetworkIdentifier;
-		
+
 		class Mosaic: public catapult::model::Mosaic {
 			using b = catapult::model::Mosaic;
+
 		public:
 			using Id = catapult::MosaicId;
 			using UnresolvedId = catapult::UnresolvedMosaicId;
-			
+
 			uint64_t amount() const { return Amount.unwrap(); }
 			uint64_t id() const { return MosaicId.unwrap(); }
-			
+
 			void toStream(ostream&) const;
 		};
 
@@ -68,23 +69,23 @@ namespace symbol {
 				return false;
 			}
 		}
-		
+
 		bool sign(const Keys::PrivateKey&);
-		
-		ptr<catapult::model::Transaction> m_catapultTx{nullptr};
+
+		ptr<catapult::model::Transaction> m_catapultTx{ nullptr };
 		const Network& m_network;
 	};
 
 	class Transfer: public Transaction {
 		using b = Transaction;
-		
+
 	public:
 		Transfer(const vector<uint8_t>&);
 		Transfer(const Network&, ptr<catapult::model::Transaction>);
 		Transfer(Transfer&&);
 		void toStream(ostream&) const;
-		
-		[[nodiscard]] static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
+
+		static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
 
 
 	};

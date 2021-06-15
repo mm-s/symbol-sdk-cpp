@@ -21,6 +21,9 @@ message(STATUS "Building symbol_sdk version ${PROJECT_VERSION}")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(CMAKE_CXX_FLAGS_DEBUG_INIT "-g -O0")
+set(CMAKE_CXX_FLAGS_RELEASE_INIT " -O3")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 #-------------Boost
