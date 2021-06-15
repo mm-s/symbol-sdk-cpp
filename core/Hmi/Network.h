@@ -20,37 +20,24 @@
 **/
 
 #pragma once
-#include "../base.h"
-#include "../Network.h"
-#include "conch.h"
-#include <sstream>
+#include "Main.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	/// Human-Machine Interface (HMI). Main-menu command processor (offline)
-	class Main: public conch::section {
+	class Network: public hmi::Main {
 		/// Base class b
-		using b = conch::section;
-		
-	public:
-		using Section = conch::section;
-		using Params = conch::params;
-		using CmdDef = conch::cmddef;
-		using FlagDef = conch::flagdef;
-		using ParamPath = b::param_path;
+		using b = hmi::Main;
 
 	public:
-		/// Flags and Options
-		static constexpr auto Home_Flag{'H'};
-		static constexpr auto Verbose_Flag{'v'};
-		static constexpr auto Output_Flag{'o'};
-		static constexpr auto HideLabels_Flag{'w'};
+		static constexpr auto Network_Flag{'n'};
+		static constexpr auto Seed_Flag{'s'};
 
 	public:
 		/// Construction, initialization, destruction
-		Main();
-		Main(Params&&);
-		~Main() override;
+		Network();
+		Network(Params&&);
+		~Network() override;
 
 		void init(const string& name, const string& desc) override;
 
@@ -58,13 +45,14 @@ namespace symbol { namespace core { namespace hmi {
  		///Opportunity to rewrite Params before command execution.
  		void pass1(ParamPath&) override;
 
-		/// Print key-value on output stream.
-		void kv_text(const vector<pair<string, string>>&, ostream&);
-		void kv_json(const vector<pair<string, string>>&, ostream&);
+	public: // Options related to Network.
+		/// The Network instance the user wants to use.
+		inline const symbol::Network& network() const { return *m_network; }
+		inline symbol::Network& network() { return *m_network; }
 
-	public: // Options related to this app.
+		/// Tells whether the user has explicitely set the network identifier.
+		inline bool networkOverriden() const { return m_networkOverriden; }
 		inline const string& home() const { return m_home; }
-
 	public:
 		/// Gettrs & Setters
 		/// User selectd JSON output
@@ -91,8 +79,10 @@ namespace symbol { namespace core { namespace hmi {
 		/// Flag configuration for initalizing the section
 		static FlagDef flagdefHome();
 		static FlagDef flagdefVerbose();
+		static FlagDef flagdefNetwork();
 		static FlagDef flagdefOutput();
 		static FlagDef flagdefHideLabels();
+		static FlagDef flagdefSeed();
 
 	private:
 		/// Output preferences
@@ -100,6 +90,8 @@ namespace symbol { namespace core { namespace hmi {
 		bool m_hideLabels{false};
 
 		/// Network instance
+		ptr<symbol::Network> m_network{nullptr};
+		bool m_networkOverriden{false};
 		string m_home;
 	};
 

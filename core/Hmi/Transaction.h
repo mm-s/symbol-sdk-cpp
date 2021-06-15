@@ -30,7 +30,13 @@ namespace symbol { namespace core { namespace hmi {
 		/// Base class b.
 		using b = hmi::Keys;
 
-	protected:
+	public:
+		static constexpr const char* TX_Command = "tx";
+		static constexpr const char* TX_Command_Desc = "Operations with transactions.";
+	
+		static constexpr const char* Transfer_Command = "transfer";
+		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
+
 		/// Flags, Options
 		static constexpr char Privkey_Flag{'s'};
 		static constexpr char Recipient_Flag{'r'};

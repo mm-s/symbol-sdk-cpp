@@ -30,8 +30,6 @@ namespace symbol { namespace core { namespace hmi {
 			flagdefVerbose(),
 			flagdefOutput(),
 			flagdefHideLabels(),
-			flagdefNetwork(),
-			flagdefSeed(),
 		}) {
 	}
 
@@ -40,25 +38,14 @@ namespace symbol { namespace core { namespace hmi {
 		add(flagdefVerbose());
 		add(flagdefOutput());
 		add(flagdefHideLabels());
-		add(flagdefNetwork());
-		add(flagdefSeed());
 	}
 
 	c::~Main() {
-		delete m_network;
 	}
 
 	void c::init(const string& nm, const string& dc) {
 		b::init(nm, dc);
 		set_handler([&](const Params& p, ostream& os) -> bool { return mainHandler(p, os); });
-	}
-
-	c::FlagDef c::flagdefNetwork() {
-		ostringstream os;
-		os << "Network type. Value in (";
-		symbol::Network::list(os);
-		os << ").";
-		return FlagDef{Network_Flag, "network", true, true, "public-test", os.str()};
 	}
 
 	c::FlagDef c::flagdefHome() {
@@ -73,35 +60,14 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{Output_Flag, "output", true, true, "text", "Output format. Value in (text json)"};
 	}
 
-	c::FlagDef c::flagdefSeed() {
-		return FlagDef{Seed_Flag, "seed", true, true, "", "Network generation hash seed."};
-	}
-
 	c::FlagDef c::flagdefHideLabels() {
 		return FlagDef{HideLabels_Flag, "hide-labels", true, false, "", "Hide field names. (Only on text output mode)"};
 	}
 
 	bool c::mainHandler(const Params& p, ostream& os) {
 		m_home = p.get(Home_Flag);
-
 		if (p.is_set(Verbose_Flag)) {
 			//catapult::utils::log::global_logger::set(trace);
-		}
-	
-		m_networkOverriden = p.is_set(Network_Flag);
-		Network::Identifier t = Network::identifier(p.get(Network_Flag));
-		delete m_network;
-		m_network = new symbol::Network(t);
-		if (!network().isValidIdentifier()) {
-			os << "Network identifier '" << p.get(Network_Flag) << "' is invalid.";
-			return false;
-		}
-		
-		if (p.is_set(Seed_Flag)) {
-			if (!network().setSeed(p.get(Seed_Flag))) {
-				os << "Network seed '" << p.get(Seed_Flag) << "' is invalid.";
-				return false;
-			}
 		}
 		m_json = p.get(Output_Flag) == "json";
 		m_hideLabels = p.is_set(HideLabels_Flag);
@@ -110,12 +76,6 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::pass1(ParamPath& v) {
 		b::pass1(v);
-		auto p=v.lookup({"tx", "transfer"});
-		if (p!=nullptr) {
-			auto r=v.lookup({});
-			assert(r->has(Seed_Flag));
-			r->set_mandatory(Seed_Flag);
-		}
 	}
 
 	namespace {

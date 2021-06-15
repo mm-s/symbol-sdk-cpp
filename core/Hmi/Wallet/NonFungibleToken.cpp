@@ -26,12 +26,12 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{"nft", "Functions related to N.F.T. (Non Fungible Tokens)."}, createSectionNft());
+		add(CmdDef{NFT_Command, NFT_Command_Desc}, createSectionNft());
 	}
 
 	bool c::nftInfo(const Params& p, ostream& os) {
 		os << "Info about NFT: not implemented." << '\n';
-		return false;
+		return false; //Will result in Error for the user
 	}
 
 	ptr<c::Section> c::createSectionNftInfo() {
@@ -42,7 +42,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	ptr<c::Section> c::createSectionNft() {
 		auto s=new Section(Params{});
-		s->add(CmdDef{"info", "Non Fungible Token info."}, createSectionNftInfo());
+		s->add(CmdDef{Info_Command, Info_Command_Desc}, createSectionNftInfo());
 		return s;
 	}
 

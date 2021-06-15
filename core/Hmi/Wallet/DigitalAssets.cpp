@@ -19,6 +19,7 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "DigitalAssets.h"
+#include "../Network.h"
 #include "../../DigitalAssets.h"
 #include "../../catapult/Logging.h"
 #include "../Keys.h"
@@ -27,15 +28,6 @@
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::DigitalAssets; /// Implementation for class c 
 	using symbol::ko;
-
-	static constexpr const char* DA_Command = "da";
-	static constexpr const char* DA_Command_Desc = "Digital assets...";
-
-	static constexpr const char* Digest_Command = "digest";
-	static constexpr const char* Digest_Command_Desc = "Computes RIPEMD160+base58 to the content of the file.";
-
-	static constexpr const char* Sign_Command = "sign";
-	static constexpr const char* Sign_Command_Desc = "Sign files or messages";
 
 	c::~DigitalAssets() {
 		delete m_privateKey;
@@ -110,8 +102,8 @@ namespace symbol { namespace core { namespace hmi {
 		/// Add a handler for this command.
 		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerDA(p, os); });
 		/// s->set_handler([&](const Params& p, ostream& os) -> bool { return you_handler_function(p, os); });
-		s->ignoreFlags.insert(Main::Network_Flag);
-		s->ignoreFlags.insert(Main::Seed_Flag);
+		s->ignoreFlags.insert(Network::Network_Flag);
+		s->ignoreFlags.insert(Network::Seed_Flag);
 		return s;
 	}
 

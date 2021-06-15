@@ -34,12 +34,24 @@ namespace symbol { namespace core { namespace hmi {
 		/// Base class b.
 		using b = conch::section;
 		using PrivateKey = symbol::Keys::PrivateKey;
+
 	public:
 		using Section = b;
 		using Params = conch::params;
 		using CmdDef = conch::cmddef;
 		using FlagDef = conch::flagdef;
 		using ParamPath = b::param_path;
+
+	public:
+		static constexpr const char* DA_Command = "da";
+		static constexpr const char* DA_Command_Desc = "Digital assets...";
+
+		static constexpr const char* Digest_Command = "digest";
+		static constexpr const char* Digest_Command_Desc = "Computes RIPEMD160+base58 to the content of the file.";
+
+		static constexpr const char* Sign_Command = "sign";
+		static constexpr const char* Sign_Command_Desc = "Sign files or messages";
+
 
 	protected:
 		/// Flags, Options

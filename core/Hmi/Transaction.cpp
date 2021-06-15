@@ -25,11 +25,6 @@
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::Transaction; /// Implementation for class c 
 
-	void c::init(const string& name, const string& desc) {
-		b::init(name, desc);
-		add(CmdDef{"tx", "Operations with transactions."}, createSectionTx());
-	}
-
 	bool c::txTransfer(const Params& p, ostream& os) {
 		symbol::Amount am;
 		if (!symbol::Transaction::parse(p.get(Amount_Flag), am)) {
@@ -110,8 +105,13 @@ namespace symbol { namespace core { namespace hmi {
 
 	ptr<c::Section> c::createSectionTx() {
 		auto s=new Section(Params{});
-		s->add(CmdDef{"transfer", "Transfer transaction."}, createSectionTxTransfer());
+		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTxTransfer());
 		return s;
+	}
+
+	void c::init(const string& name, const string& desc) {
+		b::init(name, desc);
+		add(CmdDef{TX_Command, TX_Command_Desc}, createSectionTx());
 	}
 
 }}}

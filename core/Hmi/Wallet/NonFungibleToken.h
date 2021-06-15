@@ -29,8 +29,15 @@ namespace symbol { namespace core { namespace hmi {
 		/// Base class b.
 		using b = hmi::DigitalAssets;
 
-	protected:
+	public:
 		/// Flags, Options
+		static constexpr const char* Info_Command = "info";
+		static constexpr const char* Info_Command_Desc = "Non Fungible Token info.";
+
+		static constexpr const char* NFT_Command = "nft";
+		static constexpr const char* NFT_Command_Desc = "Functions related to N.F.T. (Non Fungible Tokens).";
+
+
 
 	public:
 		/// constructors, initialization, destructor

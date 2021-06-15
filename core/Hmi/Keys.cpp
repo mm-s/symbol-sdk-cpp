@@ -25,11 +25,11 @@ namespace symbol { namespace core { namespace hmi {
 	using c = hmi::Keys;  /// Implementation for class c 
 
 	c::FlagDef c::flagdefPrivkey(bool mandatory) {
-		return FlagDef{Privkey_Flag, "private-key", !mandatory, true, "", "Use the supplied private key in HEX format."};
+		return FlagDef{Privkey_Flag, Privkey_Name, !mandatory, true, Privkey_Default, Privkey_Desc};
 	}
 
 	c::FlagDef c::flagdefAcc() {
-		return FlagDef{Acc_Flag, "account", true, true, "", "Use the supplied account id."};
+		return FlagDef{Acc_Flag, Acc_Name, true, true, Acc_Default, Acc_Desc};
 	}
 
 	bool c::keys(const Params& p, ostream& os) {
@@ -92,7 +92,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{"keys", "Keys/Address/Account generation/info."}, createSectionKeys());
+		add(CmdDef{Keys_Command, Keys_Command_Desc}, createSectionKeys());
 	}
 
 }}}

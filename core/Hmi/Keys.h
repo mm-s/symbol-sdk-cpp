@@ -20,23 +20,38 @@
 **/
 #pragma once
 
-#include "Main.h"
+#include "Network.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	/// Human-Machine Interface. Keys section command processor (offline)
-	class Keys: public hmi::Main {
+	class Keys: public hmi::Network {
 		/// Base class b
-		using b = hmi::Main;
+		using b = hmi::Network;
+
+	public:
+		static constexpr const char* Keys_Command = "keys";
+		static constexpr const char* Keys_Command_Desc = "Keys/Address/Account generation/info.";
+	
+		static constexpr const char* Transfer_Command = "transfer";
+		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
 
 	public:
 		/// Flags and Options
 		static constexpr char Privkey_Flag{'s'};
+		static constexpr auto Privkey_Name{"private-key"};
+		static constexpr auto Privkey_Default{""};
+		static constexpr auto Privkey_Desc{"Use the supplied private key in HEX format."};
+
 		static constexpr char Acc_Flag{'a'};
+		static constexpr auto Acc_Name{"account"};
+		static constexpr auto Acc_Default{""};
+		static constexpr auto Acc_Desc{"Use the supplied account id."};
+
 
 	public:
 		/// Construction, initialization, destruction
-		using b::Main;
+		using b::Network;
 
 		void init(const string& name, const string& desc) override;
 
