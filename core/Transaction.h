@@ -33,6 +33,7 @@ namespace symbol { namespace core {
 
 	class Network;
 
+	/// Class Transaction. Just making space for the comment.
 	class Transaction {
 	public:
 		using UnresolvedAddress = catapult::UnresolvedAddress;
@@ -42,6 +43,7 @@ namespace symbol { namespace core {
 		using Msg = vector<uint8_t>;
 		using NetworkIdentifier = catapult::model::NetworkIdentifier;
 
+		/// Class Mosaic. Just making space for the comment.
 		class Mosaic: public catapult::model::Mosaic {
 			using b = catapult::model::Mosaic;
 
@@ -58,6 +60,9 @@ namespace symbol { namespace core {
 		Transaction(const Network&, catapult::model::Transaction*);
 		Transaction(Transaction&&);
 		virtual ~Transaction();
+
+		static pair<ko, ptr<Transaction>> create(const string& memHex);
+
 
 		template<typename t>
 		static bool parse(const string& input, t&o) {
@@ -80,12 +85,12 @@ namespace symbol { namespace core {
 		using b = Transaction;
 
 	public:
-		Transfer(const vector<uint8_t>&);
 		Transfer(const Network&, ptr<catapult::model::Transaction>);
 		Transfer(Transfer&&);
-		void toStream(ostream&) const;
+		bool toStream(ostream&) const;
 
 		static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
+		ptr<catapult::model::Transaction> m_catapultTransferTx{ nullptr };
 
 
 	};

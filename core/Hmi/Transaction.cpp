@@ -24,7 +24,11 @@
 #include "../catapult/TransferTransaction.h"
 
 namespace symbol { namespace core { namespace hmi {
-	using c = hmi::Transaction; /// Implementation for class c 
+	using c = core::hmi::Transaction; /// Implementation for class c 
+
+	c::~Transaction() {
+		delete m_tx;
+	}
 
 	bool c::txTransfer(const Params& p, ostream& os) {
 		Amount am;
@@ -120,9 +124,15 @@ namespace symbol { namespace core { namespace hmi {
 
 	bool c::tx(const Params& p, ostream& os) {
 		if (p.is_set(Mem_Flag)) {
-//			return txTransferMem
+			auto r = core::Transaction::create(p.get(Mem_Flag));
+			if (is_ko(r.first)) {
+				os << r.first;
+				return false;
+			}
+			assert(m_tx == nullptr);
+			m_tx = r.second;
 		}
-		//else {
+		return true;
 	}
 
 	ptr<c::Section> c::createSectionTxTransfer() {

@@ -26,10 +26,12 @@
 #include "catapult/HexFormatter.h"
 #include "catapult/TransactionExtensions.h"
 #include <vector>
+#include <type_traits>
+
 
 namespace symbol { namespace core {
 	/// Implementation for the class c 
-	using c = Transaction;
+	using c = core::Transaction;
 	using std::move;
 	using std::ostringstream;
 	using std::make_pair;
@@ -47,11 +49,36 @@ namespace symbol { namespace core {
 		delete m_catapultTx;
 	}
 
+	pair<ko, ptr<c>> c::create(const string& memHex) {
+		vector<uint8_t> mem;
+		//Get from the bytes the instance type.
+		if (!catapult::utils::TryParseHexStringIntoContainer(memHex.data(), memHex.size(), mem)) {
+			return make_pair("KO 50948", nullptr);
+		}
+		/*
+		static_assert(std::is_trivially_copyable<catapult::model::Transaction>::value);
+		catapult::model::Transaction* disguised=reinterpret_cast<catapult::model::Transaction*>(mem.data());
+		catapult::model::Transaction* tx=new catapult::model::Transaction(*disguised);
+
+		string instance_type;
+		instance_type = "transfer";
+		if ( instance_type == "transfer" ) {
+			return new Transfer(tx);
+		}
+		delete tx;
+		*/
+		return make_pair("KO 50947", nullptr);
+	}
+
+
+
+
 	Transfer::Transfer(const Network& n, ptr<catapult::model::Transaction> t): b(n, t) {
 	}
 
 	Transfer::Transfer(Transfer&& other): b(move(other)) {
 	}
+
 
 	ptr<Transfer> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline) {
 		auto k=Keys::generate();
@@ -101,15 +128,16 @@ namespace symbol { namespace core {
 	}
 	*/
 
-	void Transfer::toStream(ostream& os) const {
+	bool Transfer::toStream(ostream& os) const {
+		if (m_catapultTx==nullptr) {
+			return false;
+		}
 		auto sz=sizeof(*m_catapultTx);
 		vector<char> buf;
 		buf.resize(sz);
-	//    char buf[sz];
 		memcpy(buf.data(), m_catapultTx, sz);
-		os << catapult::utils::HexFormat(buf) << endl;
-
-	//    os << "tx: sz " << sizeof(*u) << endl;
+		os << catapult::utils::HexFormat(buf);
+		return true;
 	}
 
 }} // namespaces

@@ -73,6 +73,8 @@ namespace symbol { namespace core { namespace hmi {
 		/// Default constructors
 		using b::Keys;
 
+		~Transaction() override;
+
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
 		void pass1(ParamPath&) override;
@@ -86,7 +88,9 @@ namespace symbol { namespace core { namespace hmi {
 
 		ptr<Section> createSectionTxTransfer(); /// Init
 		virtual bool txTransfer(const Params&, ostream&); /// Command Handler
-		
+	
+	private:
+		core::Transaction* m_tx;
 	};
 
 }}}
