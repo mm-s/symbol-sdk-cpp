@@ -1,0 +1,28 @@
+NonCopyable
+SizePrefixedEntity
+	uint32_t Size;
+EmbeddedTransactionHeader
+	uint32_t EmbeddedTransactionHeader_Reserved1; /// Reserved padding to align end of EmbeddedTransactionHeader on 8-byte boundary.
+
+EntityBody
+	Key SignerPublicKey;
+	uint32_t EntityBody_Reserved1; /// Reserved padding to align end of EntityBody on 8-byte boundary.
+Header_Size
+	uint8_t Version; /// Entity version.
+	NetworkIdentifier Network; /// Entity network.
+	EntityType Type; /// Entity type.
+
+
+
+TransferTransactionBody
+	UnresolvedAddress RecipientAddress; /// Recipient address.
+	uint16_t MessageSize; /// Message size in bytes.
+	uint8_t MosaicsCount; /// Number of mosaics.
+	uint32_t TransferTransactionBody_Reserved1; /// Reserved padding to align Mosaics on 8-byte boundary.
+	uint8_t TransferTransactionBody_Reserved2;
+EmbeddedTransferTransaction
+
+
+(vertical spaces are for comparing side by side with TransferTransaction)
+
+
