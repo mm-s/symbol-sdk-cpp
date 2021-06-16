@@ -1,18 +1,26 @@
 cmake_minimum_required(VERSION 3.14)
 if (DEFINED ENV{SYMBOLCORE_VERSION})
-    set(SYMBOLCORE_VERSION $ENV{SYMBOLCORE_VERSION})
+	set(SYMBOLCORE_VERSION $ENV{SYMBOLCORE_VERSION})
 endif()
 
 if (NOT DEFINED SYMBOLCORE_VERSION)
-    set(SYMBOLCORE_VERSION 0.0.3)
+	set(SYMBOLCORE_VERSION 0.0.3)
 endif()
 
 if (DEFINED ENV{SYMBOLRPC_VERSION})
-    set(SYMBOLRPC_VERSION $ENV{SYMBOLRPC_VERSION})
+	set(SYMBOLRPC_VERSION $ENV{SYMBOLRPC_VERSION})
 endif()
 
 if (NOT DEFINED SYMBOLRPC_VERSION)
-    set(SYMBOLRPC_VERSION 0.0.1)
+	set(SYMBOLRPC_VERSION 0.0.1)
+endif()
+
+if (NOT DEFINED ONLY_SYMBOLCORE)
+	set(ONLY_SYMBOLCORE OFF)
+endif()
+
+if (NOT DEFINED BUILD_SYMBOLCLI)
+	set(BUILD_SYMBOLCLI ON)
 endif()
 
 project(symbol_sdk VERSION ${SYMBOLRPC_VERSION} )
@@ -33,7 +41,7 @@ set(Boost_USE_STATIC_RUNTIME OFF)
 find_package(Boost 1.45.0 REQUIRED COMPONENTS log thread filesystem coroutine)
 
 if(NOT Boost_FOUND)
-        message(FATAL_ERROR "Boost required.")
+	message(FATAL_ERROR "Boost required.")
 endif()
 
 add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS -DBOOST_DISABLE_PRAGMA_MESSAGE)
@@ -45,15 +53,26 @@ message("OpenSSL  root: ${OPENSSL_ROOT_DIR}")
 message("OpenSSL   inc: ${OPENSSL_INCLUDE_DIR}")
 message("OpenSSL  libs: ${OPENSSL_LIBRARIES}")
 
-
+message("ONLY_SYMBOLCORE: ${ONLY_SYMBOLCORE}")
+message("BUILD_SYMBOLCLI: ${BUILD_SYMBOLCLI}")
 
 
 add_subdirectory(core)
-add_subdirectory(rpc)
-add_subdirectory(cli)
+if (${ONLY_SYMBOLCORE})
+	message (STATUS "Only core selected. Omits rpc and cli components.")
+else()
+	message (STATUS "Includes core, rpc components.")
+	add_subdirectory(rpc)
+endif()
 
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLCORE.cmake" DESTINATION "share/cmake/SYMBOLCORE/")
-install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLRPC.cmake" DESTINATION "share/cmake/SYMBOLRPC")
+if (${BUILD_SYMBOLCLI})
+	message (STATUS "build cli.")
+	add_subdirectory(cli)
+else()
+	message (STATUS "Not building cli.")
+endif()
+
+
 
 
 

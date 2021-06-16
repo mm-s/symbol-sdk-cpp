@@ -9,7 +9,8 @@ file(GLOB symbol_core_donna_SRC "donna/*.c")
 add_definitions(-DNO_MISALIGNED_ACCESSES) # sha3
 
 #------------- libsymbolcore.so
-add_library(symbolcore SHARED ${symbol_core_SRC}
+add_library(symbolcore SHARED
+	${symbol_core_SRC}
 	${symbol_core_catapult_SRC}
 	${symbol_core_donna_SRC}
 	${symbol_core_hmi_SRC}
@@ -26,8 +27,7 @@ target_link_libraries(symbolcore ${Boost_LIBRARIES})
 
 set_property(TARGET symbolcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-target_include_directories(symbolcore
-	PUBLIC
+target_include_directories(symbolcore PUBLIC
 	# Headers used from source/build location:
 	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/core>"
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
@@ -42,6 +42,7 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/core/" # source directory
 	PATTERN "*.h" # select header files
 )
 
+install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLCORE.cmake" DESTINATION "share/cmake/SYMBOLCORE/")
 install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/core.h" DESTINATION "include/symbol/")
 install(FILES "${CMAKE_BINARY_DIR}/core/config.h" DESTINATION "include/symbol/core/")
 

@@ -17,9 +17,10 @@ message("Restc-Cpp  headers: ${RESTCCPP_INCLUDE_DIRS}")
 message("           libs: ${RESTCCPP_LIBRARIES}")
 
 #------------- libsymbolrpc.so
-add_library(symbolrpc SHARED ${symbol_SRC}
-		       ${symbol_dto_SRC}
-		       ${symbol_hmi_SRC}
+add_library(symbolrpc SHARED
+	${symbol_SRC}
+	${symbol_dto_SRC}
+	${symbol_hmi_SRC}
 )
 
 add_compile_definitions("BOOST_ALL_DYN_LINK")
@@ -37,22 +38,22 @@ target_link_libraries(symbolrpc ZLIB::ZLIB)
 
 set_property(TARGET symbolrpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 
-
-target_include_directories(symbolrpc
-  PUBLIC
-    # Headers used from source/build location:
-    "$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/rpc>"
-    "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
-    # Headers used from installed location:
-    "$<INSTALL_INTERFACE:include>"
+target_include_directories(symbolrpc PUBLIC
+	# Headers used from source/build location:
+	"$<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/rpc>"
+	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
+	# Headers used from installed location:
+	"$<INSTALL_INTERFACE:include>"
 )
 install(TARGETS symbolrpc DESTINATION lib)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/rpc/" # source directory
-        DESTINATION "include/symbol" # target directory
-        FILES_MATCHING # install only matched files
-        PATTERN "*.h" # select header files
+	DESTINATION "include/symbol" # target directory
+	FILES_MATCHING # install only matched files
+	PATTERN "*.h" # select header files
 )
 
+install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLRPC.cmake" DESTINATION "share/cmake/SYMBOLRPC")
 install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/rpc.h" DESTINATION "include/symbol/")
 install(FILES "${CMAKE_BINARY_DIR}/rpc/config.h" DESTINATION "include/symbol/rpc/")
+
