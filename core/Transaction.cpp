@@ -24,6 +24,7 @@
 #include "catapult/TransactionBuilder.h"
 #include "catapult/TransferBuilder.h"
 #include "catapult/HexFormatter.h"
+#include "catapult/RawBuffer.h"
 #include "catapult/TransactionExtensions.h"
 #include <vector>
 #include <type_traits>
@@ -80,10 +81,11 @@ namespace symbol { namespace core {
 	}
 
 
-	ptr<Transfer> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline) {
+	ptr<Transfer> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg) {
 		auto k=Keys::generate();
 		catapult::builders::TransferBuilder builder(n.identifier(), k.second.publicKey());
 		
+		builder.setMessage(catapult::utils::RawBuffer(msg.data(), msg.size()));
 		builder.setRecipientAddress(rcpt);
 	//	for (const auto& seed : seeds) {
 	//		auto mosaicId = mosaicNameToMosaicIdMap.at(seed.Name);
@@ -92,7 +94,7 @@ namespace symbol { namespace core {
 		UnresolvedMosaicId um(m.unwrap());
 		builder.addMosaic({ um, am });
 		builder.setDeadline(Timestamp(deadline.millis()));
-		auto x=builder.build().release();
+		auto x = builder.build().release();
 		return new Transfer(n, x);
 	}
 

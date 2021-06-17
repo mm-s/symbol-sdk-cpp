@@ -234,8 +234,8 @@ namespace symbol { namespace core {
 		return true;
 	}
 
-	ptr<symbol::core::Transfer> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d) {
-		return Transfer::create(*this, rcpt, a, m, f, d);
+	ptr<symbol::core::Transfer> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) {
+		return Transfer::create(*this, rcpt, a, m, f, d, msg);
 	}
 
 }} // Namespaces

@@ -132,7 +132,7 @@ namespace symbol { namespace core {
 
 	public:	/// Tranactions
 		/// Creates a Transfer transaction
-		[[nodiscard]] ptr<Transfer> createTransfer(const UnresolvedAddress& rcpt, const Amount&, const MosaicId&, const Amount& maxfee, const TimeSpan& deadline);
+		[[nodiscard]] ptr<Transfer> createTransfer(const UnresolvedAddress& rcpt, const Amount&, const MosaicId&, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg);
 
 	private:
 		Identifier m_identifier;

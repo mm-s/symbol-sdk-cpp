@@ -64,7 +64,12 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Deadline_Default{""};
 		static constexpr auto Deadline_Desc{"Deadline."};
 
-		static constexpr auto Mem_Flag{'M'};
+		static constexpr auto Message_Flag{'M'};
+		static constexpr auto Message_Name{"message"};
+		static constexpr auto Message_Default{""};
+		static constexpr auto Message_Desc{"Message."};
+
+		static constexpr auto Mem_Flag{'F'};
 		static constexpr auto Mem_Name{"mem"};
 		static constexpr auto Mem_Default{""};
 		static constexpr auto Mem_Desc{"Transaction memory representation in Hex format."};

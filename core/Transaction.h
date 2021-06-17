@@ -89,7 +89,7 @@ namespace symbol { namespace core {
 		Transfer(Transfer&&);
 		bool toStream(ostream&) const;
 
-		static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline);
+		static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg);
 		ptr<catapult::model::Transaction> m_catapultTransferTx{ nullptr };
 
 

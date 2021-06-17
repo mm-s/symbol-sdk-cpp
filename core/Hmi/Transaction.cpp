@@ -58,7 +58,13 @@ namespace symbol { namespace core { namespace hmi {
 			os << "Invalid deadline.";
 			return false;
 		}
-		
+
+		vector<uint8_t> msg;
+		if (p.is_set(Message_Flag)) {
+			string s = p.get(Message_Flag);
+			msg = vector<uint8_t>(s.begin(), s.end());
+		}
+
 		ptr<PublicKey> pk{nullptr};
 		ptr<UnresolvedAddress> addr{nullptr};
 		string e = network().parse(p.get(Recipient_Flag), pk, addr, networkOverriden());
@@ -68,7 +74,7 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		delete pk;
 
-		ptr<Transfer> tx = network().createTransfer(*addr, am, mo, maxfee, deadline);
+		ptr<Transfer> tx = network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
 		delete addr;
 		if (tx == nullptr) {
 			os << "Invalid transfer.";
