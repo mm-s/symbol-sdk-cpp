@@ -86,18 +86,6 @@ namespace symbol { namespace core {
 		const Network& m_network;
 	};
 
-	class Transfer: public Transaction {
-		using b = Transaction;
-	public:
-		Transfer(const Network&, ptr<catapult::model::TransferTransaction>);
-		Transfer(Transfer&&);
-		bool toStream(ostream&) const;
-		static pair<ko, ptr<Transfer>> create(const Network& n, const Blob& mem);
-		static pair<ko, ptr<Transfer>> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg);
-
-		ptr<catapult::model::TransferTransaction> m_catapultTransferTx{ nullptr };
-	};
-
 }} //Namespaces
 
 namespace symbol { //publish on namespace symbol
@@ -109,6 +97,7 @@ namespace symbol { //publish on namespace symbol
 	using TimeSpan = Transaction::TimeSpan;
 	
 }
+
 std::ostream& operator << (std::ostream&, const symbol::core::Transaction::Mosaic&);
-std::ostream& operator << (std::ostream&, const symbol::core::Transfer&);
+
 

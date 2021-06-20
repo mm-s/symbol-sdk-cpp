@@ -18,17 +18,43 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "Transaction.h"
-#include "../dto/dto.h"
-#include "Transaction/Transfer.h"
+#include "Transfer.h"
+#include "../../dto/dto.h"
+#include <symbol/core/Hmi/Network.h>
 
 namespace symbol { namespace hmi {
 
-	using c = symbol::hmi::Transaction;
+	using c = symbol::hmi::Transfer;
 	using namespace std;
 
-	ptr<c::Section> c::createSectionTxTransfer() {
-		return new symbol::hmi::Transfer();
+	Transaction* c::root() {
+		return dynamic_cast<Transaction*>(b::root());
+	}
+
+	void c::pass1(ParamPath& v) {
+		b::pass1(v);
+		if (!root()->offline()) {
+			auto p = v.lookup({"tx", "transfer"});
+			if (p != nullptr) {
+				p->set_optional(Mosaic_Flag);
+				p->set_optional(Deadline_Flag);
+				auto r = v.lookup({});
+				assert(r != nullptr);
+				r->set_optional(core::Hmi::Network::Seed_Flag);
+			}
+		}
+	}
+
+	bool c::txTransfer(Params&p, ostream& os) {
+		if ( !root()->offline() ) {
+			dto::node_info o;
+			if ( !o.fetch( root()->url() ) ) {
+				os << "Unable to fetch from " << root()->url() << ".";
+				return false;
+			}
+			/// 
+		}
+		return b::txTransfer(p, os);
 	}
 
 }}

@@ -81,9 +81,15 @@ void c::init(const string& nm, const string& dc) {
 
 void c::add(flagdef&& fd) {
 	assert(!m_pdef.empty());
-	auto& def = const_cast<params&>(m_pdef);
-	auto it = --(def.rbegin().base());
-	def.emplace(it, move(fd));
+	m_pdef.emplace(--(m_pdef.rbegin().base()), move(fd));
+	assert(m_pdef.check_unique());
+}
+
+void c::add(params&& p) {
+	assert(!m_pdef.empty());
+	for (auto& i: p) {
+		m_pdef.emplace(--(m_pdef.rbegin().base()), move(i));
+	}
 	assert(m_pdef.check_unique());
 }
 

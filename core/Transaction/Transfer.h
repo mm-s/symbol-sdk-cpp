@@ -18,18 +18,32 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "Transaction.h"
-#include "../dto/dto.h"
-#include "Transaction/Transfer.h"
+#pragma once
 
-namespace symbol { namespace hmi {
+#include "../Transaction.h"
 
-	using c = symbol::hmi::Transaction;
-	using namespace std;
+namespace symbol { namespace core {
 
-	ptr<c::Section> c::createSectionTxTransfer() {
-		return new symbol::hmi::Transfer();
-	}
+	class Transfer: public Transaction {
+		using b = Transaction;
+	public:
+		Transfer(const Network&, ptr<catapult::model::TransferTransaction>);
+		Transfer(Transfer&&);
+		bool toStream(ostream&) const;
+		static pair<ko, ptr<Transfer>> create(const Network& n, const Blob& mem);
+		static pair<ko, ptr<Transfer>> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg);
 
-}}
+		void pretty_print(ostream&os) const;
+
+		ptr<catapult::model::TransferTransaction> m_catapultTransferTx{ nullptr };
+	};
+
+}} //Namespaces
+
+namespace symbol { //publish on namespace symbol
+	using Transfer = ::symbol::core::Transfer;
+	
+}
+
+std::ostream& operator << (std::ostream&, const symbol::core::Transfer&);
 

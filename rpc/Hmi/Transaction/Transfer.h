@@ -18,18 +18,33 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "Transaction.h"
-#include "../dto/dto.h"
-#include "Transaction/Transfer.h"
+#pragma once
+
+#include <symbol/core/Hmi/Transaction/Transfer.h>
+#include "../Transaction.h"
 
 namespace symbol { namespace hmi {
 
-	using c = symbol::hmi::Transaction;
-	using namespace std;
+	/// Human-Machine Interface. Transactions (tx) section command processor (online+offline)
+	class Transfer: public symbol::core::hmi::Transfer {
+		using b = symbol::core::hmi::Transfer;
 
-	ptr<c::Section> c::createSectionTxTransfer() {
-		return new symbol::hmi::Transfer();
-	}
+	public:
+		using b::Transfer;
+
+	protected:
+		Transaction* root();
+
+		///Opportunity to rewrite Params before command execution.
+		void pass1(ParamPath&) override;
+
+	private:
+		//ptr<Section> createSectionTxTransfer() override;
+		bool txTransfer(Params&, std::ostream&) override;
+
+
+
+	};
 
 }}
 

@@ -4,6 +4,8 @@ file(GLOB symbol_core_SRC *.cpp)
 file(GLOB symbol_core_catapult_SRC "catapult/*.cpp")
 file(GLOB symbol_core_hmi_SRC "Hmi/*.cpp")
 file(GLOB symbol_core_hmi_wallet_SRC "Hmi/Wallet/*.cpp")
+file(GLOB symbol_core_transaction_SRC "Transaction/*.cpp")
+file(GLOB symbol_core_hmi_transaction_SRC "Hmi/Transaction/*.cpp")
 file(GLOB symbol_core_donna_SRC "donna/*.c")
 
 add_definitions(-DNO_MISALIGNED_ACCESSES) # sha3
@@ -15,6 +17,8 @@ add_library(symbolcore SHARED
 	${symbol_core_donna_SRC}
 	${symbol_core_hmi_SRC}
 	${symbol_core_hmi_wallet_SRC}
+	${symbol_core_transaction_SRC}
+	${symbol_core_hmi_transaction_SRC}
 )
 
 #-------------Use OpenSSL, Boost

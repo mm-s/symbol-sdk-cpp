@@ -20,22 +20,29 @@
 **/
 #pragma once
 
-#include "Keys.h"
 #include "../Transaction.h"
+#include "../conch.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	/// Human-Machine Interface. Transaction(tx) section command processor (offline)
-	class Transaction: public hmi::Keys {
+	class Transfer: public conch::section {
 		/// Base class b.
-		using b = hmi::Keys;
+		using b = conch::section;
 
 	public:
-		static constexpr const char* TX_Command = "tx";
-		static constexpr const char* TX_Command_Desc = "Operations with transactions.";
-/*
+		using Section = conch::section;
+		using Params = conch::params;
+		using CmdDef = conch::cmddef;
+		using FlagDef = conch::flagdef;
+		using ParamPath = b::param_path;
+
+	public:
+	
 		static constexpr const char* Transfer_Command = "transfer";
 		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
+
+		static Params defParams();
 
 		/// Flags, Options
 		//static constexpr char Privkey_Flag{'s'};
@@ -68,31 +75,28 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Message_Name{"message"};
 		static constexpr auto Message_Default{""};
 		static constexpr auto Message_Desc{"Message."};
-*/
-	public:		
-		/// Default constructors
-		using b::Keys;
 
-		~Transaction() override;
+	public:
+		/// Default constructors
+		Transfer();
+		Transfer(Params&&);
+		~Transfer() override;
 
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
 		void pass1(ParamPath&) override;
 
-	public:
-		virtual ptr<Section> createSectionTxTransfer(); /// Init
-
+		Transaction* root();
 	private:
 		/// menu command: tx
-		ptr<Section> createSectionTx();
 
 	protected: /// menu command: tx transfer
-		bool tx(Params&, ostream&); /// Command Handler
 
-		//virtual bool txTransfer(Params&, ostream&); /// Command Handler
+		ptr<Section> createSectionTxTransfer(); /// Init
+		virtual bool txTransfer(Params&, ostream&); /// Command Handler
 	
 	private:
-		core::Transaction* m_tx;
+		core::Transfer* m_tx;
 	};
 
 }}}

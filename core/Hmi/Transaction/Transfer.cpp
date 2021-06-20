@@ -18,27 +18,50 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#include "Transaction.h"
-#include "Network.h"
+#include "Transfer.h"
+#include "../Network.h"
 #include "../Transaction.h"
-#include "../catapult/TransferTransaction.h"
-#include "Transaction/Transfer.h"
+#include "../../Transaction/Transfer.h"
+#include "../Keys.h"
+//#include "../catapult/TransferTransaction.h"
 
 namespace symbol { namespace core { namespace hmi {
-	using c = core::hmi::Transaction; /// Implementation for class c 
+	using c = core::hmi::Transfer; /// Implementation for class c 
 
-	c::~Transaction() {
+	c::Params c::defParams() {
+		return Params{
+				{Recipient_Flag, Recipient_Name, false, true, Recipient_Default, Recipient_Desc},
+				{Amount_Flag, Amount_Name, false, true, Amount_Default, Amount_Desc},
+				{Mosaic_Flag, Mosaic_Name, false, true, Mosaic_Default, Mosaic_Desc},
+				{Maxfee_Flag, Maxfee_Name, false, true, Maxfee_Default, Maxfee_Desc},
+				{Deadline_Flag, Deadline_Name, false, true, Deadline_Default, Deadline_Desc},
+				{Keys::Privkey_Flag, Keys::Privkey_Name, true, true, Keys::Privkey_Default, Keys::Privkey_Desc},
+			};
+	}
+		
+	c::Transfer(): b(defParams()) {
+	}
+
+	c::Transfer(Params&&p): b(move(p)) {
+		add(defParams());
+	}
+
+	c::~Transfer() {
 		delete m_tx;
 	}
-/*
+
+	Transaction* c::root() {
+		return dynamic_cast<Transaction*>(b::root());
+	}
+
 	bool c::txTransfer(Params& p, ostream& os) {
 		ptr<symbol::core::Transfer> tx;
-		if (blobOverriden()) {
-			if (!symbol::core::Transaction::isTransferTransaction(blob())) {
+		if (root()->blobOverriden()) {
+			if (!symbol::core::Transaction::isTransferTransaction(root()->blob())) {
 				os << "Blob is not a transfer transaction.";
 				return false;
 			}
-			auto r = network().createTransfer(blob());
+			auto r = root()->network().createTransfer(root()->blob());
 			if (is_ko(r.first)) {
 				assert(r.second==nullptr);
 				os << r.first;
@@ -83,14 +106,14 @@ namespace symbol { namespace core { namespace hmi {
 
 			ptr<PublicKey> pk{nullptr};
 			ptr<UnresolvedAddress> addr{nullptr};
-			string e = network().parse(p.get(Recipient_Flag), pk, addr, networkOverriden());
+			string e = root()->network().parse(p.get(Recipient_Flag), pk, addr, root()->networkOverriden());
 			if ( !e.empty() ) {
 				os << e;
 				return false;
 			}
 			delete pk;
 
-			auto r = network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
+			auto r = root()->network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
 			delete addr;
 			if (is_ko(r.first)) {
 				assert(r.second==nullptr);
@@ -101,8 +124,8 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		
 		ptr<PrivateKey> sk{nullptr};
-		if (p.is_set(Privkey_Flag)) {
-			sk = core::Keys::createPrivateKey( p.get(Privkey_Flag) );
+		if (p.is_set(Keys::Privkey_Flag)) {
+			sk = core::Keys::createPrivateKey( p.get(Keys::Privkey_Flag) );
 			if (sk == nullptr) {
 				os << "Input is not a private key.";
 				return false;
@@ -119,11 +142,10 @@ namespace symbol { namespace core { namespace hmi {
 		delete tx;
 		return true;
 	}
-*/
+
 	void c::pass1(ParamPath& v) {
 		b::pass1(v);
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
-/*
 		{
 			auto p=v.lookup({}); //TODO replace strings with their section name var
 			assert(p!=nullptr);
@@ -141,39 +163,11 @@ namespace symbol { namespace core { namespace hmi {
 				}
 			}
 		}
-*/
-	}
-
-	bool c::tx(Params& p, ostream& os) {
-	/*
-		auto r = network().createTransaction(p.get(Mem_Flag));
-		if (is_ko(r.first)) {
-			os << r.first;
-			return false;
-		}
-		assert(m_tx == nullptr);
-		m_tx = r.second;
-		return true;
-		*/
-		return true;
-	}
-
-	ptr<c::Section> c::createSectionTxTransfer() {
-		auto s=new Transfer();
-		//s->set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
-		return s;
-	}
-
-	ptr<c::Section> c::createSectionTx() {
-		auto s=new Section(Params{});
-		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTxTransfer());
-		s->set_handler([&](Params& p, ostream& os) -> bool { return tx(p, os); });
-		return s;
 	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{TX_Command, TX_Command_Desc}, createSectionTx());
+		set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
 	}
 
 }}}

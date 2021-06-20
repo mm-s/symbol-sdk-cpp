@@ -30,6 +30,8 @@
 
 namespace symbol { namespace core {
 
+	class Transfer;
+	
 	/// Instance covering identified networks.
 	class Network {
 	public:

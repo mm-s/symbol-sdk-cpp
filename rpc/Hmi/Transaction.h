@@ -33,12 +33,8 @@ namespace symbol { namespace hmi {
 
 	protected:
 
-		///Opportunity to rewrite Params before command execution.
-		void pass1(ParamPath&) override;
+		ptr<Section> createSectionTxTransfer() override; /// Init
 
-	private:
-		//ptr<Section> createSectionTxTransfer() override;
-		bool txTransfer(Params&, ostream&) override;
 
 
 

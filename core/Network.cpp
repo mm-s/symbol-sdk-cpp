@@ -22,6 +22,7 @@
 #include "Network.h"
 #include "catapult/Address.h"
 #include "Transaction.h"
+#include "Transaction/Transfer.h"
 #include "catapult/EntityType.h"
 #include "catapult/EntityIoUtils.h"
 #include "catapult/TransferEntityType.h"
@@ -158,7 +159,6 @@ namespace symbol { namespace core {
 		
 	}
 
-
 	string c::nodesUrl() const {
 		using namespace catapult::model;
 		if (m_identifier == Identifier::Public_Test) {
@@ -275,8 +275,6 @@ namespace symbol { namespace core {
 	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const {
 		return Transfer::create(*this, rcpt, a, m, f, d, msg);
 	}
-
-	
 
 }} // Namespaces
 
