@@ -61,14 +61,14 @@ c::section(): m_pdef({}) {
 	constructor();
 }
 
-c::section(function<bool(const params&, ostream&)>f): m_pdef({}), handler(f) {
+c::section(function<bool(params&, ostream&)>f): m_pdef({}), handler(f) {
 	assert(m_pdef.check_unique());
 }
 
 void c::constructor() {
 	auto& def = const_cast<params&>(m_pdef);
 	def.emplace_back(flagdef{'h', "help", true, false, "", "Prints this help."});
-	handler = [](const params& p, ostream& os) -> bool {
+	handler = [](params& p, ostream& os) -> bool {
 		os << "Not implemented.\n";
 		return false;
 	};
@@ -175,12 +175,12 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 	}
 }
 
-void c::set_handler(function<bool(const params&, ostream&)> f) {
+void c::set_handler(function<bool(params&, ostream&)> f) {
 	handler=f;
 	skip_handler=false;
 }
 
-bool c::fillv(param_path& v, istream& is) const {
+bool c::fillv(param_path& v, istream& is) {
 	assert(m_pdef.check_unique());
 	params* p = new params(m_pdef, is);
 	v.emplace_back(make_pair(this, p));
@@ -219,7 +219,7 @@ bool c::fillv(param_path& v, istream& is) const {
 	return s->fillv(v, is);
 }
 
-bool c::exec(const param_path& v, param_path::const_iterator i) const {
+bool c::exec(const param_path& v, param_path::const_iterator i) {
 	params* p = i->second;
 	if (p->is_set('h')) {
 		auto n = i+1;
@@ -313,7 +313,7 @@ void c::pass1(param_path& v) {
 	}
 }
 
-bool c::exec(istream& is) const {
+bool c::exec(istream& is) {
 	param_path v;
 	auto r = fillv(v, is);
 	if (!r) {
@@ -325,11 +325,17 @@ bool c::exec(istream& is) const {
 	return r;
 }
 
-const c* c::lookup(const string& cmd) const {
+c* c::lookup(const string& cmd) const {
 	for (auto i = begin(); i != end(); ++i) {
 		if (i->first.name == cmd) return i->second;
 	}
 	return nullptr;
+}
+
+c* c::root() {
+	auto p=this;
+	while(p->parent != nullptr) p = p->parent;
+	return p;
 }
 
 const c* c::root() const {
@@ -346,6 +352,21 @@ bool c::ignore(char flag) const {
 		return false;
 	}
 	return parent->ignore(flag);
+}
+
+c* c::lookup(const param_path& v, param_path::const_iterator t) {
+	assert(t != v.end());
+	if (v.empty()) return nullptr;
+	auto s = root();
+	auto i = v.begin();
+	assert(i->first->isRoot());
+	if (v.size() == 1) return s;
+	while(i != t) {
+		++i;
+		s = i->first;
+		if (s == nullptr) return nullptr;
+	}
+	return s;
 }
 
 const c* c::lookup(const param_path& v, param_path::const_iterator t) const {
@@ -501,6 +522,13 @@ void params::dump_set(const string& pfx, const section& sec, ostream& os) const 
 flagdef* params::lookup(const string& f) {
 	for (auto i = begin(); i != end(); ++i) {
 		if (*i==f) return &*i;
+	}
+	return nullptr;
+}
+
+flagdef* params::lookup(char f) {
+	for (auto i = begin(); i != end(); ++i) {
+		if (i->short_name == f) return &*i;
 	}
 	return nullptr;
 }

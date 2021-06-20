@@ -25,6 +25,8 @@
 #include "catapult/TransferBuilder.h"
 #include "catapult/HexFormatter.h"
 #include "catapult/RawBuffer.h"
+#include "catapult/EntityIoUtils.h"
+#include "catapult/BufferInputStreamAdapter.h"
 #include "catapult/TransactionExtensions.h"
 #include <vector>
 #include <type_traits>
@@ -50,42 +52,89 @@ namespace symbol { namespace core {
 		delete m_catapultTx;
 	}
 
-	pair<ko, ptr<c>> c::create(const string& memHex) {
-		vector<uint8_t> mem;
-		//Get from the bytes the instance type.
-		if (!catapult::utils::TryParseHexStringIntoContainer(memHex.data(), memHex.size(), mem)) {
-			return make_pair("KO 50948", nullptr);
+/*
+utils::NonCopyable
+	uint32_t Size; /// Entity size.
+SizePrefixedEntity
+	uint32_t VerifiableEntityHeader_Reserved1;
+	catapult::Signature Signature;
+VerifiableEntityHeader
+	Key SignerPublicKey;
+	uint32_t EntityBody_Reserved1;
+	uint8_t Version;
+	NetworkIdentifier Network;
+	EntityType Type;
+EntityBody
+VerifiableEntity
+	Amount MaxFee; /// Maximum transaction fee paid for confirmation./// \note Actual fee paid is dependent on containing block.
+	Timestamp Deadline; /// Transaction deadline.
+Transaction
+
+*/
+	bool c::isTransaction(const Blob& blob) {
+		auto is = catapult::io::BufferInputStreamAdapter(blob);
+		try {
+			auto ptx = catapult::io::ReadEntity<catapult::model::Transaction>(is);
+			return catapult::model::ToBasicEntityType(ptx->Type) == catapult::model::BasicEntityType::Transaction;
 		}
-		/*
-		static_assert(std::is_trivially_copyable<catapult::model::Transaction>::value);
-		catapult::model::Transaction* disguised=reinterpret_cast<catapult::model::Transaction*>(mem.data());
-		catapult::model::Transaction* tx=new catapult::model::Transaction(*disguised);
-
-		string instance_type;
-		instance_type = "transfer";
-		if ( instance_type == "transfer" ) {
-			return new Transfer(tx);
+		catch (...) {
+			///CATAPULT_THROW_INVALID_ARGUMENT("size is insufficient");
 		}
-		delete tx;
-		*/
-		return make_pair("KO 50947", nullptr);
+		return false;
+	}
+
+	bool c::isTransferTransaction(const Blob& blob) {
+		auto is = catapult::io::BufferInputStreamAdapter(blob);
+		try {
+			auto ptx = catapult::io::ReadEntity<catapult::model::TransferTransaction>(is);
+			return ptx->Type == catapult::model::Entity_Type_Transfer;
+			
+		}
+		catch (...) {
+		}
+		return false;
+	}
+
+	
+
+	pair<ko, ptr<Transfer>> Transfer::create(const Network& n, const Blob& mem) {
+		auto is = catapult::io::BufferInputStreamAdapter(mem);
+
+	//	catapult::model::IsSizeValidT<catapult::model::Transaction>
+	//	EntityType type=
+	//	BasicEntityType bet=catapult::model::ToBasicEntityType(entity.Type);
+		std::unique_ptr<catapult::model::TransferTransaction> ptx;
+		try {
+			ptx = catapult::io::ReadEntity<catapult::model::TransferTransaction>(is);
+			assert(ptx->Type == catapult::model::Entity_Type_Transfer);
+		}
+		catch (...) {
+			///CATAPULT_THROW_INVALID_ARGUMENT("size is insufficient");
+			return make_pair("KO 84039", nullptr);
+		}
+		if (n.identifier() != ptx->Network) {
+			return make_pair("KO 82291", nullptr);
+		}
+		return make_pair(ok, new Transfer(n, ptx.release()));
 	}
 
 
 
 
-	Transfer::Transfer(const Network& n, ptr<catapult::model::Transaction> t): b(n, t) {
+	Transfer::Transfer(const Network& n, ptr<catapult::model::TransferTransaction> t): m_catapultTransferTx(t), b(n, t) {
 	}
 
-	Transfer::Transfer(Transfer&& other): b(move(other)) {
+	Transfer::Transfer(Transfer&& other): b(move(other)), m_catapultTransferTx(other.m_catapultTransferTx) {
+		other.m_catapultTransferTx = nullptr;
 	}
 
 
-	ptr<Transfer> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg) {
+	pair<ko, ptr<Transfer>> Transfer::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg) {
 		auto k=Keys::generate();
 		catapult::builders::TransferBuilder builder(n.identifier(), k.second.publicKey());
-		
-		builder.setMessage(catapult::utils::RawBuffer(msg.data(), msg.size()));
+		if (!msg.empty()) {
+			builder.setMessage(catapult::utils::RawBuffer(msg.data(), msg.size()));
+		}
 		builder.setRecipientAddress(rcpt);
 	//	for (const auto& seed : seeds) {
 	//		auto mosaicId = mosaicNameToMosaicIdMap.at(seed.Name);
@@ -95,7 +144,10 @@ namespace symbol { namespace core {
 		builder.addMosaic({ um, am });
 		builder.setDeadline(Timestamp(deadline.millis()));
 		auto x = builder.build().release();
-		return new Transfer(n, x);
+//cout << "XXXXXXXXXXXXXXXXXXXX" << endl;
+//cout << x->Network << " " << x->Size << " bytes" << endl;
+		
+		return make_pair(ok, new Transfer(n, x));
 	}
 
 	bool c::sign(const Keys::PrivateKey& sk) {
@@ -134,10 +186,9 @@ namespace symbol { namespace core {
 		if (m_catapultTx==nullptr) {
 			return false;
 		}
-		auto sz=sizeof(*m_catapultTx);
-		vector<char> buf;
-		buf.resize(sz);
-		memcpy(buf.data(), m_catapultTx, sz);
+		Blob buf;
+		buf.resize(m_catapultTx->Size);
+		memcpy(buf.data(), m_catapultTx, m_catapultTx->Size);
 		os << catapult::utils::HexFormat(buf);
 		return true;
 	}

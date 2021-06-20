@@ -85,7 +85,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	protected:
 		/// Handler for empty command
-		virtual bool mainHandler(const Params& p, ostream& os);
+		virtual bool mainHandler(Params& p, ostream& os);
 
 	private:
 		/// Flag configuration for initalizing the section

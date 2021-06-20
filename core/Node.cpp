@@ -18,31 +18,20 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-#pragma once
 
-#include "Keys.h"
+#include "Node.h"
 
-namespace symbol { namespace hmi {
+namespace symbol { namespace core {
+	/// Implementation for the class c 
+	using c = Node;
+	using std::move;
+	using std::ostringstream;
+	using std::make_pair;
 
-	/// Human-Machine Interface. Transactions (tx) section command processor (online+offline)
-	class Transaction: public symbol::hmi::Keys {
-		using b = symbol::hmi::Keys;
+	ko c::start() {
+		return "KO 06995";
+	}
 
-	public:
-		using b::Keys;
+}} // Namespaces
 
-	protected:
-
-		///Opportunity to rewrite Params before command execution.
-		void pass1(ParamPath&) override;
-
-	private:
-		//ptr<Section> createSectionTxTransfer() override;
-		bool txTransfer(Params&, ostream&) override;
-
-
-
-	};
-
-}}
 

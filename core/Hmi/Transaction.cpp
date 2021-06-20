@@ -30,55 +30,73 @@ namespace symbol { namespace core { namespace hmi {
 		delete m_tx;
 	}
 
-	bool c::txTransfer(const Params& p, ostream& os) {
-		Amount am;
-		if (!core::Transaction::parse(p.get(Amount_Flag), am)) {
-			os << "Invalid amount.";
-			return false;
+	bool c::txTransfer(Params& p, ostream& os) {
+		ptr<symbol::core::Transfer> tx;
+		if (blobOverriden()) {
+			if (!symbol::core::Transaction::isTransferTransaction(blob())) {
+				os << "Blob is not a transfer transaction.";
+				return false;
+			}
+			auto r = network().createTransfer(blob());
+			if (is_ko(r.first)) {
+				assert(r.second==nullptr);
+				os << r.first;
+				return false;
+			}
+			tx=r.second;
 		}
-		if (am.unwrap()==0) {
-			os << "Invalid amount.";
-			return false;
-		}
+		else {
+			Amount am;
+			if (!core::Transaction::parse(p.get(Amount_Flag), am)) {
+				os << "Invalid amount.";
+				return false;
+			}
+			if (am.unwrap()==0) {
+				os << "Invalid amount.";
+				return false;
+			}
 
-		MosaicId mo;
-		if (!core::Transaction::parse(p.get(Mosaic_Flag), mo)) {
-			os << "Invalid mosaic.";
-			return false;
-		}
+			MosaicId mo;
+			if (!core::Transaction::parse(p.get(Mosaic_Flag), mo)) {
+				os << "Invalid mosaic.";
+				return false;
+			}
 
-		Amount maxfee;
-		if (!core::Transaction::parse(p.get(Maxfee_Flag), maxfee)) {
-			os << "Invalid maxfee.";
-			return false;
-		}
+			Amount maxfee;
+			if (!core::Transaction::parse(p.get(Maxfee_Flag), maxfee)) {
+				os << "Invalid maxfee.";
+				return false;
+			}
 
-		TimeSpan deadline;
-		if (!core::Transaction::parse(p.get(Deadline_Flag), deadline)) {
-			os << "Invalid deadline.";
-			return false;
-		}
+			TimeSpan deadline;
+			if (!core::Transaction::parse(p.get(Deadline_Flag), deadline)) {
+				os << "Invalid deadline.";
+				return false;
+			}
 
-		vector<uint8_t> msg;
-		if (p.is_set(Message_Flag)) {
-			string s = p.get(Message_Flag);
-			msg = vector<uint8_t>(s.begin(), s.end());
-		}
+			vector<uint8_t> msg;
+			if (p.is_set(Message_Flag)) {
+				string s = p.get(Message_Flag);
+				msg = vector<uint8_t>(s.begin(), s.end());
+			}
 
-		ptr<PublicKey> pk{nullptr};
-		ptr<UnresolvedAddress> addr{nullptr};
-		string e = network().parse(p.get(Recipient_Flag), pk, addr, networkOverriden());
-		if ( !e.empty() ) {
-			os << e;
-			return false;
-		}
-		delete pk;
+			ptr<PublicKey> pk{nullptr};
+			ptr<UnresolvedAddress> addr{nullptr};
+			string e = network().parse(p.get(Recipient_Flag), pk, addr, networkOverriden());
+			if ( !e.empty() ) {
+				os << e;
+				return false;
+			}
+			delete pk;
 
-		ptr<Transfer> tx = network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
-		delete addr;
-		if (tx == nullptr) {
-			os << "Invalid transfer.";
-			return false;
+			auto r = network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
+			delete addr;
+			if (is_ko(r.first)) {
+				assert(r.second==nullptr);
+				os << r.first;
+				return false;
+			}
+			tx = r.second;
 		}
 		
 		ptr<PrivateKey> sk{nullptr};
@@ -105,40 +123,42 @@ namespace symbol { namespace core { namespace hmi {
 		b::pass1(v);
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
 		{
-			auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
-			if (p!=nullptr) {
-	//cout << "KKKKKKKK" << endl;
-				if(p->is_set(Mem_Flag)) {
-	//cout << "AAAAAAAAAA" << endl;
-					p->set_optional(Recipient_Flag);
-					p->set_optional(Amount_Flag);
-					p->set_optional(Mosaic_Flag);
-					p->set_optional(Maxfee_Flag);
-					p->set_optional(Deadline_Flag);
-					{
-						auto p=v.lookup({}); //TODO replace strings with their section name var
-						if (p!=nullptr) {
-							p->set_optional(Network::Seed_Flag);
-						}
+			auto p=v.lookup({}); //TODO replace strings with their section name var
+			assert(p!=nullptr);
+			if(p->is_set(Network::Blob_Flag)) {
+				p->set_optional(Network::Seed_Flag);
+				{
+					auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
+					if(p!=nullptr) {
+						p->set_optional(Recipient_Flag);
+						p->set_optional(Amount_Flag);
+						p->set_optional(Mosaic_Flag);
+						p->set_optional(Maxfee_Flag);
+						p->set_optional(Deadline_Flag);
 					}
-
 				}
-	//cout << "XXXXXXXXXXXXXXXXXX" << endl;
 			}
 		}
 	}
 
-	bool c::tx(const Params& p, ostream& os) {
-		if (p.is_set(Mem_Flag)) {
-			auto r = core::Transaction::create(p.get(Mem_Flag));
-			if (is_ko(r.first)) {
-				os << r.first;
-				return false;
-			}
-			assert(m_tx == nullptr);
-			m_tx = r.second;
+	bool c::tx(Params& p, ostream& os) {
+	/*
+		auto r = network().createTransaction(p.get(Mem_Flag));
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
 		}
+		assert(m_tx == nullptr);
+		m_tx = r.second;
 		return true;
+		*/
+		return true;
+	}
+
+	ptr<c::Section> c::createSectionTxUnknown() {
+		auto s=new Section(Params{});
+//		s->set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
+		return s;
 	}
 
 	ptr<c::Section> c::createSectionTxTransfer() {
@@ -149,16 +169,15 @@ namespace symbol { namespace core { namespace hmi {
 			{Maxfee_Flag, Maxfee_Name, false, true, Maxfee_Default, Maxfee_Desc},
 			{Deadline_Flag, Deadline_Name, false, true, Deadline_Default, Deadline_Desc},
 			{Privkey_Flag, Privkey_Name, true, true, Privkey_Default, Privkey_Desc},
-			{Mem_Flag, Mem_Name, true, true, Mem_Default, Mem_Desc},
 		});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return txTransfer(p, os); });
+		s->set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
 		return s;
 	}
 
 	ptr<c::Section> c::createSectionTx() {
 		auto s=new Section(Params{});
 		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTxTransfer());
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return tx(p, os); });
+		s->set_handler([&](Params& p, ostream& os) -> bool { return tx(p, os); });
 		return s;
 	}
 

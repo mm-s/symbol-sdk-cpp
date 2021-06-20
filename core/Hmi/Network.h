@@ -28,10 +28,17 @@ namespace symbol { namespace core { namespace hmi {
 	class Network: public hmi::Main {
 		/// Base class b
 		using b = hmi::Main;
-
 	public:
 		static constexpr auto Network_Flag{'n'};
 		static constexpr auto Seed_Flag{'s'};
+		
+		static constexpr auto Blob_Flag{'B'};
+		static constexpr auto Blob_Name{"blob"};
+		static constexpr auto Blob_Default{""};
+		static constexpr auto Blob_Desc{"Memory representation in Hex format."};
+
+	public:
+		using Blob = symbol::core::Network::Blob;
 
 	public:
 		/// Construction, initialization, destruction
@@ -51,8 +58,13 @@ namespace symbol { namespace core { namespace hmi {
 		inline core::Network& network() { return *m_network; }
 
 		/// Tells whether the user has explicitely set the network identifier.
-		inline bool networkOverriden() const { return m_networkOverriden; }
 		inline const string& home() const { return m_home; }
+		inline bool networkOverriden() const { return m_networkOverriden; }
+		ko setNetworkIdentifier(Params& p, const core::Network::Identifier&);
+
+		inline const Blob& blob() const { return m_blob; }
+		inline bool blobOverriden() const { return m_blobOverriden; }
+
 	public:
 		/// Gettrs & Setters
 		/// User selectd JSON output
@@ -73,7 +85,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	protected:
 		/// Handler for empty command
-		virtual bool mainHandler(const Params& p, ostream& os);
+		virtual bool mainHandler(Params&, ostream&);
 
 	private:
 		/// Flag configuration for initalizing the section
@@ -83,6 +95,7 @@ namespace symbol { namespace core { namespace hmi {
 		static FlagDef flagdefOutput();
 		static FlagDef flagdefHideLabels();
 		static FlagDef flagdefSeed();
+		static FlagDef flagdefBlob();
 
 	private:
 		/// Output preferences
@@ -93,6 +106,9 @@ namespace symbol { namespace core { namespace hmi {
 		ptr<core::Network> m_network{nullptr};
 		bool m_networkOverriden{false};
 		string m_home;
+
+		bool m_blobOverriden{false};
+		symbol::core::Network::Blob m_blob;
 	};
 
 	/// String converter. Type with special treatment required in order to be printed as a number, not as a char.

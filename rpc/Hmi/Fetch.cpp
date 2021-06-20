@@ -225,7 +225,7 @@ namespace symbol { namespace hmi {
 		
 	}
 
-	bool c::mainHandler(const Params& p, ostream& os) {
+	bool c::mainHandler(Params& p, ostream& os) {
 
 		m_url = p.get(Url_Flag);
 		return b::mainHandler(p, os);

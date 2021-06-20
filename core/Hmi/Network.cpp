@@ -29,22 +29,20 @@ namespace symbol { namespace core { namespace hmi {
 	c::Network(): b(Params{
 			flagdefNetwork(),
 			flagdefSeed(),
+			flagdefBlob(),
 		}) {
 	}
 
 	c::Network(Params&&p): b(move(p)) {
 		add(flagdefNetwork());
 		add(flagdefSeed());
+		add(flagdefBlob());
 	}
 
 	c::~Network() {
 		delete m_network;
 	}
 
-	void c::init(const string& nm, const string& dc) {
-		b::init(nm, dc);
-		set_handler([&](const Params& p, ostream& os) -> bool { return mainHandler(p, os); });
-	}
 
 	c::FlagDef c::flagdefNetwork() {
 		ostringstream os;
@@ -58,23 +56,31 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{Seed_Flag, "seed", true, true, "", "Network generation hash seed."};
 	}
 
-	bool c::mainHandler(const Params& p, ostream& os) {
-		m_networkOverriden = p.is_set(Network_Flag);
-		core::Network::Identifier t = core::Network::identifier(p.get(Network_Flag));
-		delete m_network;
-		m_network = new core::Network(t);
-		if (!network().isValidIdentifier()) {
-			os << "Network identifier '" << p.get(Network_Flag) << "' is invalid.";
-			return false;
+	c::FlagDef c::flagdefBlob() {
+		return FlagDef{Blob_Flag, Blob_Name, true, true, Blob_Default, Blob_Desc};
+	}
+
+	ko c::setNetworkIdentifier(Params& p, const core::Network::Identifier& newId) {
+		assert(m_network!=nullptr);
+		if (!core::Network::isValid(newId)) {
+			return "KO 66091 Invalid Network Id.";
 		}
-		
-		if (p.is_set(Seed_Flag)) {
-			if (!network().setSeed(p.get(Seed_Flag))) {
-				os << "Network seed '" << p.get(Seed_Flag) << "' is invalid.";
-				return false;
+		if (m_networkOverriden) {
+			if (m_network->identifier()!=newId) {
+				return "KO 66095 Network Id set twice with different values.";
 			}
+			return ok;
 		}
-		return true;
+		if (m_network->identifier()!=newId) {
+			delete m_network;
+			m_network = new core::Network(newId);
+		}
+		m_networkOverriden = true;
+		
+		Params& pn=const_cast<Params&>(p);
+		auto f=pn.lookup(Network_Flag);
+		f->value=symbol::core::Network::identifierStr(newId);
+		return ok;
 	}
 
 	void c::pass1(ParamPath& v) {
@@ -86,6 +92,50 @@ namespace symbol { namespace core { namespace hmi {
 			assert(r->has(Seed_Flag));
 			r->set_mandatory(Seed_Flag);
 		}
+	}
+
+	bool c::mainHandler(Params& p, ostream& os) {
+		assert(!m_networkOverriden);
+		m_networkOverriden = p.is_set(Network_Flag);
+		core::Network::Identifier t = core::Network::identifier(p.get(Network_Flag));
+		delete m_network;
+		m_network = new core::Network(t);
+		if (!network().isValidIdentifier()) {
+			os << "Network identifier '" << p.get(Network_Flag) << "' is invalid.";
+			return false;
+		}
+		m_blobOverriden = p.is_set(Blob_Flag);
+		if (m_blobOverriden) {
+			{
+				{
+					auto r = symbol::core::Network::decodeBlob(p.get(Blob_Flag));
+					if (is_ko(r.first)) {
+						os << r.first;
+						return false;
+					}
+					m_blob=move(r.second);
+					assert(!m_blob.empty());
+				}
+				auto nid = core::Network::identifier(m_blob);
+				auto r = setNetworkIdentifier(p, nid);
+				if (is_ko(r)) {
+					os << r;
+					return false;
+				}
+			}
+		}
+		if (p.is_set(Seed_Flag)) {
+			if (!network().setSeed(p.get(Seed_Flag))) {
+				os << "Network seed '" << p.get(Seed_Flag) << "' is invalid.";
+				return false;
+			}
+		}
+		return true;
+	}
+
+	void c::init(const string& nm, const string& dc) {
+		b::init(nm, dc);
+		set_handler([&](Params& p, ostream& os) -> bool { return mainHandler(p, os); });
 	}
 
 }}}

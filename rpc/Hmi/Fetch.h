@@ -91,7 +91,7 @@ namespace symbol { namespace hmi {
 		inline bool offline() const { return m_offline; }
 
 	protected:
-		bool mainHandler(const Params&, ostream&) override;
+		bool mainHandler(Params&, ostream&) override;
 
 		///Opportunity to rewrite Params before command execution.
 		void pass1(ParamPath&) override;

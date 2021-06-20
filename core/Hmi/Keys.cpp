@@ -32,7 +32,7 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{Acc_Flag, Acc_Name, true, true, Acc_Default, Acc_Desc};
 	}
 
-	bool c::keys(const Params& p, ostream& os) {
+	bool c::keys(Params& p, ostream& os) {
 		if( p.is_set(Privkey_Flag) && p.is_set(Acc_Flag) ) {
 			os << "Multiple inputs.";
 			return false;
@@ -86,7 +86,7 @@ namespace symbol { namespace core { namespace hmi {
 			flagdefPrivkey(false),
 			flagdefAcc(),
 		});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return keys(p, os); });
+		s->set_handler([&](Params& p, ostream& os) -> bool { return keys(p, os); });
 		return s;
 	}
 

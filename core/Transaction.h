@@ -27,6 +27,7 @@
 #include "catapult/NetworkIdentifier.h"
 #include "catapult/Mosaic.h"
 #include "catapult/TimeSpan.h"
+#include "catapult/TransferTransaction.h"
 
 namespace symbol { namespace core {
 	using namespace std;
@@ -42,6 +43,7 @@ namespace symbol { namespace core {
 		using TimeSpan = catapult::utils::TimeSpan;
 		using Msg = vector<uint8_t>;
 		using NetworkIdentifier = catapult::model::NetworkIdentifier;
+		using Blob = std::vector<uint8_t>;
 
 		/// Class Mosaic. Just making space for the comment.
 		class Mosaic: public catapult::model::Mosaic {
@@ -61,8 +63,7 @@ namespace symbol { namespace core {
 		Transaction(Transaction&&);
 		virtual ~Transaction();
 
-		static pair<ko, ptr<Transaction>> create(const string& memHex);
-
+		//static pair<ko, ptr<Transaction>> create(const string& memHex);
 
 		template<typename t>
 		static bool parse(const string& input, t&o) {
@@ -74,25 +75,27 @@ namespace symbol { namespace core {
 				return false;
 			}
 		}
+	public:
+		static bool isTransaction(const Blob&);
+		static bool isTransferTransaction(const Blob&);
 
 		bool sign(const Keys::PrivateKey&);
 
+	public:
 		ptr<catapult::model::Transaction> m_catapultTx{ nullptr };
 		const Network& m_network;
 	};
 
 	class Transfer: public Transaction {
 		using b = Transaction;
-
 	public:
-		Transfer(const Network&, ptr<catapult::model::Transaction>);
+		Transfer(const Network&, ptr<catapult::model::TransferTransaction>);
 		Transfer(Transfer&&);
 		bool toStream(ostream&) const;
+		static pair<ko, ptr<Transfer>> create(const Network& n, const Blob& mem);
+		static pair<ko, ptr<Transfer>> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg);
 
-		static ptr<Transfer> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg);
-		ptr<catapult::model::Transaction> m_catapultTransferTx{ nullptr };
-
-
+		ptr<catapult::model::TransferTransaction> m_catapultTransferTx{ nullptr };
 	};
 
 }} //Namespaces

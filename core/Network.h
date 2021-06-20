@@ -36,7 +36,8 @@ namespace symbol { namespace core {
 		using Identifier = Transaction::NetworkIdentifier;
 		using GenerationHashSeed = catapult::GenerationHashSeed;
 		using ResolverContext = catapult::model::ResolverContext;
-
+		using Blob = Transaction::Blob;
+	public:
 		/// Address tied to a Network instance
 		class UnresolvedAddress: public catapult::UnresolvedAddress {
 			/// Base class
@@ -48,6 +49,8 @@ namespace symbol { namespace core {
 			UnresolvedAddress(b&&, const Network&);
 			UnresolvedAddress(UnresolvedAddress&&);
 
+			
+
 			/// Validation
 			bool isValid() const;
 			static bool isAddress(const string& hex);
@@ -57,16 +60,17 @@ namespace symbol { namespace core {
 
 		private:
 			const Network& m_network;
-	};
+		};
 
-	class Account: UnresolvedAddress {
-		public:
-	};
+	public:
+		class Account: UnresolvedAddress {
+			public:
+		};
 
 	public:
 		/// Construction, Initialization, Destruction
 		Network(const Identifier&);
-		Network(const string& identifier);
+		Network(const string& identifierName);
 		virtual ~Network();
 
 	public:
@@ -84,6 +88,7 @@ namespace symbol { namespace core {
 		static Identifier identifierFromName(const string& name);
 		static Identifier identifierFromAddressHex(const string& hex);
 		static Identifier identifierFromAccount(const string& enc);
+		static Identifier identifierFromEntity(const string& memHex);
 
 		/// Obtain PublicKey and/or Address from a string representing either an Hex PublicKey, an Hex Address or a formatted Account.
 		/// Fails when the network identifier encoded in the address -if any- doesn't match this instance Identifier.
@@ -125,14 +130,19 @@ namespace symbol { namespace core {
 		string identifierHex() const;
 		const char* identifierStr() const;
 		static const char* identifierStr(Identifier t);
-		static Identifier identifier(const string&);
+		static Identifier identifier(const string& name); // can return Identifier::Zero
+		static Identifier identifier(const Blob&); // can return Identifier::Zero
 		inline const Identifier& identifier() const { return m_identifier; }
 		inline const GenerationHashSeed& seed() const { return m_seed; }
 		inline const ResolverContext& resolver() const { return m_resolver; }
 
-	public:	/// Tranactions
+		static pair<ko, Blob> decodeBlob(const string& Hex);
+
+	public:	/// Transactions
 		/// Creates a Transfer transaction
-		[[nodiscard]] ptr<Transfer> createTransfer(const UnresolvedAddress& rcpt, const Amount&, const MosaicId&, const Amount& maxfee, const TimeSpan& deadline, const vector<uint8_t>& msg);
+		pair<ko, ptr<Transfer>> createTransfer(const Blob& mem) const;
+		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const;
+
 
 	private:
 		Identifier m_identifier;

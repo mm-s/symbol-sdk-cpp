@@ -69,11 +69,6 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Message_Default{""};
 		static constexpr auto Message_Desc{"Message."};
 
-		static constexpr auto Mem_Flag{'F'};
-		static constexpr auto Mem_Name{"mem"};
-		static constexpr auto Mem_Default{""};
-		static constexpr auto Mem_Desc{"Transaction memory representation in Hex format."};
-
 	public:		
 		/// Default constructors
 		using b::Keys;
@@ -86,13 +81,14 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// menu command: tx
+		ptr<Section> createSectionTxUnknown();
 		ptr<Section> createSectionTx();
 
 	protected: /// menu command: tx transfer
-		bool tx(const Params&, ostream&); /// Command Handler
+		bool tx(Params&, ostream&); /// Command Handler
 
 		ptr<Section> createSectionTxTransfer(); /// Init
-		virtual bool txTransfer(const Params&, ostream&); /// Command Handler
+		virtual bool txTransfer(Params&, ostream&); /// Command Handler
 	
 	private:
 		core::Transaction* m_tx;

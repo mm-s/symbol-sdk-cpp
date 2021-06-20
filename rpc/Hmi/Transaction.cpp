@@ -48,7 +48,7 @@ namespace symbol { namespace hmi {
 	}
 */
 
-	bool c::txTransfer(const Params&p, ostream& os) {
+	bool c::txTransfer(Params&p, ostream& os) {
 		if ( !offline() ) {
 			dto::node_info o;
 			if ( !o.fetch( url() ) ) {

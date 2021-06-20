@@ -22,6 +22,11 @@
 #include "Network.h"
 #include "catapult/Address.h"
 #include "Transaction.h"
+#include "catapult/EntityType.h"
+#include "catapult/EntityIoUtils.h"
+#include "catapult/TransferEntityType.h"
+#include "catapult/SizeChecker.h"
+#include "catapult/BufferInputStreamAdapter.h"
 
 namespace symbol { namespace core {
 	/// Implementation for the class c 
@@ -34,7 +39,7 @@ namespace symbol { namespace core {
 	}
 
 	c::Network(const string& s) {
-		m_identifier=identifier(s);
+		m_identifier = identifier(s);
 	}
 
 	c::~Network() {
@@ -138,6 +143,22 @@ namespace symbol { namespace core {
 		return r;
 	}
 
+	c::Identifier c::identifier(const Blob& blob) {
+		auto is = catapult::io::BufferInputStreamAdapter(blob);
+		std::unique_ptr<catapult::model::VerifiableEntity> ptx;
+		try {
+			ptx = catapult::io::ReadEntity<catapult::model::VerifiableEntity>(is);
+			//assert(ptx->Type == catapult::model::Entity_Type_Transfer);
+		}
+		catch (...) {
+			///CATAPULT_THROW_INVALID_ARGUMENT("size is insufficient");
+			return Identifier::Zero;
+		}
+		return ptx->Network;
+		
+	}
+
+
 	string c::nodesUrl() const {
 		using namespace catapult::model;
 		if (m_identifier == Identifier::Public_Test) {
@@ -154,7 +175,7 @@ namespace symbol { namespace core {
 	}
 
 	bool c::listed(const Identifier& t) {
-		using namespace catapult::model;
+		//using namespace catapult::model;
 		switch(t) {
 			case Identifier::Zero: return true;
 			case Identifier::Public: return true;
@@ -234,9 +255,28 @@ namespace symbol { namespace core {
 		return true;
 	}
 
-	ptr<symbol::core::Transfer> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) {
+	pair<ko, c::Blob> c::decodeBlob(const string& hex) {
+		Blob blob;
+		if (hex.size()&1) {
+			return make_pair("KO 44932 malformed hex string.", blob);
+		}
+		blob.resize(hex.size()/2);
+		//Get from the bytes the instance type.
+		if (!catapult::utils::TryParseHexStringIntoContainer(hex.data(), hex.size(), blob)) {
+			return make_pair("KO 50948 Cannot decode hex.", move(blob));
+		}
+		return make_pair(ok, move(blob));
+	}
+
+	pair<ko, ptr<Transfer>> c::createTransfer(const Blob& mem) const {
+		return Transfer::create(*this, mem);
+	}
+
+	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const {
 		return Transfer::create(*this, rcpt, a, m, f, d, msg);
 	}
+
+	
 
 }} // Namespaces
 
@@ -244,4 +284,29 @@ std::ostream& operator << (std::ostream& os, const symbol::core::Network& o) {
 	o.toStream(os);
 	return os;
 }
+
+
+
+
+//pair<ko, ptr<catapult::model::Transfer>> c::createTransfer(const vector<uint8_t>& mem) {
+	
+
+	
+	
+	/*
+	static_assert(std::is_trivially_copyable<catapult::model::Transaction>::value);
+	catapult::model::Transaction* disguised=reinterpret_cast<catapult::model::Transaction*>(mem.data());
+	catapult::model::Transaction* tx=new catapult::model::Transaction(*disguised);
+
+	string instance_type;
+	instance_type = "transfer";
+	if ( instance_type == "transfer" ) {
+		return new Transfer(tx);
+	}
+	delete tx;
+	*/
+//	return make_pair(ok, new Transfer(n, tx));
+//}
+
+
 

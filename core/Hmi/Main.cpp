@@ -45,7 +45,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::init(const string& nm, const string& dc) {
 		b::init(nm, dc);
-		set_handler([&](const Params& p, ostream& os) -> bool { return mainHandler(p, os); });
+		set_handler([&](Params& p, ostream& os) -> bool { return mainHandler(p, os); });
 	}
 
 	c::FlagDef c::flagdefHome() {
@@ -64,7 +64,7 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{HideLabels_Flag, "hide-labels", true, false, "", "Hide field names. (Only on text output mode)"};
 	}
 
-	bool c::mainHandler(const Params& p, ostream& os) {
+	bool c::mainHandler(Params& p, ostream& os) {
 		m_home = p.get(Home_Flag);
 		if (p.is_set(Verbose_Flag)) {
 			//catapult::utils::log::global_logger::set(trace);

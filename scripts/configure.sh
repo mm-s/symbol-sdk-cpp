@@ -58,8 +58,50 @@ function append_h {
 	rm $src
 }
 
-function catapultme {
-	rm -rf core/catapult/*
+#function catapultnew {
+#	grab_classes catapult-server/src/catapult/subscribers core/catapult  
+#	grab_classes catapult-server/src/catapult/consumers core/catapult  
+#	grab_classes catapult-server/src/catapult/io core/catapult  #
+#	grab_classes catapult-server/src/catapult/cache core/catapult  
+#	grab_classes catapult-server/src/catapult/model core/catapult  
+#	grab_classes catapult-server/src/catapult/local/server core/catapult  
+#	grab_classes catapult-server/src/catapult/cache_tx core/catapult  
+#	grab_classes catapult-server/src/catapult/model core/catapult  
+#	grab_classes catapult-server/src/catapult/utils core/catapult  
+#	grab_classes catapult-server/src/catapult/chain core/catapult  
+#	grab_classes catapult-server/src/catapult/ionet core/catapult  
+#	grab_classes catapult-server/src/catapult/thread core/catapult  
+#	grab_classes catapult-server/src/catapult/observers core/catapult  
+#	grab_classes catapult-server/src/catapult/validators core/catapult  
+#	grab_classes catapult-server/src/catapult/disruptor core/catapult  
+#}
+
+function catapult2 {
+	grab_classes catapult-server/src/catapult/extensions core/catapult  TransactionEvent BasicServerHooks ServerHooks ProcessBootstrapper
+	grab_classes catapult-server/src/catapult/local/server core/catapult  NodeContainerSubscriberAdapter NemesisBlockNotifier MemoryCounters LocalNode FileStateChangeStorage
+	grab_classes catapult-server/src/catapult/local core/catapult  ProcessHost
+	grab_classes catapult-server/src/catapult/process core/catapult  ProcessMain
+	grab_classes catapult-server/src/catapult/utils core/catapult  SpinLock SpinReaderWriterLock ShortHash DiagnosticCounter DiagnosticCounterId
+
+	grab_classes catapult-server/src/catapult/io core/catapult  PodIoUtils Stream
+	grab_classes catapult-server/src/catapult/subscribers core/catapult  SubscriberOperationTypes StateChangeInfo StateChangeSubscriber
+
+	grab_classes catapult-server/src/catapult/cache core/catapult  ReadOnlyCatapultCache SubCachePlugin StateHashInfo CacheChangesStorage CacheChanges CatapultCacheDelta 
+	grab_classes catapult-server/src/catapult/model core/catapult  HeightHashPair NetworkInfo HeightGrouping NotificationContext BlockStatementBuilder NotificationPublisher AnnotatedEntityRange EntityRange RangeTypes ChainScore
+	grab_classes catapult-server/src/catapult/cache_tx core/catapult  BasicTransactionsCache UtCache MemoryCacheProxy MemoryCacheOptions MemoryUtCache
+	grab_classes catapult-server/src/catapult/chain core/catapult  ExecutionConfiguration BatchEntityProcessor RemoteNodeSynchronizer ChainSynchronizer ChainFunctions
+	grab_classes catapult-server/src/catapult/ionet core/catapult  NodeInteractionResultCode
+	grab_classes catapult-server/src/catapult/thread core/catapult  Future FutureUtils
+	grab_classes catapult-server/src/catapult/thread/detail core/catapult  FutureSharedState
+	grab_classes catapult-server/src/catapult/disruptor core/catapult  DisruptorConsumer InputSource ConsumerInput DisruptorElement DisruptorTypes
+	grab_classes catapult-server/src/catapult/consumers core/catapult  InputUtils HashCheckOptions BlockChainSyncHandlers BlockChainProcessor BlockConsumers
+	grab_classes catapult-server/src/catapult/observers core/catapult  FunctionalNotificationObserver EntityObserver ObserverStatementBuilder ObserverContext NotificationObserver AggregateNotificationObserver ObserverTypes
+	grab_classes catapult-server/src/catapult/state core/catapult  CatapultState
+	grab_classes catapult-server/src/catapult/validators core/catapult FunctionalNotificationValidator EntityValidator ValidatorContext ValidationResult NotificationValidator AggregateNotificationValidator ValidatorTypes
+
+}
+
+function catapult1 {
 	mv catapult-server/sdk/src/builders/* core/catapult/
 
 	grab_classes catapult-server/src/catapult core/catapult  preprocessor functions plugins exceptions types
@@ -103,6 +145,8 @@ function catapultme {
 	grab_classes catapult-server/src/catapult/ionet/ core/catapult Node NodeRoles NodeVersion
 	grab_classes catapult-server/src/catapult/version/ core/catapult version version_inc
 
+	grab_classes catapult-server/src/catapult/io core/catapult  Stream BufferInputStreamAdapter EntityIoUtils PodIoUtils
+
 
 	mkdir -p core/donna
 	mv catapult-server/external/donna/*.c core/donna/
@@ -117,15 +161,23 @@ function catapultme {
 	sed -i "s/class BasicKeyPair final/class BasicKeyPair/" core/catapult/BasicKeyPair.h
 	sed -i "s/private:/protected:/" core/catapult/BasicKeyPair.h
 
-	replace_includes
 }
+
+#catapultnew
+#replace_includes
+#exit 1
 
 #produce_catbuffer_sources
 rm -rf catapult-server
 git clone --depth 1 $catapult_rep
 rm -rf core/catapult/*
 
-catapultme
+catapult1 #Network, Transactions, Crypto
+#catapult2 #Server Process
+
+replace_includes
+
+echo "Success: type make to create _buildd dir"
 
 exit 0
 

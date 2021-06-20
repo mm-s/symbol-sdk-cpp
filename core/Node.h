@@ -20,42 +20,17 @@
 **/
 #pragma once
 
-#include "../base.h"
-#include "Transaction.h"
+#include "base.h"
 
-namespace symbol { namespace core { namespace hmi {
+namespace symbol { namespace core {
 
-	/// Human-Machine Interface. Keys section command processor (offline)
-	class Wallet: public hmi::Transaction {
-		/// Base class b
-		using b = hmi::Transaction;
-
+	/// Instance covering identified networks.
+	class Node {
 	public:
-		using b::Section;
-		static constexpr const char* Command = "wallet";
 
-		/// Flags and Options
-
-//		static constexpr char Privkey_Flag{'s'};
-//		static constexpr char Acc_Flag{'a'};
-
-	public:
-		/// Construction, initialization, destruction
-		using b::Transaction;
-
-		void init(const string& name, const string& desc) override;
-		void pass1(ParamPath& v) override;
-
-	public:
-//		static FlagDef flagdefPrivkey(bool mandatory);
-//		static FlagDef flagdefAcc();
-
-	private:
-		/// menu command: keys
-		//ptr<Section> createSectionWallet(); /// init
-		bool wallet(const Params&, ostream&); /// Handler, user hitting wallet
-
+		ko start();
 	};
 
-}}}
+}} // namespaces
+
 

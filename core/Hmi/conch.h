@@ -61,6 +61,7 @@ namespace conch {
 		params(b&&);
 		params(const params&, istream&);
 		flagdef* lookup(const string&);
+		flagdef* lookup(char);
 		const string& get(const string&) const;
 		const string& get(char) const;
 		bool is_set(char flag) const;
@@ -86,7 +87,7 @@ namespace conch {
 
 	public:
 		/// Linear path over the tree. Sequence of choices.
-		struct param_path: vector<pair<const section*, params*>> {
+		struct param_path: vector<pair<section*, params*>> {
 			params* lookup(const vector<string>& cmdpath);
 		};
 
@@ -97,7 +98,7 @@ namespace conch {
 		/// Construction, Initialization, Destruction
 		section();
 		section(params&&);
-		section(function<bool(const params&, ostream&)>);
+		section(function<bool(params&, ostream&)>);
 		void constructor();
 		virtual ~section();
 
@@ -107,26 +108,27 @@ namespace conch {
 		///Composing the choices tree
 		section& add(cmddef&&, section*);
 		void add(flagdef&&);
-		void set_handler(function<bool(const params&, ostream&)>);
+		void set_handler(function<bool(params&, ostream&)>);
 
 		/// Rewrite params and flags spec before excecuting command. Called before executing the first command. Writable ParamPath can be used to tweak the spec based on user choices. e.g. A flag A is optional only if flag B is set otherwise is mandatory.
 		virtual void pass1(param_path&);
 
 		///Excecuting command
-		bool exec(istream&) const;
+		bool exec(istream&);
 		bool exec(const string&);
 
 	private:
-		bool exec(const param_path&, param_path::const_iterator) const;
+		bool exec(const param_path&, param_path::const_iterator);
 		void help(const param_path&) const;
 		void help(const param_path&, param_path::const_iterator) const;
 		string scope() const;
-		bool fillv(param_path&, istream&) const;
-		const section* root() const;
-		const section* lookup(const string&) const;
+		bool fillv(param_path&, istream&);
+		section* lookup(const string&) const;
 		const section* lookup(const param_path&, param_path::const_iterator) const;
+		section* lookup(const param_path&, param_path::const_iterator);
 //		param_path::const_iterator check_req(const param_path&, ostream&) const;
 		section* root();
+		const section* root() const;
 		inline bool isRoot() const { return parent == nullptr; }
 		static void print_error(const string& msg);
 
@@ -144,8 +146,8 @@ namespace conch {
 		static string version;
 		string m_name;
 		string m_desc;
-		const params m_pdef;
-		function<bool(const params&, ostream&)> handler;
+		params m_pdef;
+		function<bool(params&, ostream&)> handler;
 		bool skip_handler{true};
 		section* parent{nullptr};
 	};
