@@ -28,6 +28,7 @@ namespace symbol { namespace hmi {
 	using namespace std;
 
 	ptr<c::Section> c::createSectionTxTransfer() {
+//	cout << "INstance createSectionTxTransfer" << endl;
 		return new symbol::hmi::Transfer();
 	}
 

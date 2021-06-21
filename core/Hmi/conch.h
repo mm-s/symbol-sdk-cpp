@@ -60,7 +60,7 @@ namespace conch {
 		using b::vector;
 		params(b&&);
 		params(const params&, istream&);
-		flagdef* lookup(const string&);
+		flagdef* lookup_flag_from_input(const string& ui_input);
 		flagdef* lookup(char);
 		const string& get(const string&) const;
 		const string& get(char) const;
@@ -77,6 +77,7 @@ namespace conch {
 		void dump_set(const string& prefix, const section& ignoresrc, ostream&) const;
 		bool check_req(ostream&) const;
 		bool check_unique() const;
+		const flagdef* flag_req_help() const;
 		string ko;
 	};
 
@@ -113,10 +114,13 @@ namespace conch {
 
 		/// Rewrite params and flags spec before excecuting command. Called before executing the first command. Writable ParamPath can be used to tweak the spec based on user choices. e.g. A flag A is optional only if flag B is set otherwise is mandatory.
 		virtual void pass1(param_path&);
+		void pass2(param_path&);
 
 		///Excecuting command
 		bool exec(istream&);
 		bool exec(const string&);
+
+		virtual void help_flag(const flagdef& f, ostream& os) const;
 
 	public:
 		const section* root() const;

@@ -32,20 +32,31 @@ namespace symbol { namespace hmi {
 	}
 
 	void c::pass1(ParamPath& v) {
+//cout << "RPC TRANSFER call base now" << endl;	
 		b::pass1(v);
-		if (!root()->offline()) {
-			auto p = v.lookup({"tx", "transfer"});
-			if (p != nullptr) {
-				p->set_optional(Mosaic_Flag);
-				p->set_optional(Deadline_Flag);
-				auto r = v.lookup({});
-				assert(r != nullptr);
-				r->set_optional(core::Hmi::Network::Seed_Flag);
+//cout << "RPC TRANSFER" << endl;	
+//cout << "pass1  " << root()->offline() << endl;
+//cout << "A" << endl;
+		auto p = v.lookup({});
+		assert(p != nullptr);
+		if (!p->is_set(Fetch::Offline_Flag)) {
+			p->set_optional(core::Hmi::Network::Seed_Flag);
+//cout << "C " << p->lookup(core::Hmi::Network::Seed_Flag)->name << " " << p->lookup(core::Hmi::Network::Seed_Flag)->optional << endl;
+//cout << "Optional seed here because tx online" << endl;
+//cout << "C " << p->lookup(core::Hmi::Network::Seed_Flag)->name << " " << p->lookup(core::Hmi::Network::Seed_Flag)->optional << endl;
+			{
+				auto p = v.lookup({Transaction::TX_Command, Transaction::Transfer_Command});
+				if (p != nullptr) {
+//	cout << "B" << endl;
+					p->set_optional(Mosaic_Flag);
+					p->set_optional(Deadline_Flag);
+				}
 			}
 		}
 	}
 
 	bool c::txTransfer(Params&p, ostream& os) {
+//cout << "root()->offline() " << root()->offline() << endl;
 		if ( !root()->offline() ) {
 			dto::node_info o;
 			if ( !o.fetch( root()->url() ) ) {

@@ -78,6 +78,7 @@ namespace symbol { namespace core {
 	public:
 		/// List valid network Identifiers
 		static void list(ostream& os);
+		static void list(const string& prefix, ostream& os);
 
 		/// Determine if the given Identifier is among the listed ones.
 		static bool listed(const Identifier&);

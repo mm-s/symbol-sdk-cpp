@@ -25,19 +25,20 @@ namespace symbol { namespace core { namespace hmi {
 	
 	using c = hmi::Main;
 
-	c::Main(): b(Params{
-			flagdefHome(),
-			flagdefVerbose(),
-			flagdefOutput(),
-			flagdefHideLabels(),
-		}) {
+	c::Params c::defParams() {
+		return Params{
+			{Home_Flag, Home_Name, true, true, Home_Default, Home_Desc},
+			{Verbose_Flag, Verbose_Name, true, false, Verbose_Default, Verbose_Desc},
+			{Output_Flag, Output_Name, true, true, Output_Default, Output_Desc},
+			{HideLabels_Flag, HideLabels_Name, true, false, HideLabels_Default, HideLabels_Desc},
+		};
+	}
+
+	c::Main(): b(defParams()) {
 	}
 
 	c::Main(Params&&p): b(move(p)) {
-		add(flagdefHome());
-		add(flagdefVerbose());
-		add(flagdefOutput());
-		add(flagdefHideLabels());
+		add(defParams());
 	}
 
 	c::~Main() {
@@ -48,21 +49,6 @@ namespace symbol { namespace core { namespace hmi {
 		set_handler([&](Params& p, ostream& os) -> bool { return mainHandler(p, os); });
 	}
 
-	c::FlagDef c::flagdefHome() {
-		return FlagDef{Home_Flag, "home", true, true, "~/.symbol", "Home directory."}; //TODO:PORTABLE default path to home dir
-	}
-
-	c::FlagDef c::flagdefVerbose() {
-		return FlagDef{Verbose_Flag, "verbose", true, false, "text", "Print extra information about what the program is doing."};
-	}
-
-	c::FlagDef c::flagdefOutput() {
-		return FlagDef{Output_Flag, "output", true, true, "text", "Output format. Value in (text json)"};
-	}
-
-	c::FlagDef c::flagdefHideLabels() {
-		return FlagDef{HideLabels_Flag, "hide-labels", true, false, "", "Hide field names. (Only on text output mode)"};
-	}
 
 	bool c::mainHandler(Params& p, ostream& os) {
 		m_home = p.get(Home_Flag);

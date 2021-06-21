@@ -24,12 +24,15 @@ namespace symbol { namespace core { namespace hmi {
 
 	using c = hmi::Keys;  /// Implementation for class c 
 
-	c::FlagDef c::flagdefPrivkey(bool mandatory) {
-		return FlagDef{Privkey_Flag, Privkey_Name, !mandatory, true, Privkey_Default, Privkey_Desc};
+	c::Params c::defParams() {
+		return Params{
+			flagdefPrivkey(false),
+			{Acc_Flag, Acc_Name, true, true, Acc_Default, Acc_Desc},
+		};
 	}
 
-	c::FlagDef c::flagdefAcc() {
-		return FlagDef{Acc_Flag, Acc_Name, true, true, Acc_Default, Acc_Desc};
+	c::FlagDef c::flagdefPrivkey(bool mandatory) {
+		return FlagDef{Privkey_Flag, Privkey_Name, !mandatory, true, Privkey_Default, Privkey_Desc};
 	}
 
 	bool c::keys(Params& p, ostream& os) {
@@ -82,10 +85,7 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	ptr<c::Section> c::createSectionKeys() {
-		auto s=new Section(Params{
-			flagdefPrivkey(false),
-			flagdefAcc(),
-		});
+		auto s=new Section(defParams());
 		s->set_handler([&](Params& p, ostream& os) -> bool { return keys(p, os); });
 		return s;
 	}

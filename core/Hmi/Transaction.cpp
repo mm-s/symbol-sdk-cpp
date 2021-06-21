@@ -27,9 +27,9 @@
 namespace symbol { namespace core { namespace hmi {
 	using c = core::hmi::Transaction; /// Implementation for class c 
 
-	c::~Transaction() {
-		delete m_tx;
-	}
+	//c::~Transaction() {
+	//	delete m_tx;
+	//}
 /*
 	bool c::txTransfer(Params& p, ostream& os) {
 		ptr<symbol::core::Transfer> tx;
@@ -121,7 +121,19 @@ namespace symbol { namespace core { namespace hmi {
 	}
 */
 	void c::pass1(ParamPath& v) {
+//	cout << "CORE TRANSACTION pass1 call base" << endl;
 		b::pass1(v);
+
+		auto p=v.lookup({Transaction::TX_Command}); //TODO replace strings with their section name var
+		if (p!=nullptr) {
+			auto r=v.lookup({});
+			assert(r->has(Network::Seed_Flag));
+			r->set_mandatory(Network::Seed_Flag);
+			//cout << "MANDATORY SEED HERE" <<endl;
+		}
+
+
+//	cout << "/CORE TRANSACTION pass1" << endl;
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
 /*
 		{

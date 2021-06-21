@@ -186,6 +186,10 @@ void c::set_handler(function<bool(params&, ostream&)> f) {
 	skip_handler=false;
 }
 
+void c::help_flag(const flagdef& f, ostream& os) const {
+	os << "There is no help available for option --" << f.name << '\n';
+}
+
 bool c::fillv(param_path& v, istream& is) {
 	assert(m_pdef.check_unique());
 	params* p = new params(m_pdef, is);
@@ -194,6 +198,14 @@ bool c::fillv(param_path& v, istream& is) {
 		print_error(p->ko);
 		help(v);
 		return false;
+	}
+	{
+		auto f = p->flag_req_help();
+		if ( f != nullptr) {
+			//*pos << "Help for flag -" << f->short_name << " --" << f->name << ":\n";
+			help_flag(*f, *pos);
+			return false;
+		}
 	}
 	string cmd;
 	is >> cmd;
@@ -314,8 +326,16 @@ params* c::param_path::lookup(const vector<string>& cmdpath) {
 }
 
 void c::pass1(param_path& v) {
+}
+
+void c::pass2(param_path& v) {
+	pass1(v);
+//	cout << "conch pass1. \"" << name() << "\".";
+//	if (!empty()) cout << "Calling children.";
+//	cout << endl;
 	for (auto& i: *this) {
-		i.second->pass1(v);
+//		cout << "  conch pass1.\"" << name() << "\". calling child \"" << i.second->name() << "\"" << endl;
+		i.second->pass2(v);
 	}
 }
 
@@ -325,7 +345,7 @@ bool c::exec(istream& is) {
 	if (!r) {
 		return false;
 	}
-	const_cast<c*>(this)->pass1(v); /// rewrite v and let specializations have a first look.
+	pass2(v); /// rewrite v and let specializations have a first look.
 	r = exec(v, v.begin());
 	for (auto& i: v) delete i.second;
 	return r;
@@ -413,7 +433,7 @@ params::params(const params& fd, istream& is): b(fd) {
 			is.seekg(g, is.beg);
 			break;
 		}
-		auto f = lookup(flag);
+		auto f = lookup_flag_from_input(flag);
 		if (f == nullptr) {
 			ko = string("Unrecognized flag '") + flag + "'. ";
 			break;
@@ -421,7 +441,7 @@ params::params(const params& fd, istream& is): b(fd) {
 		if (f->req_input) {
 			is >> f->value;
 			if (is.fail() || f->value.empty()) {
-				ko = string("Expected value after '") + flag + "'. ";
+				ko = string("Expected value after '") + flag + "' Try -h. ";
 				break;
 			}
 		}
@@ -466,6 +486,15 @@ bool params::check_unique() const {
 		}
 	}
 	return s.size() == size();
+}
+
+const flagdef* params::flag_req_help() const {
+	for (auto& i: *this) {
+		if (i.value == "-h") {
+			return &i;
+		}
+	}
+	return nullptr;
 }
 
 void params::dump(const string& pfx, ostream& os) const {
@@ -525,7 +554,7 @@ void params::dump_set(const string& pfx, const section& sec, ostream& os) const 
 	}
 }
 
-flagdef* params::lookup(const string& f) {
+flagdef* params::lookup_flag_from_input(const string& f) {
 	for (auto i = begin(); i != end(); ++i) {
 		if (*i==f) return &*i;
 	}

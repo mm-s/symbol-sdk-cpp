@@ -55,6 +55,7 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	bool c::txTransfer(Params& p, ostream& os) {
+	cout << "core txTransfer" << endl;
 		ptr<symbol::core::Transfer> tx;
 		if (root()->blobOverriden()) {
 			if (!symbol::core::Transaction::isTransferTransaction(root()->blob())) {
@@ -144,12 +145,18 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	void c::pass1(ParamPath& v) {
+//		cout << "CORE TRANSFER pass1 - call base" << endl;
 		b::pass1(v);
+//		cout << "CORE TRANSFER pass1" << endl;
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
 		{
 			auto p=v.lookup({}); //TODO replace strings with their section name var
 			assert(p!=nullptr);
+
+
+
 			if(p->is_set(Network::Blob_Flag)) {
+cout << "OPTIONAL SEED HGERE " << endl;
 				p->set_optional(Network::Seed_Flag);
 				{
 					auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var

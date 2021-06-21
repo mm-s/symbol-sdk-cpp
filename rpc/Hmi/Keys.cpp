@@ -35,7 +35,7 @@ namespace symbol { namespace hmi {
 		ptr<symbol::UnresolvedAddress> addr{nullptr};
 		string e=network().parse(o.account.publicKey, pk, addr);
 		if (!e.empty()) {
-		    return nullptr;
+			return nullptr;
 		}
 		delete addr;
 		return pk;    

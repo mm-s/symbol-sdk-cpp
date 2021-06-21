@@ -42,9 +42,24 @@ namespace symbol { namespace core { namespace hmi {
 	public:
 		/// Flags and Options
 		static constexpr auto Home_Flag{'H'};
+		static constexpr auto Home_Name{"home"};
+		static constexpr auto Home_Default{"~/.symbol"};
+		static constexpr auto Home_Desc{"Home directory."};
+
 		static constexpr auto Verbose_Flag{'v'};
+		static constexpr auto Verbose_Name{"verbose"};
+		static constexpr auto Verbose_Default{""};
+		static constexpr auto Verbose_Desc{"Print extra information about what the program is doing."};
+
 		static constexpr auto Output_Flag{'o'};
+		static constexpr auto Output_Name{"output"};
+		static constexpr auto Output_Default{"text"};
+		static constexpr auto Output_Desc{"Output format. Value in (text json)"};
+
 		static constexpr auto HideLabels_Flag{'w'};
+		static constexpr auto HideLabels_Name{"hide-labels"};
+		static constexpr auto HideLabels_Default{""};
+		static constexpr auto HideLabels_Desc{"Hide field names. (Only on text output mode)"};
 
 	public:
 		/// Construction, initialization, destruction
@@ -89,10 +104,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// Flag configuration for initalizing the section
-		static FlagDef flagdefHome();
-		static FlagDef flagdefVerbose();
-		static FlagDef flagdefOutput();
-		static FlagDef flagdefHideLabels();
+		static Params defParams();
 
 	private:
 		/// Output preferences

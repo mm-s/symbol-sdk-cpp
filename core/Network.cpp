@@ -41,6 +41,16 @@ namespace symbol { namespace core {
 
 	c::Network(const string& s) {
 		m_identifier = identifier(s);
+/*
+		if (isValidIdentifier()) return;
+		uint8_t x;
+		istringstream is(s);
+		is >> x;
+		if (is.fail()) {
+			return;
+		}
+		m_identifier = x;
+*/		
 	}
 
 	c::~Network() {
@@ -172,6 +182,15 @@ namespace symbol { namespace core {
 
 	void c::list(ostream& os) {
 		os << "public public-test  private private-test  mijin mijin-test";
+	}
+	
+	void c::list(const string& prefix, ostream& os) {
+		os << prefix << "public (or " << dec << +(uint8_t)Identifier::Public << ", 0x" << hex << +(uint8_t)Identifier::Public << ")" << '\n';
+		os << prefix << "public-test (or " << dec << +(uint8_t)Identifier::Public_Test << ", 0x" << hex << +(uint8_t)Identifier::Public_Test << ")" << '\n';
+		os << prefix << "private (or " << dec << +(uint8_t)Identifier::Private << ", 0x" << hex << +(uint8_t)Identifier::Private << ")" << '\n';
+		os << prefix << "private-test (or " << dec << +(uint8_t)Identifier::Private_Test << ", 0x" << hex << +(uint8_t)Identifier::Private_Test << ")" << '\n';
+		os << prefix << "mijin (or " << dec << +(uint8_t)Identifier::Mijin << ", 0x" << hex << +(uint8_t)Identifier::Mijin << ")" << '\n';
+		os << prefix << "mijin-test (or " << dec << +(uint8_t)Identifier::Mijin_Test << ", 0x" << hex << +(uint8_t)Identifier::Mijin_Test << ")" << '\n';
 	}
 
 	bool c::listed(const Identifier& t) {

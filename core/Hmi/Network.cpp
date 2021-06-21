@@ -26,38 +26,32 @@ namespace symbol { namespace core { namespace hmi {
 	
 	using c = hmi::Network;
 
-	c::Network(): b(Params{
-			flagdefNetwork(),
-			flagdefSeed(),
-			flagdefBlob(),
-		}) {
+	c::Params c::defParams() {
+		return Params{
+			{Network_Flag, Network_Name, true, true, Network_Default, Network_Desc},
+			{Seed_Flag, Seed_Name, true, true, Seed_Default, Seed_Desc},
+			{Blob_Flag, Blob_Name, true, true, Blob_Default, Blob_Desc},
+		};
+	}
+
+	c::Network(): b(defParams()) {
 	}
 
 	c::Network(Params&&p): b(move(p)) {
-		add(flagdefNetwork());
-		add(flagdefSeed());
-		add(flagdefBlob());
+		add(defParams());
 	}
 
 	c::~Network() {
 		delete m_network;
 	}
 
-
-	c::FlagDef c::flagdefNetwork() {
-		ostringstream os;
-		os << "Network type. Value in (";
-		core::Network::list(os);
-		os << ").";
-		return FlagDef{Network_Flag, "network", true, true, "public-test", os.str()};
-	}
-
-	c::FlagDef c::flagdefSeed() {
-		return FlagDef{Seed_Flag, "seed", true, true, "", "Network generation hash seed."};
-	}
-
-	c::FlagDef c::flagdefBlob() {
-		return FlagDef{Blob_Flag, Blob_Name, true, true, Blob_Default, Blob_Desc};
+	void c::help_flag(const FlagDef& f, ostream& os) const {
+		if (f.short_name == Network_Flag) {
+			os << "Possible values for --" << f.name << '\n';
+			core::Network::list("  ", os);
+			return;
+		}
+		b::help_flag(f, os);
 	}
 
 	ko c::setNetworkIdentifier(Params& p, const core::Network::Identifier& newId) {
@@ -71,7 +65,7 @@ namespace symbol { namespace core { namespace hmi {
 			}
 			return ok;
 		}
-		if (m_network->identifier()!=newId) {
+		if (m_network->identifier() != newId) {
 			delete m_network;
 			m_network = new core::Network(newId);
 		}
@@ -81,17 +75,6 @@ namespace symbol { namespace core { namespace hmi {
 		auto f=pn.lookup(Network_Flag);
 		f->value=symbol::core::Network::identifierStr(newId);
 		return ok;
-	}
-
-	void c::pass1(ParamPath& v) {
-		b::pass1(v);
-		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
-		auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
-		if (p!=nullptr) {
-			auto r=v.lookup({});
-			assert(r->has(Seed_Flag));
-			r->set_mandatory(Seed_Flag);
-		}
 	}
 
 	bool c::mainHandler(Params& p, ostream& os) {

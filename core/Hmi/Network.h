@@ -30,7 +30,14 @@ namespace symbol { namespace core { namespace hmi {
 		using b = hmi::Main;
 	public:
 		static constexpr auto Network_Flag{'n'};
+		static constexpr auto Network_Name{"network"};
+		static constexpr auto Network_Default{"public-test"};
+		static constexpr auto Network_Desc{"Network type."};
+ 		
 		static constexpr auto Seed_Flag{'s'};
+		static constexpr auto Seed_Name{"seed"};
+		static constexpr auto Seed_Default{""};
+		static constexpr auto Seed_Desc{"Network generation hash seed."};
 		
 		static constexpr auto Blob_Flag{'B'};
 		static constexpr auto Blob_Name{"blob"};
@@ -47,10 +54,6 @@ namespace symbol { namespace core { namespace hmi {
 		~Network() override;
 
 		void init(const string& name, const string& desc) override;
-
-	public: //hmi
-		///Opportunity to rewrite Params before command execution.
-		void pass1(ParamPath&) override;
 
 	public: // Options related to Network.
 		/// The Network instance the user wants to use.
@@ -73,6 +76,7 @@ namespace symbol { namespace core { namespace hmi {
 		/// User selected to hide labels in text output
 		inline bool hideLabels() const { return m_hideLabels; }
 
+		void help_flag(const FlagDef&, ostream&) const override;
 
 	public: /// Generic
 		/// String converter
@@ -89,13 +93,17 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// Flag configuration for initalizing the section
+/*
+		static FlagDef flagdefNetwork();
 		static FlagDef flagdefHome();
 		static FlagDef flagdefVerbose();
-		static FlagDef flagdefNetwork();
 		static FlagDef flagdefOutput();
 		static FlagDef flagdefHideLabels();
 		static FlagDef flagdefSeed();
 		static FlagDef flagdefBlob();
+*/
+
+		static Params defParams();
 
 	private:
 		/// Output preferences

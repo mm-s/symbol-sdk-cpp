@@ -57,11 +57,13 @@ namespace symbol { namespace core { namespace hmi {
 
 	public:
 		static FlagDef flagdefPrivkey(bool mandatory);
-		static FlagDef flagdefAcc();
 
 	public:
 		/// Override to resolve a PublicKey from an Address.
 		virtual ptr<PublicKey> resolvePublicKey(const UnresolvedAddress&) const { return nullptr; }
+
+	private:
+		static Params defParams();
 
 	private:
 		/// menu command: keys

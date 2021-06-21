@@ -46,7 +46,7 @@ namespace symbol { namespace hmi {
 	}
 
 	c::FlagDef c::flagdefOffline() {
-		return FlagDef{Offline_Flag, "offline", true, true, "", "Work offline."};
+		return FlagDef{Offline_Flag, "offline", true, false, "", "Work offline."};
 	}
 
 	bool c::fetch(const Params& p, ostream& os) {
