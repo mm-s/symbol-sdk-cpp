@@ -69,13 +69,30 @@ namespace symbol { namespace core { namespace hmi {
 				os << r;
 				return false;
 			}
-			remove(Keys::Main_Command);
 		}
 		return true;
 	}
 
 	void c::init(const string& nm, const string& dc) {
 		b::init(nm, dc);
+	}
+
+	bool c::pass1(ParamPath& v, ostream& os) {
+//		cout << "CORE TRANSFER pass1 - call base" << endl;
+		if (!b::pass1(v, os)) return false;
+//		cout << "CORE TRANSFER pass1" << endl;
+		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
+		auto p=v.lookup({}); //TODO replace strings with their section name var
+		assert(p!=nullptr);
+		if(p->is_set(Blob::Blob_Flag)) {
+//			auto p=v.lookup({Keys::Main_Command}); //TODO replace strings with their section name var
+//			if (p!=nullptr) {
+				disable(Keys::Main_Command);
+//				os << "Keys functions are disabled when working with a blob."; 
+//				return false;
+//			}
+		}
+		return true;
 	}
 
 }}}

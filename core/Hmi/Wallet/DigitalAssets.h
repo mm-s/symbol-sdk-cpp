@@ -76,7 +76,7 @@ namespace symbol { namespace core { namespace hmi {
 		bool handlerDA(const Params& p, ostream&);
 		bool handlerSign(const Params&, ostream&); /// Command Handler
 		bool handlerDigest(const Params&, ostream&); /// Command Handler
-		void pass1(ParamPath& v) override;
+		bool pass1(ParamPath&, ostream&) override;
 
 	private:
 		string m_file;

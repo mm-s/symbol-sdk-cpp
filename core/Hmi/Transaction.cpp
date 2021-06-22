@@ -120,17 +120,6 @@ namespace symbol { namespace core { namespace hmi {
 		return true;
 	}
 */
-	void c::pass1(ParamPath& v) {
-//	cout << "CORE TRANSACTION pass1 call base" << endl;
-		b::pass1(v);
-		auto p=v.lookup({Transaction::Main_Command}); //TODO replace strings with their section name var
-		if (p!=nullptr) {
-			auto r=v.lookup({});
-			assert(r->has(Network::Seed_Flag));
-			r->set_mandatory(Network::Seed_Flag);
-			//cout << "MANDATORY SEED HERE" <<endl;
-		}
-	}
 
 
 //	cout << "/CORE TRANSACTION pass1" << endl;
@@ -206,6 +195,19 @@ namespace symbol { namespace core { namespace hmi {
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
 		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
+	}
+
+	bool c::pass1(ParamPath& v, ostream& os) {
+//	cout << "CORE TRANSACTION pass1 call base" << endl;
+		if (!b::pass1(v, os)) return false;
+		auto p=v.lookup({Transaction::Main_Command}); //TODO replace strings with their section name var
+		if (p!=nullptr) {
+			auto r=v.lookup({});
+			assert(r->has(Network::Seed_Flag));
+			r->set_mandatory(Network::Seed_Flag);
+			//cout << "MANDATORY SEED HERE" <<endl;
+		}
+		return true;
 	}
 
 }}}

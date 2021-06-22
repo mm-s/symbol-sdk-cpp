@@ -33,17 +33,6 @@ namespace symbol { namespace core { namespace hmi {
 		delete m_privateKey;
 	}
 
-	void c::pass1(ParamPath& v) {
-	//cout << "pass1" << endl;
-		b::pass1(v);
-		auto p=v.lookup({Wallet::Command, DA_Command, Sign_Command});
-		if (p!=nullptr) {
-			auto r=v.lookup({Wallet::Command});
-			assert(r->has(Keys::Privkey_Flag));
-			r->set_mandatory(Keys::Privkey_Flag);
-		}
-	}
-
 	bool c::handlerSign(const Params& p, ostream& os) {
 		assert ( m_privateKey != nullptr );
 		os << *m_privateKey << "\n";
@@ -108,11 +97,23 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	void c::init(const string& name, const string& desc) {
-		CATAPULT_LOG(trace) << "Test Log";
+		//CATAPULT_LOG(trace) << "Test Log";
 		b::init(name, desc);
 		add(CmdDef{DA_Command, DA_Command_Desc}, createSectionDA());
 		/// Add more commands here.
 		/// Add a handler for this command.
+	}
+
+	bool c::pass1(ParamPath& v, ostream& os) {
+	//cout << "pass1" << endl;
+		if (!b::pass1(v, os)) return false;
+		auto p=v.lookup({Wallet::Command, DA_Command, Sign_Command});
+		if (p!=nullptr) {
+			auto r=v.lookup({Wallet::Command});
+			assert(r->has(Keys::Privkey_Flag));
+			r->set_mandatory(Keys::Privkey_Flag);
+		}
+		return true;
 	}
 
 }}}

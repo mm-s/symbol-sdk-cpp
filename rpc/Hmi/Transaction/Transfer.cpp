@@ -45,9 +45,9 @@ namespace symbol { namespace hmi {
 		return true;
 	}
 
-	void c::pass1(ParamPath& v) {
+	bool c::pass1(ParamPath& v, ostream& os) {
 //cout << "RPC TRANSFER call base now" << endl;	
-		b::pass1(v);
+		if (!b::pass1(v, os)) return false;
 //cout << "RPC TRANSFER" << endl;	
 //cout << "pass1  " << root()->offline() << endl;
 //cout << "A" << endl;
@@ -67,6 +67,7 @@ namespace symbol { namespace hmi {
 				}
 			}
 		}
+		return true;
 	}
 
 }}

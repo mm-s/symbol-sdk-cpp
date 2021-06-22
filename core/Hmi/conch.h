@@ -109,13 +109,13 @@ namespace conch {
 		///Composing the choices tree
 		section& add(cmddef&&, section*);
 		bool remove(const string& cmd);
+		bool disable(const string& cmd);
 		void add(flagdef&&);
 		void add(params&&);
 		void set_handler(function<bool(params&, ostream&)>);
 
 		/// Rewrite params and flags spec before excecuting command. Called before executing the first command. Writable ParamPath can be used to tweak the spec based on user choices. e.g. A flag A is optional only if flag B is set otherwise is mandatory.
-		virtual void pass1(param_path&);
-		void pass2(param_path&);
+		virtual bool pass1(param_path&, ostream&);
 
 		///Excecuting command
 		bool exec(istream&);
@@ -139,6 +139,7 @@ namespace conch {
 //		param_path::const_iterator check_req(const param_path&, ostream&) const;
 		inline bool isRoot() const { return parent == nullptr; }
 		static void print_error(const string& msg);
+		bool pass2(param_path&, ostream&);
 
 	public:
 		inline const string& name() const { return m_name; }
@@ -155,6 +156,7 @@ namespace conch {
 		string m_name;
 		string m_desc;
 		params m_pdef;
+		bool enabled{true};
 		function<bool(params&, ostream&)> handler;
 		bool skip_handler{true};
 		section* parent{nullptr};

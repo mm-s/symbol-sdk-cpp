@@ -37,7 +37,7 @@ namespace symbol { namespace hmi {
 		Transaction* root();
 
 		///Opportunity to rewrite Params before command execution.
-		void pass1(ParamPath&) override;
+		bool pass1(ParamPath&, ostream&) override;
 
 	private:
 		//ptr<Section> createSectionTxTransfer() override;

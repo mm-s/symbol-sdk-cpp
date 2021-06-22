@@ -121,6 +121,16 @@ bool c::remove(const string& cmd) {
 	return false;
 }
 
+bool c::disable(const string& cmd) {
+	for (auto i=begin(); i!=end(); ++i) {
+		if (i->first.name == cmd) {
+			i->second->enabled=false;
+			return true;
+		}
+	}
+	return false;
+}
+
 string c::scope() const {
 	if (parent == nullptr) return m_name;
 	return parent->scope() + " " + m_name;
@@ -154,6 +164,7 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 		ostringstream buf;
 		const section& secignore = *v.rbegin()->first;
 		for (auto j = v.begin(); j != i; ++j) {
+			assert((*j).first->enabled);
 			string ind; /// Print section name.
 			ostringstream bufT;
 			if (!(*j).first->isRoot()) {
@@ -187,7 +198,20 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 		os << '\n';
 		os << "commands:\n";
 		for (auto& i: *s) {
-			os << "  " << fmt_field(i.first.name, tabpos) << i.first.desc << '\n';
+			static constexpr bool Show_Disabled{false};
+			if (Show_Disabled) {
+				os << "  " << fmt_field(i.first.name, tabpos);
+				if (!i.second->enabled) {
+					os << "(disabled) ";
+				}
+				os << i.first.desc << '\n';
+			}
+			else {
+				if (i.second->enabled) {
+					os << "  " << fmt_field(i.first.name, tabpos);
+					os << i.first.desc << '\n';
+				}
+			}
 		}
 	}
 }
@@ -289,6 +313,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 		}
 		return true;
 	}
+	
 	/*
 	auto s = lookup(i->first->name);
 	if (s == nullptr) {
@@ -298,6 +323,13 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 	}
 	*/
 	assert(i->first != nullptr);
+	if (!i->first->enabled) {
+		ostringstream os;
+		os << "Disabled function " << i->first->name() << '.';
+		print_error(os.str());
+		help(v, --i);
+		return false;
+	}
 	return i->first->exec(v, i);
 	//return s->exec(v, i);
 }
@@ -337,18 +369,20 @@ params* c::param_path::lookup(const vector<string>& cmdpath) {
 	return nullptr;
 }
 
-void c::pass1(param_path& v) {
+bool c::pass1(param_path&, ostream&) {
+	return true;
 }
 
-void c::pass2(param_path& v) {
-	pass1(v);
+bool c::pass2(param_path& v, ostream& os) {
+	if (!pass1(v, os)) return false;
 //	cout << "conch pass1. \"" << name() << "\".";
 //	if (!empty()) cout << "Calling children.";
 //	cout << endl;
 	for (auto& i: *this) {
 //		cout << "  conch pass1.\"" << name() << "\". calling child \"" << i.second->name() << "\"" << endl;
-		i.second->pass2(v);
+		if (!i.second->pass2(v, os)) return false;
 	}
+	return true;
 }
 
 bool c::exec(istream& is) {
@@ -357,7 +391,12 @@ bool c::exec(istream& is) {
 	if (!r) {
 		return false;
 	}
-	pass2(v); /// rewrite v and let specializations have a first look.
+	ostringstream os;
+	if (!pass2(v, os)) {
+		print_error(os.str());
+//		help(v, i);
+		return false;
+	} /// rewrite v and let specializations have a first look.
 	r = exec(v, v.begin());
 	for (auto& i: v) delete i.second;
 	return r;

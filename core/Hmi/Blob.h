@@ -61,6 +61,8 @@ namespace symbol { namespace core { namespace hmi {
 		//bool mainHandler(Params&, ostream&) override;
 		bool main(Params&, ostream&) override;
 
+		bool pass1(ParamPath&, ostream&) override;
+
 	protected:
 		/// Handler for empty command
 

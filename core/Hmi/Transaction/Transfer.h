@@ -36,7 +36,7 @@ namespace symbol { namespace core { namespace hmi {
 		using CmdDef = conch::cmddef;
 		using FlagDef = conch::flagdef;
 		using ParamPath = b::param_path;
-
+		using ostream = std::ostream;
 	public:
 	
 		static constexpr const char* Transfer_Command = "transfer";
@@ -84,7 +84,7 @@ namespace symbol { namespace core { namespace hmi {
 
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
-		void pass1(ParamPath&) override;
+		bool pass1(ParamPath&, ostream&) override;
 
 		Transaction* root();
 	private:

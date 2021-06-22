@@ -80,7 +80,7 @@ namespace symbol { namespace core { namespace hmi {
 
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
-		void pass1(ParamPath&) override;
+		bool pass1(ParamPath&, ostream&) override;
 
 	public:
 		virtual ptr<Section> createSectionTransfer(); /// Init

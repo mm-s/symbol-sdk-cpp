@@ -214,14 +214,15 @@ namespace symbol { namespace hmi {
 		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
 	}
 
-	void c::pass1(ParamPath& v) {
-		b::pass1(v);
+	bool c::pass1(ParamPath& v, ostream& os) {
+		if (!b::pass1(v, os)) return false;
 		auto p = v.lookup({});
 		assert(p!=nullptr);
 		m_url = p->get(Url_Flag);
 		if ( p->is_set(Offline_Flag) ) {
 			m_offline = true;
 		}
+		return true;
 	}
 
 }}

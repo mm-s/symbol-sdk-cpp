@@ -149,9 +149,9 @@ namespace symbol { namespace core { namespace hmi {
 		set_handler([&](Params& p, ostream& os) -> bool { return main(p, os); });
 	}
 
-	void c::pass1(ParamPath& v) {
+	bool c::pass1(ParamPath& v, ostream& os) {
 //		cout << "CORE TRANSFER pass1 - call base" << endl;
-		b::pass1(v);
+		if (!b::pass1(v, os)) return false;
 //		cout << "CORE TRANSFER pass1" << endl;
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
 		auto p=v.lookup({}); //TODO replace strings with their section name var
@@ -169,6 +169,7 @@ namespace symbol { namespace core { namespace hmi {
 				}
 			}
 		}
+		return true;
 	}
 
 }}}
