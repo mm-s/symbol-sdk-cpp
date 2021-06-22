@@ -37,8 +37,8 @@ namespace symbol { namespace hmi {
 	c::Fetch(): b(defParams()) {
 	}
 
-	c::Fetch(Params&&p): b(move(p)) {
-		add(defParams());
+	c::Fetch(Params&&p): b(defParams()) {
+		add(move(p));
 	}
 
 //	void c::chainInfo(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
@@ -186,7 +186,7 @@ namespace symbol { namespace hmi {
 		return s;
 	}
 
-	bool c::fetch(const Params& p, ostream& os) {
+	bool c::cmdMain(Params& p, ostream& os) {
 		if (p.is_set(Offline_Flag)) {
 			os << "Cannot access the network in offline mode.";
 			return false;
@@ -194,9 +194,9 @@ namespace symbol { namespace hmi {
 		return true;
 	}
 
-	ptr<c::Section> c::createSectionFetch() {
+	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(Params{});
-		s->set_handler([&](Params& p, ostream& os) -> bool { return fetch(p, os); });
+		s->set_handler([&](Params& p, ostream& os) -> bool { return cmdMain(p, os); });
 		s->add(CmdDef{"node", "Node information."}, createSectionFetchNode());
 		s->add(CmdDef{"chain", "Chain information."}, createSectionFetchChain());
 		s->add(CmdDef{"nodes", "List of network nodes."}, createSectionFetchNodes());
@@ -204,25 +204,24 @@ namespace symbol { namespace hmi {
 		return s;
 	}
 
+//	bool c::main(Params& p, ostream& os) {
+//		return b::mainHandler(p, os);
+//		return true;
+//	}
+
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{"fetch", "Obtaing remote data from an API node."}, createSectionFetch());
+		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
 	}
 
 	void c::pass1(ParamPath& v) {
 		b::pass1(v);
-		auto p = v.lookup({""});
-		if (p != nullptr) {    
-			if ( p->is_set(Offline_Flag) ) {
-				m_offline = true;
-			}
+		auto p = v.lookup({});
+		assert(p!=nullptr);
+		m_url = p->get(Url_Flag);
+		if ( p->is_set(Offline_Flag) ) {
+			m_offline = true;
 		}
-		
-	}
-
-	bool c::mainHandler(Params& p, ostream& os) {
-		m_url = p.get(Url_Flag);
-		return b::mainHandler(p, os);
 	}
 
 }}

@@ -30,7 +30,7 @@ namespace symbol { namespace hmi {
 	class Keys: public symbol::hmi::Fetch {
 		using b = symbol::hmi::Fetch;
 
-	public:    
+	public:
 		using b::Fetch;
 
 	private:

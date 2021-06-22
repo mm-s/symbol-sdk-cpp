@@ -123,14 +123,14 @@ namespace symbol { namespace core { namespace hmi {
 	void c::pass1(ParamPath& v) {
 //	cout << "CORE TRANSACTION pass1 call base" << endl;
 		b::pass1(v);
-
-		auto p=v.lookup({Transaction::TX_Command}); //TODO replace strings with their section name var
+		auto p=v.lookup({Transaction::Main_Command}); //TODO replace strings with their section name var
 		if (p!=nullptr) {
 			auto r=v.lookup({});
 			assert(r->has(Network::Seed_Flag));
 			r->set_mandatory(Network::Seed_Flag);
 			//cout << "MANDATORY SEED HERE" <<endl;
 		}
+	}
 
 
 //	cout << "/CORE TRANSACTION pass1" << endl;
@@ -154,9 +154,16 @@ namespace symbol { namespace core { namespace hmi {
 			}
 		}
 */
+
+	bool c::cmdMain(Params& p, ostream& os) {
+		if (blobOverriden()) {
+			if (!core::Transaction::isTransaction(blob())) {
+				remove(hmi::Transaction::Main_Command);
+			}
+		}
+		return true;
 	}
 
-	bool c::tx(Params& p, ostream& os) {
 	/*
 		auto r = network().createTransaction(p.get(Mem_Flag));
 		if (is_ko(r.first)) {
@@ -167,25 +174,38 @@ namespace symbol { namespace core { namespace hmi {
 		m_tx = r.second;
 		return true;
 		*/
+
+/*
+	bool c::txInfo(Params& p, ostream& os) {
+		os << "Tx Info" << endl;
 		return true;
 	}
+*/
+/*
+	ptr<c::Section> c::createSectionTxInfo() {
+		auto s=new Section();
+		s->set_handler([&](Params& p, ostream& os) -> bool { return txInfo(p, os); });
+		return s;
+	}
+*/
 
-	ptr<c::Section> c::createSectionTxTransfer() {
+	ptr<c::Section> c::createSectionTransfer() {
 		auto s=new Transfer();
 		//s->set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
 		return s;
 	}
 
-	ptr<c::Section> c::createSectionTx() {
+	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(Params{});
-		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTxTransfer());
-		s->set_handler([&](Params& p, ostream& os) -> bool { return tx(p, os); });
+		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTransfer());
+//		s->add(CmdDef{TX_Info_Command, TX_Info_Command_Desc}, createSectionTxInfo());
+		s->set_handler([&](Params& p, ostream& os) -> bool { return cmdMain(p, os); });
 		return s;
 	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{TX_Command, TX_Command_Desc}, createSectionTx());
+		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
 	}
 
 }}}

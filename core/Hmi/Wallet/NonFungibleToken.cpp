@@ -24,11 +24,6 @@
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::NonFungibleToken; /// Implementation for class c 
 
-	void c::init(const string& name, const string& desc) {
-		b::init(name, desc);
-		add(CmdDef{NFT_Command, NFT_Command_Desc}, createSectionNft());
-	}
-
 	bool c::nftInfo(const Params& p, ostream& os) {
 		os << "Info about NFT: not implemented." << '\n';
 		return false; //Will result in Error for the user
@@ -44,6 +39,11 @@ namespace symbol { namespace core { namespace hmi {
 		auto s=new Section(Params{});
 		s->add(CmdDef{Info_Command, Info_Command_Desc}, createSectionNftInfo());
 		return s;
+	}
+
+	void c::init(const string& name, const string& desc) {
+		b::init(name, desc);
+		add(CmdDef{NFT_Command, NFT_Command_Desc}, createSectionNft());
 	}
 
 }}}

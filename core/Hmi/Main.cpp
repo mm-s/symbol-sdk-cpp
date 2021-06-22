@@ -37,31 +37,11 @@ namespace symbol { namespace core { namespace hmi {
 	c::Main(): b(defParams()) {
 	}
 
-	c::Main(Params&&p): b(move(p)) {
-		add(defParams());
+	c::Main(Params&& p): b(move(defParams())) {
+		add(move(p));
 	}
 
 	c::~Main() {
-	}
-
-	void c::init(const string& nm, const string& dc) {
-		b::init(nm, dc);
-		set_handler([&](Params& p, ostream& os) -> bool { return mainHandler(p, os); });
-	}
-
-
-	bool c::mainHandler(Params& p, ostream& os) {
-		m_home = p.get(Home_Flag);
-		if (p.is_set(Verbose_Flag)) {
-			//catapult::utils::log::global_logger::set(trace);
-		}
-		m_json = p.get(Output_Flag) == "json";
-		m_hideLabels = p.is_set(HideLabels_Flag);
-		return true;
-	}
-
-	void c::pass1(ParamPath& v) {
-		b::pass1(v);
 	}
 
 	namespace {
@@ -99,6 +79,21 @@ namespace symbol { namespace core { namespace hmi {
 		ostringstream os;
 		os << +o;
 		return os.str();
+	}
+
+	bool c::main(Params& p, ostream& os) {
+		m_home = p.get(Home_Flag);
+		if (p.is_set(Verbose_Flag)) {
+			//catapult::utils::log::global_logger::set(trace);
+		}
+		m_json = p.get(Output_Flag) == "json";
+		m_hideLabels = p.is_set(HideLabels_Flag);
+		return true;
+	}
+
+	void c::init(const string& nm, const string& dc) {
+		b::init(nm, dc);
+		set_handler([&](Params& p, ostream& os) -> bool { return main(p, os); });
 	}
 
 }}}

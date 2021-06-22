@@ -70,8 +70,6 @@ namespace symbol { namespace core { namespace hmi {
 		void init(const string& name, const string& desc) override;
 
 	public: //hmi
- 		///Opportunity to rewrite Params before command execution.
- 		void pass1(ParamPath&) override;
 
 		/// Print key-value on output stream.
 		void kv_text(const vector<pair<string, string>>&, ostream&);
@@ -98,9 +96,11 @@ namespace symbol { namespace core { namespace hmi {
 			return os.str();
 		}
 
+		virtual bool main(Params&, ostream&);
+
 	protected:
 		/// Handler for empty command
-		virtual bool mainHandler(Params& p, ostream& os);
+//		virtual bool mainHandler(Params& p, ostream& os);
 
 	private:
 		/// Flag configuration for initalizing the section

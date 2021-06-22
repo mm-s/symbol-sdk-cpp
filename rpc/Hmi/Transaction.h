@@ -33,7 +33,7 @@ namespace symbol { namespace hmi {
 
 	protected:
 
-		ptr<Section> createSectionTxTransfer() override; /// Init
+		ptr<Section> createSectionTransfer() override; /// Init
 
 
 

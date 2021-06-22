@@ -32,7 +32,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	public:
 		using b::Section;
-		static constexpr const char* Command = "wallet";
+		static constexpr auto Command = "wallet";
 
 		/// Flags and Options
 
@@ -44,7 +44,6 @@ namespace symbol { namespace core { namespace hmi {
 		using b::Transaction;
 
 		void init(const string& name, const string& desc) override;
-		void pass1(ParamPath& v) override;
 
 	public:
 //		static FlagDef flagdefPrivkey(bool mandatory);

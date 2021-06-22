@@ -35,7 +35,7 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{Privkey_Flag, Privkey_Name, !mandatory, true, Privkey_Default, Privkey_Desc};
 	}
 
-	bool c::keys(Params& p, ostream& os) {
+	bool c::cmdMain(Params& p, ostream& os) {
 		if( p.is_set(Privkey_Flag) && p.is_set(Acc_Flag) ) {
 			os << "Multiple inputs.";
 			return false;
@@ -84,15 +84,15 @@ namespace symbol { namespace core { namespace hmi {
 		return true;
 	}
 
-	ptr<c::Section> c::createSectionKeys() {
+	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(defParams());
-		s->set_handler([&](Params& p, ostream& os) -> bool { return keys(p, os); });
+		s->set_handler([&](Params& p, ostream& os) -> bool { return cmdMain(p, os); });
 		return s;
 	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		add(CmdDef{Keys_Command, Keys_Command_Desc}, createSectionKeys());
+		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
 	}
 
 }}}

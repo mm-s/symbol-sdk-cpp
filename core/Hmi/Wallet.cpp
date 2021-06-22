@@ -26,11 +26,6 @@ namespace symbol { namespace core { namespace hmi {
 
 	using c = symbol::core::hmi::Wallet;  /// Implementation for class c 
 
-	void c::pass1(ParamPath& v) {
-	//cout << "wpass1" << endl;
-		b::pass1(v);
-	}
-	
 /*
 	c::FlagDef c::flagdefPrivkey(bool mandatory) {
 		return FlagDef{Privkey_Flag, "private-key", !mandatory, true, "", "Use the supplied private key in HEX format."};
@@ -97,9 +92,7 @@ namespace symbol { namespace core { namespace hmi {
 		b::init(name, desc);
 
 		using walletSection = hmi::NonFungibleToken;
-		add(CmdDef{Command, "Privacy management."}, new walletSection(Params{
-			//Keys::flagdefPrivkey(false),
-		}));
+		add(CmdDef{Command, "Private."}, new walletSection());
 	}
 
 }}}

@@ -32,6 +32,7 @@ namespace symbol { namespace hmi {
 	public:
 		using b::Transfer;
 
+		bool main(Params&, std::ostream&) override;
 	protected:
 		Transaction* root();
 
@@ -40,7 +41,6 @@ namespace symbol { namespace hmi {
 
 	private:
 		//ptr<Section> createSectionTxTransfer() override;
-		bool txTransfer(Params&, std::ostream&) override;
 
 
 

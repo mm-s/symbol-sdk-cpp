@@ -30,15 +30,14 @@ namespace symbol { namespace core { namespace hmi {
 		return Params{
 			{Network_Flag, Network_Name, true, true, Network_Default, Network_Desc},
 			{Seed_Flag, Seed_Name, true, true, Seed_Default, Seed_Desc},
-			{Blob_Flag, Blob_Name, true, true, Blob_Default, Blob_Desc},
 		};
 	}
 
 	c::Network(): b(defParams()) {
 	}
 
-	c::Network(Params&&p): b(move(p)) {
-		add(defParams());
+	c::Network(Params&&p): b(move(defParams())) {
+		add(move(p));
 	}
 
 	c::~Network() {
@@ -77,7 +76,8 @@ namespace symbol { namespace core { namespace hmi {
 		return ok;
 	}
 
-	bool c::mainHandler(Params& p, ostream& os) {
+	bool c::main(Params& p, ostream& os) {
+		if (!b::main(p, os)) return false;
 		assert(!m_networkOverriden);
 		m_networkOverriden = p.is_set(Network_Flag);
 		core::Network::Identifier t = core::Network::identifier(p.get(Network_Flag));
@@ -86,26 +86,6 @@ namespace symbol { namespace core { namespace hmi {
 		if (!network().isValidIdentifier()) {
 			os << "Network identifier '" << p.get(Network_Flag) << "' is invalid.";
 			return false;
-		}
-		m_blobOverriden = p.is_set(Blob_Flag);
-		if (m_blobOverriden) {
-			{
-				{
-					auto r = symbol::core::Network::decodeBlob(p.get(Blob_Flag));
-					if (is_ko(r.first)) {
-						os << r.first;
-						return false;
-					}
-					m_blob=move(r.second);
-					assert(!m_blob.empty());
-				}
-				auto nid = core::Network::identifier(m_blob);
-				auto r = setNetworkIdentifier(p, nid);
-				if (is_ko(r)) {
-					os << r;
-					return false;
-				}
-			}
 		}
 		if (p.is_set(Seed_Flag)) {
 			if (!network().setSeed(p.get(Seed_Flag))) {
@@ -118,7 +98,6 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::init(const string& nm, const string& dc) {
 		b::init(nm, dc);
-		set_handler([&](Params& p, ostream& os) -> bool { return mainHandler(p, os); });
 	}
 
 }}}

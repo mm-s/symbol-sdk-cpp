@@ -20,19 +20,22 @@
 **/
 #pragma once
 
-#include "Keys.h"
+#include "Blob.h"
 #include "../Transaction.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	/// Human-Machine Interface. Transaction(tx) section command processor (offline)
-	class Transaction: public hmi::Keys {
+	class Transaction: public hmi::Blob {
 		/// Base class b.
-		using b = hmi::Keys;
+		using b = hmi::Blob;
 
 	public:
-		static constexpr const char* TX_Command = "tx";
-		static constexpr const char* TX_Command_Desc = "Operations with transactions.";
+		static constexpr auto Main_Command = "tx";
+		static constexpr auto Main_Command_Desc = "Operations with transactions.";
+
+		static constexpr auto Info_Command = "info";
+		static constexpr auto Info_Command_Desc = "Info about transaction.";
 /*
 		static constexpr const char* Transfer_Command = "transfer";
 		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
@@ -71,7 +74,7 @@ namespace symbol { namespace core { namespace hmi {
 */
 	public:		
 		/// Default constructors
-		using b::Keys;
+		using b::Blob;
 
 		//~Transaction() override;
 
@@ -80,14 +83,14 @@ namespace symbol { namespace core { namespace hmi {
 		void pass1(ParamPath&) override;
 
 	public:
-		virtual ptr<Section> createSectionTxTransfer(); /// Init
+		virtual ptr<Section> createSectionTransfer(); /// Init
 
 	private:
 		/// menu command: tx
-		ptr<Section> createSectionTx();
+		ptr<Section> createSectionMain();
 
 	protected: /// menu command: tx transfer
-		bool tx(Params&, ostream&); /// Command Handler
+		bool cmdMain(Params&, ostream&); /// Command Handler
 
 		//virtual bool txTransfer(Params&, ostream&); /// Command Handler
 	

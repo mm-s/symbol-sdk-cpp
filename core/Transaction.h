@@ -64,7 +64,6 @@ namespace symbol { namespace core {
 		virtual ~Transaction();
 
 		//static pair<ko, ptr<Transaction>> create(const string& memHex);
-
 		template<typename t>
 		static bool parse(const string& input, t&o) {
 			try {

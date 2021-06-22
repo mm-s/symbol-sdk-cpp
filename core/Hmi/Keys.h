@@ -30,9 +30,9 @@ namespace symbol { namespace core { namespace hmi {
 		using b = hmi::Network;
 
 	public:
-		static constexpr const char* Keys_Command = "keys";
-		static constexpr const char* Keys_Command_Desc = "Keys/Address/Account generation/info.";
-	
+		static constexpr const char* Main_Command = "keys";
+		static constexpr const char* Main_Command_Desc = "Keys/Address/Account generation/info.";
+
 		static constexpr const char* Transfer_Command = "transfer";
 		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
 
@@ -67,8 +67,8 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// menu command: keys
-		ptr<Section> createSectionKeys(); /// init
-		bool keys(Params&, ostream&); /// Handler
+		ptr<Section> createSectionMain(); /// init
+		bool cmdMain(Params&, ostream&); /// Handler
 
 	};
 

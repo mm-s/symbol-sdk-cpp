@@ -38,14 +38,6 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Seed_Name{"seed"};
 		static constexpr auto Seed_Default{""};
 		static constexpr auto Seed_Desc{"Network generation hash seed."};
-		
-		static constexpr auto Blob_Flag{'B'};
-		static constexpr auto Blob_Name{"blob"};
-		static constexpr auto Blob_Default{""};
-		static constexpr auto Blob_Desc{"Memory representation in Hex format."};
-
-	public:
-		using Blob = symbol::core::Network::Blob;
 
 	public:
 		/// Construction, initialization, destruction
@@ -64,9 +56,6 @@ namespace symbol { namespace core { namespace hmi {
 		inline const string& home() const { return m_home; }
 		inline bool networkOverriden() const { return m_networkOverriden; }
 		ko setNetworkIdentifier(Params& p, const core::Network::Identifier&);
-
-		inline const Blob& blob() const { return m_blob; }
-		inline bool blobOverriden() const { return m_blobOverriden; }
 
 	public:
 		/// Gettrs & Setters
@@ -87,11 +76,15 @@ namespace symbol { namespace core { namespace hmi {
 			return os.str();
 		}
 
+		bool main(Params&, ostream&) override;
+
 	protected:
 		/// Handler for empty command
-		virtual bool mainHandler(Params&, ostream&);
+		//bool mainHandler(Params&, ostream&) override;
+
 
 	private:
+
 		/// Flag configuration for initalizing the section
 /*
 		static FlagDef flagdefNetwork();
@@ -115,12 +108,10 @@ namespace symbol { namespace core { namespace hmi {
 		bool m_networkOverriden{false};
 		string m_home;
 
-		bool m_blobOverriden{false};
-		symbol::core::Network::Blob m_blob;
 	};
 
 	/// String converter. Type with special treatment required in order to be printed as a number, not as a char.
-	template<> string Main::toString(const uint8_t& o);
+//	template<> string Main::toString(const uint8_t& o);
 
 }}}
 

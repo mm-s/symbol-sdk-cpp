@@ -93,7 +93,7 @@ namespace symbol { namespace core { namespace hmi {
 	protected: /// menu command: tx transfer
 
 		ptr<Section> createSectionTxTransfer(); /// Init
-		virtual bool txTransfer(Params&, ostream&); /// Command Handler
+		virtual bool main(Params&, ostream&); /// Command Handler
 	
 	private:
 		core::Transfer* m_tx;

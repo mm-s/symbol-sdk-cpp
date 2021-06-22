@@ -27,7 +27,7 @@ namespace symbol { namespace hmi {
 	using c = symbol::hmi::Transaction;
 	using namespace std;
 
-	ptr<c::Section> c::createSectionTxTransfer() {
+	ptr<c::Section> c::createSectionTransfer() {
 //	cout << "INstance createSectionTxTransfer" << endl;
 		return new symbol::hmi::Transfer();
 	}

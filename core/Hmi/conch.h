@@ -108,6 +108,7 @@ namespace conch {
 	public:
 		///Composing the choices tree
 		section& add(cmddef&&, section*);
+		bool remove(const string& cmd);
 		void add(flagdef&&);
 		void add(params&&);
 		void set_handler(function<bool(params&, ostream&)>);

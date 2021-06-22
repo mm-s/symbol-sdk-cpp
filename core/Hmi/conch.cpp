@@ -110,6 +110,17 @@ c& c::add(cmddef&& a, section* s) {
 	return *s;
 }
 
+bool c::remove(const string& cmd) {
+	for (auto i=begin(); i!=end(); ++i) {
+		if (i->first.name == cmd) {
+			delete i->second;
+			erase(i);
+			return true;
+		}
+	}
+	return false;
+}
+
 string c::scope() const {
 	if (parent == nullptr) return m_name;
 	return parent->scope() + " " + m_name;
@@ -182,6 +193,7 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 }
 
 void c::set_handler(function<bool(params&, ostream&)> f) {
+	assert(skip_handler);
 	handler=f;
 	skip_handler=false;
 }

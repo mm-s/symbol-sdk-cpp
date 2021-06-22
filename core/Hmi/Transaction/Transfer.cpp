@@ -54,8 +54,8 @@ namespace symbol { namespace core { namespace hmi {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
-	bool c::txTransfer(Params& p, ostream& os) {
-	cout << "core txTransfer" << endl;
+	bool c::main(Params& p, ostream& os) {
+//cout << "core txTransfer" << endl;
 		ptr<symbol::core::Transfer> tx;
 		if (root()->blobOverriden()) {
 			if (!symbol::core::Transaction::isTransferTransaction(root()->blob())) {
@@ -144,37 +144,31 @@ namespace symbol { namespace core { namespace hmi {
 		return true;
 	}
 
+	void c::init(const string& name, const string& desc) {
+		b::init(name, desc);
+		set_handler([&](Params& p, ostream& os) -> bool { return main(p, os); });
+	}
+
 	void c::pass1(ParamPath& v) {
 //		cout << "CORE TRANSFER pass1 - call base" << endl;
 		b::pass1(v);
 //		cout << "CORE TRANSFER pass1" << endl;
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
-		{
-			auto p=v.lookup({}); //TODO replace strings with their section name var
-			assert(p!=nullptr);
-
-
-
-			if(p->is_set(Network::Blob_Flag)) {
-cout << "OPTIONAL SEED HGERE " << endl;
-				p->set_optional(Network::Seed_Flag);
-				{
-					auto p=v.lookup({Transaction::TX_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
-					if(p!=nullptr) {
-						p->set_optional(Recipient_Flag);
-						p->set_optional(Amount_Flag);
-						p->set_optional(Mosaic_Flag);
-						p->set_optional(Maxfee_Flag);
-						p->set_optional(Deadline_Flag);
-					}
+		auto p=v.lookup({}); //TODO replace strings with their section name var
+		assert(p!=nullptr);
+		if(p->is_set(Blob::Blob_Flag)) {
+			p->set_optional(Network::Seed_Flag);
+			{
+				auto p=v.lookup({Transaction::Main_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
+				if(p!=nullptr) {
+					p->set_optional(Recipient_Flag);
+					p->set_optional(Amount_Flag);
+					p->set_optional(Mosaic_Flag);
+					p->set_optional(Maxfee_Flag);
+					p->set_optional(Deadline_Flag);
 				}
 			}
 		}
-	}
-
-	void c::init(const string& name, const string& desc) {
-		b::init(name, desc);
-		set_handler([&](Params& p, ostream& os) -> bool { return txTransfer(p, os); });
 	}
 
 }}}

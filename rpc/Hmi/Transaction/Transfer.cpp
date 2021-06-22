@@ -31,6 +31,20 @@ namespace symbol { namespace hmi {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
+	bool c::main(Params& p, ostream& os) {
+		if (!b::main(p, os)) return false;
+//cout << "root()->offline() " << root()->offline() << endl;
+		if ( !root()->offline() ) {
+			dto::node_info o;
+			if ( !o.fetch( root()->url() ) ) {
+				os << "Unable to fetch from " << root()->url() << ".";
+				return false;
+			}
+			/// 
+		}
+		return true;
+	}
+
 	void c::pass1(ParamPath& v) {
 //cout << "RPC TRANSFER call base now" << endl;	
 		b::pass1(v);
@@ -45,7 +59,7 @@ namespace symbol { namespace hmi {
 //cout << "Optional seed here because tx online" << endl;
 //cout << "C " << p->lookup(core::Hmi::Network::Seed_Flag)->name << " " << p->lookup(core::Hmi::Network::Seed_Flag)->optional << endl;
 			{
-				auto p = v.lookup({Transaction::TX_Command, Transaction::Transfer_Command});
+				auto p = v.lookup({Transaction::Main_Command, Transaction::Transfer_Command});
 				if (p != nullptr) {
 //	cout << "B" << endl;
 					p->set_optional(Mosaic_Flag);
@@ -53,19 +67,6 @@ namespace symbol { namespace hmi {
 				}
 			}
 		}
-	}
-
-	bool c::txTransfer(Params&p, ostream& os) {
-//cout << "root()->offline() " << root()->offline() << endl;
-		if ( !root()->offline() ) {
-			dto::node_info o;
-			if ( !o.fetch( root()->url() ) ) {
-				os << "Unable to fetch from " << root()->url() << ".";
-				return false;
-			}
-			/// 
-		}
-		return b::txTransfer(p, os);
 	}
 
 }}

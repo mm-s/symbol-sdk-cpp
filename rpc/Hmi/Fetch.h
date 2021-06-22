@@ -37,6 +37,9 @@ namespace symbol { namespace hmi {
 		using b::Section;
 
 	public:
+		static constexpr auto Main_Command = "fetch";
+		static constexpr auto Main_Command_Desc = "Obtaing remote data from an API node.";
+
 		static constexpr auto Offline_Flag{'x'};
 		static constexpr auto Offline_Name{"offline"};
 		static constexpr auto Offline_Default{""};
@@ -62,8 +65,8 @@ namespace symbol { namespace hmi {
 
 	private:
 		/// menu command: fetch
-		ptr<Section> createSectionFetch(); /// init
-		bool fetch(const Params&, ostream&); /// Handler
+		ptr<Section> createSectionMain(); /// init
+		bool main(const Params&, ostream&); /// Handler
 
 		/// menu command: fetch node
 		ptr<Section> createSectionFetchNode(); /// init
@@ -99,12 +102,12 @@ namespace symbol { namespace hmi {
 		inline bool offline() const { return m_offline; }
 
 	protected:
-		bool mainHandler(Params&, ostream&) override;
 
 		///Opportunity to rewrite Params before command execution.
 		void pass1(ParamPath&) override;
 
 	private:
+		bool cmdMain(Params&, ostream&);
 //		static FlagDef flagdefOffline();
 //		static FlagDef flagdefUrl();
 		static Params defParams();

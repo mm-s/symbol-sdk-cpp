@@ -32,6 +32,13 @@ namespace symbol { namespace core {
 	using std::ostringstream;
 	using std::make_pair;
 
+	c::Transfer(const Network& n, ptr<catapult::model::TransferTransaction> t): m_catapultTransferTx(t), b(n, t) {
+	}
+
+	c::Transfer(Transfer&& other): b(move(other)), m_catapultTransferTx(other.m_catapultTransferTx) {
+		other.m_catapultTransferTx = nullptr;
+	}
+
 	pair<ko, ptr<Transfer>> c::create(const Network& n, const Blob& mem) {
 		auto is = catapult::io::BufferInputStreamAdapter(mem);
 
@@ -51,14 +58,6 @@ namespace symbol { namespace core {
 			return make_pair("KO 82291", nullptr);
 		}
 		return make_pair(ok, new Transfer(n, ptx.release()));
-	}
-
-
-	c::Transfer(const Network& n, ptr<catapult::model::TransferTransaction> t): m_catapultTransferTx(t), b(n, t) {
-	}
-
-	c::Transfer(Transfer&& other): b(move(other)), m_catapultTransferTx(other.m_catapultTransferTx) {
-		other.m_catapultTransferTx = nullptr;
 	}
 
 	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg) {
