@@ -89,7 +89,8 @@ function testBuild {
 		diff ${testpwd}/data/${gitn}/fsroot_files ${buildDir}/fsroot_files
 		er=$?
 		if [[ $er -ne 0 ]]; then
-			echo "FAIL: Files don't match"
+			echo "FAIL: Files don't match. If fileset has changed intentionally fix with:"
+			echo "cp sdk/test/_e2e/symbol-sdk-cpp/_build/fsroot_files sdk/test/data/symbol-sdk-cpp/fsroot_files"
 			exit 1
 		fi
 	popd > /dev/null

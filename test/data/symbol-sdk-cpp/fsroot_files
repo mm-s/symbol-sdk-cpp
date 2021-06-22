@@ -1,5 +1,5 @@
 fsroot/bin/symbol
-fsroot/bin/symbol-core
+fsroot/bin/symbol-offline
 fsroot/include/symbol/base.h
 fsroot/include/symbol/core/base.h
 fsroot/include/symbol/core/catapult/AccountAddressRestrictionBuilder.h
@@ -30,6 +30,7 @@ fsroot/include/symbol/core/catapult/BitwiseEnum.h
 fsroot/include/symbol/core/catapult/Block.h
 fsroot/include/symbol/core/catapult/BlockSpan.h
 fsroot/include/symbol/core/catapult/BlockStatement.h
+fsroot/include/symbol/core/catapult/BufferInputStreamAdapter.h
 fsroot/include/symbol/core/catapult/ByteArray.h
 fsroot/include/symbol/core/catapult/Casting.h
 fsroot/include/symbol/core/catapult/ClampedBaseValue.h
@@ -48,6 +49,7 @@ fsroot/include/symbol/core/catapult/EmbeddedTransaction.h
 fsroot/include/symbol/core/catapult/EntityBody.h
 fsroot/include/symbol/core/catapult/EntityHasher.h
 fsroot/include/symbol/core/catapult/EntityInfo.h
+fsroot/include/symbol/core/catapult/EntityIoUtils.h
 fsroot/include/symbol/core/catapult/EntityType.h
 fsroot/include/symbol/core/catapult/exceptions.h
 fsroot/include/symbol/core/catapult/FacilityCode.h
@@ -125,6 +127,7 @@ fsroot/include/symbol/core/catapult/PathUtils.h
 fsroot/include/symbol/core/catapult/PeersConfiguration.h
 fsroot/include/symbol/core/catapult/PluginRegistry.h
 fsroot/include/symbol/core/catapult/plugins.h
+fsroot/include/symbol/core/catapult/PodIoUtils.h
 fsroot/include/symbol/core/catapult/preprocessor.h
 fsroot/include/symbol/core/catapult/RawBuffer.h
 fsroot/include/symbol/core/catapult/Receipt.h
@@ -148,6 +151,7 @@ fsroot/include/symbol/core/catapult/SizeChecker.h
 fsroot/include/symbol/core/catapult/SizePrefixedEntityContainer.h
 fsroot/include/symbol/core/catapult/SizePrefixedEntity.h
 fsroot/include/symbol/core/catapult/StreamFormatGuard.h
+fsroot/include/symbol/core/catapult/Stream.h
 fsroot/include/symbol/core/catapult/TimeSpan.h
 fsroot/include/symbol/core/catapult/Traits.h
 fsroot/include/symbol/core/catapult/TransactionBuilder.h
@@ -196,13 +200,16 @@ fsroot/include/symbol/core/Hmi/Keys.h
 fsroot/include/symbol/core/Hmi/Main.h
 fsroot/include/symbol/core/Hmi/Network.h
 fsroot/include/symbol/core/Hmi/Transaction.h
+fsroot/include/symbol/core/Hmi/Transaction/Transfer.h
 fsroot/include/symbol/core/Hmi/Wallet/DigitalAssets.h
 fsroot/include/symbol/core/Hmi/Wallet.h
 fsroot/include/symbol/core/Hmi/Wallet/NonFungibleToken.h
 fsroot/include/symbol/core/Keys.h
 fsroot/include/symbol/core/Network.h
+fsroot/include/symbol/core/Node.h
 fsroot/include/symbol/core/NonFungibleToken.h
 fsroot/include/symbol/core/Transaction.h
+fsroot/include/symbol/core/Transaction/Transfer.h
 fsroot/include/symbol/core/Wallet.h
 fsroot/include/symbol/dto/account.h
 fsroot/include/symbol/dto/dto.h
@@ -213,6 +220,7 @@ fsroot/include/symbol/Hmi/Fetch.h
 fsroot/include/symbol/Hmi.h
 fsroot/include/symbol/Hmi/Keys.h
 fsroot/include/symbol/Hmi/Transaction.h
+fsroot/include/symbol/Hmi/Transaction/Transfer.h
 fsroot/include/symbol/rpc/config.h
 fsroot/include/symbol/rpc.h
 fsroot/lib/libsymbolcore.so
