@@ -71,7 +71,7 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		//print
 		vector<pair<string, string>> v;
-		v.emplace_back(make_pair("network_id", toString(network().identifierHex())));
+		v.emplace_back(make_pair("network_id", network().identifierDecHex()));
 		v.emplace_back(make_pair("network", toString(network().identifierStr())));
 		v.emplace_back(make_pair("private_key", sk!=nullptr ? toString(*sk) : string("unknown") ));
 		v.emplace_back(make_pair("public_key", pk!=nullptr ? toString(*pk) : string("unknown") ));

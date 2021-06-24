@@ -25,6 +25,7 @@
 #include <set>
 
 /// Shell program-options.
+/// This class encapsulates the console UI behaviour.
 namespace conch {
 	using namespace std;
 
@@ -38,7 +39,7 @@ namespace conch {
 		string desc;
 		bool overriden{false};
 
-		bool operator == (const string&) const;
+		bool operator == (const string&) const; ///string includes - or -- prefixes
 		bool operator == (const flagdef&) const;
 		void dump(const string& pfx, ostream&) const;
 		void dump_valuex(const string& pfx, ostream&) const;

@@ -113,6 +113,12 @@ namespace symbol { namespace core {
 		return "";
 	}
 
+	string c::identifierDecHex() const {
+		ostringstream os;
+		os << dec << +(uint8_t)m_identifier << " (0x" << hex << +(uint8_t)m_identifier << ')';
+		return os.str();
+	}
+	
 	string c::identifierHex() const {
 		ostringstream os;
 		os << catapult::utils::HexFormat(m_identifier);
@@ -185,12 +191,12 @@ namespace symbol { namespace core {
 	}
 	
 	void c::list(const string& prefix, ostream& os) {
-		os << prefix << "public (or " << dec << +(uint8_t)Identifier::Public << ", 0x" << hex << +(uint8_t)Identifier::Public << ")" << '\n';
-		os << prefix << "public-test (or " << dec << +(uint8_t)Identifier::Public_Test << ", 0x" << hex << +(uint8_t)Identifier::Public_Test << ")" << '\n';
-		os << prefix << "private (or " << dec << +(uint8_t)Identifier::Private << ", 0x" << hex << +(uint8_t)Identifier::Private << ")" << '\n';
-		os << prefix << "private-test (or " << dec << +(uint8_t)Identifier::Private_Test << ", 0x" << hex << +(uint8_t)Identifier::Private_Test << ")" << '\n';
-		os << prefix << "mijin (or " << dec << +(uint8_t)Identifier::Mijin << ", 0x" << hex << +(uint8_t)Identifier::Mijin << ")" << '\n';
-		os << prefix << "mijin-test (or " << dec << +(uint8_t)Identifier::Mijin_Test << ", 0x" << hex << +(uint8_t)Identifier::Mijin_Test << ")" << '\n';
+		os << prefix << "public (" << dec << +(uint8_t)Identifier::Public << ", 0x" << hex << +(uint8_t)Identifier::Public << ")" << '\n';
+		os << prefix << "public-test (" << dec << +(uint8_t)Identifier::Public_Test << ", 0x" << hex << +(uint8_t)Identifier::Public_Test << ")" << '\n';
+		os << prefix << "private (" << dec << +(uint8_t)Identifier::Private << ", 0x" << hex << +(uint8_t)Identifier::Private << ")" << '\n';
+		os << prefix << "private-test (" << dec << +(uint8_t)Identifier::Private_Test << ", 0x" << hex << +(uint8_t)Identifier::Private_Test << ")" << '\n';
+		os << prefix << "mijin (" << dec << +(uint8_t)Identifier::Mijin << ", 0x" << hex << +(uint8_t)Identifier::Mijin << ")" << '\n';
+		os << prefix << "mijin-test (" << dec << +(uint8_t)Identifier::Mijin_Test << ", 0x" << hex << +(uint8_t)Identifier::Mijin_Test << ")" << '\n';
 	}
 
 	bool c::listed(const Identifier& t) {
@@ -287,8 +293,8 @@ namespace symbol { namespace core {
 		return make_pair(ok, move(blob));
 	}
 
-	pair<ko, ptr<Transfer>> c::createTransfer(const Blob& mem) const {
-		return Transfer::create(*this, mem);
+	pair<ko, ptr<Transaction>> c::createTransaction(const Blob& mem) const {
+		return Transaction::create(*this, mem);
 	}
 
 	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const {

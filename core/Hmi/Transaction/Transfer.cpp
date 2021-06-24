@@ -35,6 +35,7 @@ namespace symbol { namespace core { namespace hmi {
 				{Mosaic_Flag, Mosaic_Name, false, true, Mosaic_Default, Mosaic_Desc},
 				{Maxfee_Flag, Maxfee_Name, false, true, Maxfee_Default, Maxfee_Desc},
 				{Deadline_Flag, Deadline_Name, false, true, Deadline_Default, Deadline_Desc},
+				{Message_Flag, Message_Name, false, true, Message_Default, Message_Desc},
 				{Keys::Privkey_Flag, Keys::Privkey_Name, true, true, Keys::Privkey_Default, Keys::Privkey_Desc},
 			};
 	}
@@ -56,19 +57,26 @@ namespace symbol { namespace core { namespace hmi {
 
 	bool c::main(Params& p, ostream& os) {
 //cout << "core txTransfer" << endl;
-		ptr<symbol::core::Transfer> tx;
 		if (root()->blobOverriden()) {
 			if (!symbol::core::Transaction::isTransferTransaction(root()->blob())) {
 				os << "Blob is not a transfer transaction.";
 				return false;
 			}
-			auto r = root()->network().createTransfer(root()->blob());
+			auto r = root()->network().createTransaction(root()->blob());
 			if (is_ko(r.first)) {
 				assert(r.second==nullptr);
 				os << r.first;
 				return false;
 			}
-			tx=r.second;
+			assert(r.second!=nullptr);
+			delete m_tx;
+			m_tx = dynamic_cast<core::Transfer*>(r.second);
+			if (m_tx==nullptr) {
+				delete r.second;
+				os << "Unexpected error.";
+				return false;
+			}
+			
 		}
 		else {
 			Amount am;
@@ -121,8 +129,10 @@ namespace symbol { namespace core { namespace hmi {
 				os << r.first;
 				return false;
 			}
-			tx = r.second;
+			delete m_tx;
+			m_tx = r.second;
 		}
+		assert(m_tx!=nullptr);
 		
 		ptr<PrivateKey> sk{nullptr};
 		if (p.is_set(Keys::Privkey_Flag)) {
@@ -131,16 +141,15 @@ namespace symbol { namespace core { namespace hmi {
 				os << "Input is not a private key.";
 				return false;
 			}
-			if ( !tx->sign(*sk) ) {
+			auto r=m_tx->sign(*sk);
+			if (is_ko(r)) {
 				delete sk;
-				delete tx;
-				os << "Couldn't sign transaction with private key.";
+				os << r;
 				return false;
 			}
 			delete sk;
 		}
-		os << *tx << '\n';
-		delete tx;
+		os << *m_tx << '\n';
 		return true;
 	}
 

@@ -77,8 +77,9 @@ namespace symbol { namespace core {
 	public:
 		static bool isTransaction(const Blob&);
 		static bool isTransferTransaction(const Blob&);
+		static pair<ko, ptr<Transaction>> create(const Network&, const Blob&);
 
-		bool sign(const Keys::PrivateKey&);
+		ko sign(const Keys::PrivateKey&);
 
 	public:
 		ptr<catapult::model::Transaction> m_catapultTx{ nullptr };

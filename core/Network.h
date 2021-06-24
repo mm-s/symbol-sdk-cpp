@@ -131,6 +131,7 @@ namespace symbol { namespace core {
 		/// Set network GenerationHashSeed
 		bool setSeed(const string&);
 		string identifierHex() const;
+		string identifierDecHex() const;
 		const char* identifierStr() const;
 		static const char* identifierStr(Identifier t);
 		static Identifier identifier(const string& name); // can return Identifier::Zero
@@ -143,7 +144,7 @@ namespace symbol { namespace core {
 
 	public:	/// Transactions
 		/// Creates a Transfer transaction
-		pair<ko, ptr<Transfer>> createTransfer(const Blob& mem) const;
+		pair<ko, ptr<Transaction>> createTransaction(const Blob& mem) const;
 		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const;
 
 

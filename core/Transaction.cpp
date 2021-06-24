@@ -20,6 +20,7 @@
 **/
 
 #include "Transaction.h"
+#include "Transaction/Transfer.h"
 #include "Network.h"
 #include "catapult/BufferInputStreamAdapter.h"
 #include "catapult/EntityIoUtils.h"
@@ -96,12 +97,34 @@ Transaction
 		return false;
 	}
 
-	bool c::sign(const Keys::PrivateKey& sk) {
-		if (m_catapultTx != nullptr ) return false;
+	pair<ko, ptr<Transaction>> c::create(const Network& n, const Blob& blob) {
+		if (isTransferTransaction(blob)) {
+			auto r=Transfer::create(n, blob);
+			if (is_ko(r.first)) {
+				assert(r.second==nullptr);
+				return make_pair(r.first, nullptr);
+			}
+			return make_pair(ok, r.second);
+		}
+		return make_pair("KO 66095", nullptr);
+	}
+
+	ko c::sign(const Keys::PrivateKey& sk) {
+		if (m_catapultTx == nullptr ) {
+			return "KO 99483";
+		}
+		
+		//cout << m_network.seed() << endl;
 		auto x = catapult::extensions::TransactionExtensions(m_network.seed());
 		Keys k(sk);
+		m_catapultTx->SignerPublicKey=k.publicKey();
+
 		x.sign(k, *m_catapultTx);
-		return x.verify(*m_catapultTx);
+		if (!x.verify(*m_catapultTx)) {
+//			return "KO 66051";
+			cout << "KO 66051" << endl;
+		}
+		return ok;
 	}
 
 }} // namespaces

@@ -53,20 +53,39 @@ namespace symbol { namespace core { namespace hmi {
 	bool c::main(Params& p, ostream& os) {
 		if (!b::main(p, os)) return false;
 		m_blobOverriden = p.is_set(Blob_Flag);
-		if (m_blobOverriden) {
-			{
-				auto r = symbol::core::Network::decodeBlob(p.get(Blob_Flag));
-				if (is_ko(r.first)) {
-					os << r.first;
-					return false;
-				}
-				m_blob = move(r.second);
-				assert(!m_blob.empty());
+		if (!m_blobOverriden) return true;
+		
+		{//Store the blob
+			auto r = symbol::core::Network::decodeBlob(p.get(Blob_Flag));
+			if (is_ko(r.first)) {
+				os << r.first;
+				return false;
 			}
+			m_blob = move(r.second);
+			assert(!m_blob.empty());
+		}
+
+		{//Set Network identifier from Blob
 			auto nid = core::Network::identifier(m_blob);
 			auto r = setNetworkIdentifier(p, nid);
 			if (is_ko(r)) {
 				os << r;
+				return false;
+			}
+		}
+
+		{ //is Transaction
+			if (core::Transaction::isTransaction(m_blob)) {
+				if (core::Transaction::isTransferTransaction(m_blob)) {
+					os << "Blob is a Transfer Transaction\n";
+				}
+				else {
+					os << "The blob is an invalid transaction.\n";
+					return false;
+				}
+			}
+			else {
+				os << "The blob is invalid.\n";
 				return false;
 			}
 		}

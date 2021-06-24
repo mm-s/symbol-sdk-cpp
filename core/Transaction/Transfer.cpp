@@ -61,8 +61,9 @@ namespace symbol { namespace core {
 	}
 
 	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg) {
-		auto k=Keys::generate();
-		catapult::builders::TransferBuilder builder(n.identifier(), k.second.publicKey());
+		PublicKey unused;
+//		auto k=Keys::generate();
+		catapult::builders::TransferBuilder builder(n.identifier(), unused);
 		if (!msg.empty()) {
 			builder.setMessage(catapult::utils::RawBuffer(msg.data(), msg.size()));
 		}
@@ -71,9 +72,10 @@ namespace symbol { namespace core {
 	//		auto mosaicId = mosaicNameToMosaicIdMap.at(seed.Name);
 	//		builder.addMosaic({ mosaicId, seed.Amount });
 	//	}
-		UnresolvedMosaicId um(m.unwrap());
+cout << "xXXXXXXXXXXXXXX " << m.unwrap() << endl;
+		UnresolvedMosaicId um(1); //m.unwrap());
 		builder.addMosaic({ um, am });
-		builder.setDeadline(Timestamp(deadline.millis()));
+		builder.setDeadline(Timestamp(54321)); //deadline.millis()));
 		auto x = builder.build().release();
 //cout << "XXXXXXXXXXXXXXXXXXXX" << endl;
 //cout << x->Network << " " << x->Size << " bytes" << endl;

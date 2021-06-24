@@ -96,7 +96,7 @@ namespace symbol { namespace core { namespace hmi {
 		virtual bool main(Params&, ostream&); /// Command Handler
 	
 	private:
-		core::Transfer* m_tx;
+		ptr<core::Transfer> m_tx;
 	};
 
 }}}

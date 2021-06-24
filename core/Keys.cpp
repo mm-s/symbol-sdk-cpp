@@ -36,7 +36,7 @@ namespace symbol { namespace core {
 	c::Keys(PrivateKey&&sk): b(move(sk)) {
 	}
 
-	c::Keys(const PrivateKey&sk): b(copyPrivateKey(sk)) {
+	c::Keys(const PrivateKey& sk): b(copyPrivateKey(sk)) {
 	}
 
 	c::Keys(c&&other): b(move(other)) {

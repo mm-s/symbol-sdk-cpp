@@ -293,11 +293,14 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 			return false;
 		}
 	}
+	bool gave_output{false};
 	if (!skip_handler) {
 		ostringstream os;
 		auto r = handler(*p, os);
 		if (r) {
-			*pos << os.str();
+			auto s = os.str();
+			*pos << s;
+			gave_output = !s.empty();
 		}
 		else {
 			*peos << "ERR " << os.str() << '\n';
@@ -306,7 +309,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 	}
 	++i;
 	if (i == v.end()) {
-		if (!empty()) {
+		if (!gave_output && !empty()) {
 			print_error("Missing command.");
 			help(v);
 			return false;

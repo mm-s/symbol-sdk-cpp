@@ -32,10 +32,8 @@ namespace symbol { namespace core {
 
 	/// Functions related to Cryptographic Keys
 	class Keys: public catapult::crypto::KeyPair {
-		/// Base class is b
+		/// Base class b
 		using b = catapult::crypto::KeyPair;
-		//using priv = b::PrivateKey;
-		//using pub = b::PublicKey;
 
 	public:
 		/// Construction, Initialization, Destruction
