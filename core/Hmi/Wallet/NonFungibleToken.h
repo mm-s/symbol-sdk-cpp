@@ -52,7 +52,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	protected: /// menu command: tx transfer
 		virtual ptr<Section> createSectionNftInfo(); /// Init
-		virtual bool nftInfo(const Params&, ostream&); /// Command Handler
+		virtual bool nftInfo(Params&, bool last, ostream&); /// Command Handler
 	};
 }}}
 

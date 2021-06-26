@@ -31,8 +31,8 @@ namespace symbol { namespace hmi {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
-	bool c::main(Params& p, ostream& os) {
-		if (!b::main(p, os)) return false;
+	bool c::main(Params& p, bool last, ostream& os) {
+		if (!b::main(p, last, os)) return false;
 //cout << "root()->offline() " << root()->offline() << endl;
 		if ( !root()->offline() ) {
 			dto::node_info o;

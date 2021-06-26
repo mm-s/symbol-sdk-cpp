@@ -42,6 +42,9 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr const char* Transfer_Command = "transfer";
 		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
 
+		static constexpr const char* Sign_Command = "sign";
+		static constexpr const char* Sign_Command_Desc = "Sign transaction.";
+
 		static Params defParams();
 
 		/// Flags, Options
@@ -76,6 +79,11 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Message_Default{""};
 		static constexpr auto Message_Desc{"Message."};
 
+		static constexpr auto Encrypt_Flag{'E'};
+		static constexpr auto Encrypt_Name{"encrypt"};
+		static constexpr auto Encrypt_Default{""};
+		static constexpr auto Encrypt_Desc{"Encrypt message."};
+
 	public:
 		/// Default constructors
 		Transfer();
@@ -85,7 +93,11 @@ namespace symbol { namespace core { namespace hmi {
 		/// Provide the program name and a description.
 		void init(const string& name, const string& desc) override;
 		bool pass1(ParamPath&, ostream&) override;
+		void help_flag(const FlagDef&, ostream&) const;
 
+		bool cmdSign(Params& p, bool last, ostream& os);
+		ptr<Section> createSectionSign();
+		
 		Transaction* root();
 	private:
 		/// menu command: tx
@@ -93,10 +105,12 @@ namespace symbol { namespace core { namespace hmi {
 	protected: /// menu command: tx transfer
 
 		ptr<Section> createSectionTxTransfer(); /// Init
-		virtual bool main(Params&, ostream&); /// Command Handler
+		virtual bool main(Params&, bool last, ostream&); /// Command Handler
 	
 	private:
 		ptr<core::Transfer> m_tx;
+		ptr<PrivateKey> m_sk{nullptr};
+
 	};
 
 }}}

@@ -31,7 +31,7 @@ namespace symbol { namespace core {
 		Transfer(Transfer&&);
 		bool toStream(ostream&) const;
 		static pair<ko, ptr<Transfer>> create(const Network& n, const Blob& mem);
-		static pair<ko, ptr<Transfer>> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg);
+		static pair<ko, ptr<Transfer>> create(const Network&, const UnresolvedAddress& rcpt, const Amount&, const Mosaic::Id&, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg, const ptr<PrivateKey>& encryptPrivateKey=nullptr, const ptr<PublicKey>& encryptPublicKey=nullptr);
 
 		ptr<catapult::model::TransferTransaction> m_catapultTransferTx{ nullptr };
 	};

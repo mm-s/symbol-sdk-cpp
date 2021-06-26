@@ -81,7 +81,7 @@ namespace symbol { namespace core { namespace hmi {
 		return os.str();
 	}
 
-	bool c::main(Params& p, ostream& os) {
+	bool c::main(Params& p, bool last, ostream& os) {
 		m_home = p.get(Home_Flag);
 		if (p.is_set(Verbose_Flag)) {
 			//catapult::utils::log::global_logger::set(trace);
@@ -93,7 +93,7 @@ namespace symbol { namespace core { namespace hmi {
 
 	void c::init(const string& nm, const string& dc) {
 		b::init(nm, dc);
-		set_handler([&](Params& p, ostream& os) -> bool { return main(p, os); });
+		set_handler([&](Params& p, bool last, ostream& os) -> bool { return main(p, last, os); });
 	}
 
 }}}

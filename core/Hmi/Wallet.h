@@ -52,7 +52,7 @@ namespace symbol { namespace core { namespace hmi {
 	private:
 		/// menu command: keys
 		//ptr<Section> createSectionWallet(); /// init
-		bool wallet(Params&, ostream&); /// Handler, user hitting wallet
+		bool wallet(Params&, bool last, ostream&); /// Handler, user hitting wallet
 
 	};
 

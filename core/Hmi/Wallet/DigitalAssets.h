@@ -73,9 +73,9 @@ namespace symbol { namespace core { namespace hmi {
 		static FlagDef flagdefFile();
 
 	protected: /// menu command: tx transfer
-		bool handlerDA(const Params& p, ostream&);
-		bool handlerSign(const Params&, ostream&); /// Command Handler
-		bool handlerDigest(const Params&, ostream&); /// Command Handler
+		bool handlerDA(Params& p, bool last, ostream&);
+		bool handlerSign(Params&, bool last, ostream&); /// Command Handler
+		bool handlerDigest(Params&, bool last, ostream&); /// Command Handler
 		bool pass1(ParamPath&, ostream&) override;
 
 	private:

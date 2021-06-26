@@ -68,7 +68,7 @@ namespace symbol { namespace core { namespace hmi {
 	private:
 		/// menu command: keys
 		ptr<Section> createSectionMain(); /// init
-		bool cmdMain(Params&, ostream&); /// Handler
+		bool cmdMain(Params&, bool last, ostream&); /// Handler
 
 	};
 

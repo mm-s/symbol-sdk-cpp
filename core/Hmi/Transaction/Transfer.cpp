@@ -1,23 +1,19 @@
-/**
-*** Copyright (c) 2016-2019, Jaguar0625, gimre, BloodyRookie, Tech Bureau, Corp.
-*** Copyright (c) 2020-present, Jaguar0625, gimre, BloodyRookie.
-*** All rights reserved.
-***
-*** This file is part of Catapult.
-***
-*** Catapult is free software: you can redistribute it and/or modify
-*** it under the terms of the GNU Lesser General Public License as published by
-*** the Free Software Foundation, either version 3 of the License, or
-*** (at your option) any later version.
-***
-*** Catapult is distributed in the hope that it will be useful,
-*** but WITHOUT ANY WARRANTY; without even the implied warranty of
-*** MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-*** GNU Lesser General Public License for more details.
-***
-*** You should have received a copy of the GNU Lesser General Public License
-*** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
-**/
+/*
+ * Copyright 2021 NEM
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 #include "Transfer.h"
 #include "../Network.h"
 #include "../Transaction.h"
@@ -35,7 +31,8 @@ namespace symbol { namespace core { namespace hmi {
 				{Mosaic_Flag, Mosaic_Name, false, true, Mosaic_Default, Mosaic_Desc},
 				{Maxfee_Flag, Maxfee_Name, false, true, Maxfee_Default, Maxfee_Desc},
 				{Deadline_Flag, Deadline_Name, false, true, Deadline_Default, Deadline_Desc},
-				{Message_Flag, Message_Name, false, true, Message_Default, Message_Desc},
+				{Message_Flag, Message_Name, true, true, Message_Default, Message_Desc},
+				{Encrypt_Flag, Encrypt_Name, true, false, Encrypt_Default, Encrypt_Desc},
 				{Keys::Privkey_Flag, Keys::Privkey_Name, true, true, Keys::Privkey_Default, Keys::Privkey_Desc},
 			};
 	}
@@ -49,14 +46,31 @@ namespace symbol { namespace core { namespace hmi {
 
 	c::~Transfer() {
 		delete m_tx;
+		delete m_sk;
 	}
 
 	Transaction* c::root() {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
-	bool c::main(Params& p, ostream& os) {
+	void c::help_flag(const FlagDef& f, ostream& os) const {
+		if (f.short_name == Mosaic_Flag) {
+			os << "Value in Hex format starting with 0x\n";
+			return;
+		}
+		b::help_flag(f, os);
+	}
+
+	bool c::main(Params& p, bool last, ostream& os) {
 //cout << "core txTransfer" << endl;
+		if (p.is_set(Keys::Privkey_Flag)) {
+			m_sk = core::Keys::createPrivateKey( p.get(Keys::Privkey_Flag) );
+			if (m_sk == nullptr) {
+				os << "Input is not a private key.";
+				return false;
+			}
+		}
+		
 		if (root()->blobOverriden()) {
 			if (!symbol::core::Transaction::isTransferTransaction(root()->blob())) {
 				os << "Blob is not a transfer transaction.";
@@ -113,6 +127,8 @@ namespace symbol { namespace core { namespace hmi {
 				msg = vector<uint8_t>(s.begin(), s.end());
 			}
 
+			bool encrypMsg = p.is_set(Encrypt_Flag);
+
 			ptr<PublicKey> pk{nullptr};
 			ptr<UnresolvedAddress> addr{nullptr};
 			string e = root()->network().parse(p.get(Recipient_Flag), pk, addr, root()->networkOverriden());
@@ -120,9 +136,16 @@ namespace symbol { namespace core { namespace hmi {
 				os << e;
 				return false;
 			}
-			delete pk;
 
-			auto r = root()->network().createTransfer(*addr, am, mo, maxfee, deadline, msg);
+			if (encrypMsg && (m_sk==nullptr || pk==nullptr)) {
+				os << "Cannot encrypt message.";
+				if (m_sk==nullptr) os << " Signer private key is required.";
+				if (pk==nullptr) os << " Recipient public key is required.";
+				return false;
+			}
+
+			auto r = root()->network().createTransfer(*addr, am, mo, maxfee, deadline, msg, encrypMsg?m_sk:nullptr, pk);
+			delete pk;
 			delete addr;
 			if (is_ko(r.first)) {
 				assert(r.second==nullptr);
@@ -134,28 +157,38 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		assert(m_tx!=nullptr);
 		
-		ptr<PrivateKey> sk{nullptr};
-		if (p.is_set(Keys::Privkey_Flag)) {
-			sk = core::Keys::createPrivateKey( p.get(Keys::Privkey_Flag) );
-			if (sk == nullptr) {
-				os << "Input is not a private key.";
-				return false;
-			}
-			auto r=m_tx->sign(*sk);
-			if (is_ko(r)) {
-				delete sk;
-				os << r;
-				return false;
-			}
-			delete sk;
+		if (last) os << *m_tx << '\n';
+		return true;
+	}
+
+	bool c::cmdSign(Params& p, bool last, ostream& os) {
+		if (!m_sk) {
+			os << "Private key is required.";
+			return false;
+		}
+		if (!m_tx) {
+			os << "Tx is required.";
+			return false;
+		}
+		auto r=m_tx->sign(*m_sk);
+		if (is_ko(r)) {
+			os << r;
+			return false;
 		}
 		os << *m_tx << '\n';
 		return true;
 	}
 
+	ptr<c::Section> c::createSectionSign() {
+		auto s=new Section(Params{});
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdSign(p, last, os); });
+		return s;
+	}
+
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
-		set_handler([&](Params& p, ostream& os) -> bool { return main(p, os); });
+		add(CmdDef{Sign_Command, Sign_Command_Desc}, createSectionSign());
+		set_handler([&](Params& p, bool last, ostream& os) -> bool { return main(p, last, os); });
 	}
 
 	bool c::pass1(ParamPath& v, ostream& os) {
@@ -163,18 +196,36 @@ namespace symbol { namespace core { namespace hmi {
 		if (!b::pass1(v, os)) return false;
 //		cout << "CORE TRANSFER pass1" << endl;
 		//"tx", "transfer"  when the user runs this sequence reconfigure flag definitions (e.g. making some of them required)
-		auto p=v.lookup({}); //TODO replace strings with their section name var
-		assert(p!=nullptr);
-		if(p->is_set(Blob::Blob_Flag)) {
-			p->set_optional(Network::Seed_Flag);
+		{
+			auto p=v.lookup({});
+			assert(p!=nullptr);
+			if(p->is_set(Blob::Blob_Flag)) {
+				p->set_optional(Network::Seed_Flag);
+				{
+					auto p=v.lookup({Transaction::Main_Command, Transaction::Transfer_Command});
+					if(p!=nullptr) {
+						p->set_optional(Recipient_Flag);
+						p->set_optional(Amount_Flag);
+						p->set_optional(Mosaic_Flag);
+						p->set_optional(Maxfee_Flag);
+						p->set_optional(Deadline_Flag);
+					}
+				}
+			}
+		}
+		{
 			{
-				auto p=v.lookup({Transaction::Main_Command, Transaction::Transfer_Command}); //TODO replace strings with their section name var
+				auto p=v.lookup({Transaction::Main_Command, Transaction::Transfer_Command});
 				if(p!=nullptr) {
-					p->set_optional(Recipient_Flag);
-					p->set_optional(Amount_Flag);
-					p->set_optional(Mosaic_Flag);
-					p->set_optional(Maxfee_Flag);
-					p->set_optional(Deadline_Flag);
+					if(p->is_set(Encrypt_Flag)) {
+						p->set_mandatory(Keys::Privkey_Flag);
+					}
+				}
+			}
+			{
+				auto p=v.lookup({Transaction::Main_Command, Transaction::Transfer_Command, Sign_Command});
+				if(p!=nullptr) {
+					p->set_mandatory(Keys::Privkey_Flag);
 				}
 			}
 		}

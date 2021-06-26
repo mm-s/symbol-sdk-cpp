@@ -76,7 +76,7 @@ namespace symbol { namespace core { namespace hmi {
 			return os.str();
 		}
 
-		bool main(Params&, ostream&) override;
+		bool main(Params&, bool last, ostream&) override;
 
 	protected:
 		/// Handler for empty command

@@ -62,14 +62,14 @@ namespace symbol { namespace core {
 
 	string c::parse(const string& input, ptr<PublicKey>& pk, ptr<UnresolvedAddress>& addr, bool as_const) {
 		bool spk{false}, sdd{false}, sad{false};
-		spk=Keys::isKey(input);
+		spk = Keys::isKey(input);
 		if (!spk) {
 			sdd=UnresolvedAddress::isAddress(input);
 			if (!sdd) {
 				sad=true;
 			}
 		}
-		bool fail=false;
+		bool fail = false;
 		if (sdd || sad) {
 			Identifier t=sdd ? identifierFromAddressHex(input) : identifierFromAccount(input);
 			if (m_identifier != t) {
@@ -78,10 +78,10 @@ namespace symbol { namespace core {
 				}
 				else {
 					if (!isValid(t)) {
-					    fail = true;
+						fail = true;
 					}
 					else {
-					    m_identifier = t;
+						m_identifier = t;
 					}
 				}
 			}
@@ -98,8 +98,8 @@ namespace symbol { namespace core {
 			addr = newAddress(*pk);
 		}
 		else {
-			pk=nullptr;
-			addr=(sad ? newAccount(input) : newAddress(input));
+			pk = nullptr;
+			addr = (sad ? newAccount(input) : newAddress(input));
 		}
 		if (!addr->isValid()) {
 			ostringstream os;
@@ -297,8 +297,8 @@ namespace symbol { namespace core {
 		return Transaction::create(*this, mem);
 	}
 
-	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const {
-		return Transfer::create(*this, rcpt, a, m, f, d, msg);
+	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) const {
+		return Transfer::create(*this, rcpt, a, m, f, d, msg, encryptPrivateKey, encryptPublicKey);
 	}
 
 }} // Namespaces

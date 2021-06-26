@@ -60,22 +60,42 @@ namespace symbol { namespace core {
 		return make_pair(ok, new Transfer(n, ptx.release()));
 	}
 
-	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg) {
+	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) {
 		PublicKey unused;
-//		auto k=Keys::generate();
 		catapult::builders::TransferBuilder builder(n.identifier(), unused);
-		if (!msg.empty()) {
-			builder.setMessage(catapult::utils::RawBuffer(msg.data(), msg.size()));
+
+		Msg finalMsg;
+		if (encryptPrivateKey != nullptr) {
+			if (encryptPublicKey == nullptr) {
+				return make_pair("KO 33092 Recipient Public Key is required.", nullptr); 
+			}
+			if (msg.empty()) {
+				return make_pair("KO 33092 Message is empty.", nullptr); 
+			}
+			auto addr = n.newAddress(*encryptPublicKey);
+			if (*addr != rcpt) {
+				delete addr;
+				return make_pair("KO 33092 Encryption Public Key must correspond to the recipient address.", nullptr); 
+			}
+			delete addr;
+			finalMsg=msg; //encrypt(msg, *encryptPrivateKey, *encryptPublicKey);
+		}
+		else {
+			finalMsg=msg;
+			finalMsg.insert(finalMsg.begin(), '\0');
+		}
+		if (!finalMsg.empty()) {
+			builder.setMessage(catapult::utils::RawBuffer(finalMsg.data(), finalMsg.size()));
 		}
 		builder.setRecipientAddress(rcpt);
 	//	for (const auto& seed : seeds) {
 	//		auto mosaicId = mosaicNameToMosaicIdMap.at(seed.Name);
 	//		builder.addMosaic({ mosaicId, seed.Amount });
 	//	}
-cout << "xXXXXXXXXXXXXXX " << m.unwrap() << endl;
-		UnresolvedMosaicId um(1); //m.unwrap());
+//cout << "xXXXXXXXXXXXXXX " << m.unwrap() << endl;
+		UnresolvedMosaicId um(m.unwrap());
 		builder.addMosaic({ um, am });
-		builder.setDeadline(Timestamp(54321)); //deadline.millis()));
+		builder.setDeadline(Timestamp(deadline.millis()));
 		auto x = builder.build().release();
 //cout << "XXXXXXXXXXXXXXXXXXXX" << endl;
 //cout << x->Network << " " << x->Size << " bytes" << endl;

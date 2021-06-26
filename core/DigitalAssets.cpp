@@ -65,7 +65,7 @@ namespace symbol { namespace core {
 		vector<unsigned char> buf;
 		auto r = readFileX(file, buf);
 		if (is_ko(r)) {
-		    return make_pair(r, Hash());
+			return make_pair(r, Hash());
 		}
 		return make_pair(ok, digest(buf));
 	}

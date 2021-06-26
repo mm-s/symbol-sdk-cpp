@@ -76,8 +76,8 @@ namespace symbol { namespace core { namespace hmi {
 		return ok;
 	}
 
-	bool c::main(Params& p, ostream& os) {
-		if (!b::main(p, os)) return false;
+	bool c::main(Params& p, bool last, ostream& os) {
+		if (!b::main(p, last, os)) return false;
 		assert(!m_networkOverriden);
 		m_networkOverriden = p.is_set(Network_Flag);
 		core::Network::Identifier t = core::Network::identifier(p.get(Network_Flag));

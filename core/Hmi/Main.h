@@ -96,7 +96,7 @@ namespace symbol { namespace core { namespace hmi {
 			return os.str();
 		}
 
-		virtual bool main(Params&, ostream&);
+		virtual bool main(Params&, bool last, ostream&);
 
 	protected:
 		/// Handler for empty command

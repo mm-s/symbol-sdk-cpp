@@ -32,7 +32,7 @@ namespace symbol { namespace hmi {
 	public:
 		using b::Transfer;
 
-		bool main(Params&, std::ostream&) override;
+		bool main(Params&, bool last, std::ostream&) override;
 	protected:
 		Transaction* root();
 

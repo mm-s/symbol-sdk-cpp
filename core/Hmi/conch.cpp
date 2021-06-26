@@ -61,14 +61,14 @@ c::section(): m_pdef({}) {
 	constructor();
 }
 
-c::section(function<bool(params&, ostream&)>f): m_pdef({}), handler(f) {
+c::section(handler_t f): m_pdef({}), handler(f) {
 	assert(m_pdef.check_unique());
 }
 
 void c::constructor() {
 	auto& def = const_cast<params&>(m_pdef);
 	def.emplace_back(flagdef{'h', "help", true, false, "", "Prints this help."});
-	handler = [](params& p, ostream& os) -> bool {
+	handler = [](params&, bool, ostream& os) -> bool {
 		os << "Not implemented.\n";
 		return false;
 	};
@@ -216,7 +216,7 @@ void c::help(const param_path& v, param_path::const_iterator i) const {
 	}
 }
 
-void c::set_handler(function<bool(params&, ostream&)> f) {
+void c::set_handler(function<bool(params&, bool last, ostream&)> f) {
 	assert(skip_handler);
 	handler=f;
 	skip_handler=false;
@@ -296,7 +296,9 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 	bool gave_output{false};
 	if (!skip_handler) {
 		ostringstream os;
-		auto r = handler(*p, os);
+		auto l=i;
+		++l;
+		auto r = handler(*p, l==v.end(), os);
 		if (r) {
 			auto s = os.str();
 			*pos << s;

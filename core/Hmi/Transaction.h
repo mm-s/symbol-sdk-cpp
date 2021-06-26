@@ -90,7 +90,7 @@ namespace symbol { namespace core { namespace hmi {
 		ptr<Section> createSectionMain();
 
 	protected: /// menu command: tx transfer
-		bool cmdMain(Params&, ostream&); /// Command Handler
+		bool cmdMain(Params&, bool last, ostream&); /// Command Handler
 
 		//virtual bool txTransfer(Params&, ostream&); /// Command Handler
 	

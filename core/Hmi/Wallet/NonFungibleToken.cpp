@@ -24,14 +24,14 @@
 namespace symbol { namespace core { namespace hmi {
 	using c = hmi::NonFungibleToken; /// Implementation for class c 
 
-	bool c::nftInfo(const Params& p, ostream& os) {
+	bool c::nftInfo(Params& p, bool last, ostream& os) {
 		os << "Info about NFT: not implemented." << '\n';
 		return false; //Will result in Error for the user
 	}
 
 	ptr<c::Section> c::createSectionNftInfo() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return nftInfo(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return nftInfo(p, last, os); });
 		return s;
 	}
 

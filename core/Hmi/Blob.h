@@ -59,7 +59,7 @@ namespace symbol { namespace core { namespace hmi {
 	public: /// Generic
 		/// String converter
 		//bool mainHandler(Params&, ostream&) override;
-		bool main(Params&, ostream&) override;
+		bool main(Params&, bool last, ostream&) override;
 
 		bool pass1(ParamPath&, ostream&) override;
 
@@ -67,7 +67,7 @@ namespace symbol { namespace core { namespace hmi {
 		/// Handler for empty command
 
 		ptr<Section> createSectionBlobInfo();
-		bool blobInfo(Params&, ostream&);
+		bool blobInfo(Params&, bool last, ostream&);
 
 	private:
 

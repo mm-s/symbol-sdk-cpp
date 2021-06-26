@@ -145,7 +145,7 @@ namespace symbol { namespace core {
 	public:	/// Transactions
 		/// Creates a Transfer transaction
 		pair<ko, ptr<Transaction>> createTransaction(const Blob& mem) const;
-		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg) const;
+		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey=nullptr, const ptr<PublicKey>& encryptPublicKey=nullptr) const;
 
 
 	private:

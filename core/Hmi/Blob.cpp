@@ -50,8 +50,8 @@ namespace symbol { namespace core { namespace hmi {
 		b::help_flag(f, os);
 	}
 
-	bool c::main(Params& p, ostream& os) {
-		if (!b::main(p, os)) return false;
+	bool c::main(Params& p, bool last, ostream& os) {
+		if (!b::main(p, last, os)) return false;
 		m_blobOverriden = p.is_set(Blob_Flag);
 		if (!m_blobOverriden) return true;
 		

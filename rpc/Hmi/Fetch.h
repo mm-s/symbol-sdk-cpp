@@ -66,35 +66,35 @@ namespace symbol { namespace hmi {
 	private:
 		/// menu command: fetch
 		ptr<Section> createSectionMain(); /// init
-		bool main(const Params&, ostream&); /// Handler
+		bool cmdMain(Params&, bool last, ostream&);
 
 		/// menu command: fetch node
 		ptr<Section> createSectionFetchNode(); /// init
-		bool fetchNode(const Params&, ostream&); /// Handler
+		bool fetchNode(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch nodes
 		ptr<Section> createSectionFetchNodes(); /// init
-		bool fetchNodes(const Params&, ostream&); /// Handler
+		bool fetchNodes(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch node health
 		ptr<Section> createSectionFetchNodeHealth(); /// init
-		bool fetchNodeHealth(const Params&, ostream&); /// Handler
+		bool fetchNodeHealth(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch node info
 		ptr<Section> createSectionFetchNodeInfo(); /// init
-		bool fetchNodeInfo(const Params&, ostream&); /// Handler
+		bool fetchNodeInfo(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch node peers
 		ptr<Section> createSectionFetchNodePeers(); /// init
-		bool fetchNodePeers(const Params&, ostream&); /// Handler
+		bool fetchNodePeers(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch chain
 		ptr<Section> createSectionFetchChain(); /// init
-		bool fetchChain(const Params&, ostream&); /// Handler
+		bool fetchChain(Params&, bool last, ostream&); /// Handler
 
 		/// menu command: fetch account
 		ptr<Section> createSectionFetchAccount(); /// init
-		bool fetchAccount(const Params&, ostream&); /// Handler
+		bool fetchAccount(Params&, bool last, ostream&); /// Handler
 
 	public:
 		/// Getters & Setters
@@ -107,7 +107,6 @@ namespace symbol { namespace hmi {
 		bool pass1(ParamPath&, ostream&) override;
 
 	private:
-		bool cmdMain(Params&, ostream&);
 //		static FlagDef flagdefOffline();
 //		static FlagDef flagdefUrl();
 		static Params defParams();

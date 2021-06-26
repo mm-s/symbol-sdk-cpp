@@ -49,7 +49,7 @@ namespace symbol { namespace hmi {
 */
 //	}
 
-	bool c::fetchAccount(const Params& p, ostream& os) {
+	bool c::fetchAccount(Params& p, bool last, ostream& os) {
 		ptr<symbol::PublicKey> pk{nullptr};
 		ptr<symbol::UnresolvedAddress> addr{nullptr};
 		string e = network().parse(p.get(Acc_Flag), pk, addr, networkOverriden());
@@ -76,11 +76,11 @@ namespace symbol { namespace hmi {
 		auto s=new Section(Params{
 			{core::Hmi::Keys::Acc_Flag, core::Hmi::Keys::Acc_Name, false, true, core::Hmi::Keys::Acc_Default, core::Hmi::Keys::Acc_Desc},
 		});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchAccount(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchAccount(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchNodes(const Params& p, ostream& os) {
+	bool c::fetchNodes(Params& p, bool last, ostream& os) {
 		auto url = network().nodesUrl();
 		if (url.empty()) {
 			os << "Unknown Url for network '" << network() << "'.";
@@ -100,22 +100,22 @@ namespace symbol { namespace hmi {
 
 	ptr<c::Section> c::createSectionFetchNodes() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodes(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodes(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchChain(const Params& p, ostream& os) {
-		os << "XXXXXXXXXXXChain\n";
+	bool c::fetchChain(Params& p, bool last, ostream& os) {
+		os << "Not implemented.\n";
 		return true;
 	}
 
 	c::section* c::createSectionFetchChain() {
 		auto s = new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchChain(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchChain(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchNodePeers(const Params& p, ostream& os) {
+	bool c::fetchNodePeers(Params& p, bool last, ostream& os) {
 		dto::node_peers o;
 		auto r=o.fetch(m_url);
 		if (!r) return false;
@@ -131,11 +131,11 @@ namespace symbol { namespace hmi {
 
 	ptr<c::Section> c::createSectionFetchNodePeers() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodePeers(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodePeers(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchNodeInfo(const Params& p, ostream& os) {
+	bool c::fetchNodeInfo(Params& p, bool last, ostream& os) {
 		dto::node_info o;
 		auto r=o.fetch(m_url);
 		if (!r) return false;
@@ -150,11 +150,11 @@ namespace symbol { namespace hmi {
 	
 	ptr<c::Section> c::createSectionFetchNodeInfo() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodeInfo(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodeInfo(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchNodeHealth(const Params& p, ostream& os) {
+	bool c::fetchNodeHealth(Params& p, bool last, ostream& os) {
 		dto::node_health o;
 		auto r=o.fetch(m_url);
 		if (!r) return false;
@@ -169,24 +169,24 @@ namespace symbol { namespace hmi {
 
 	ptr<c::Section> c::createSectionFetchNodeHealth() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNodeHealth(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodeHealth(p, last, os); });
 		return s;
 	}
 
-	bool c::fetchNode(const Params& p, ostream& os) {
+	bool c::fetchNode(Params& p, bool last, ostream& os) {
 		return true;
 	}
 
 	ptr<c::Section> c::createSectionFetchNode() {
 		auto s=new Section(Params{});
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return fetchNode(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNode(p, last, os); });
 		s->add(CmdDef{"health", "Node health."}, createSectionFetchNodeHealth());
 		s->add(CmdDef{"info", "Node info."}, createSectionFetchNodeInfo());
 		s->add(CmdDef{"peers", "Peers."}, createSectionFetchNodePeers());
 		return s;
 	}
 
-	bool c::cmdMain(Params& p, ostream& os) {
+	bool c::cmdMain(Params& p, bool last, ostream& os) {
 		if (p.is_set(Offline_Flag)) {
 			os << "Cannot access the network in offline mode.";
 			return false;
@@ -196,7 +196,7 @@ namespace symbol { namespace hmi {
 
 	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(Params{});
-		s->set_handler([&](Params& p, ostream& os) -> bool { return cmdMain(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdMain(p, last, os); });
 		s->add(CmdDef{"node", "Node information."}, createSectionFetchNode());
 		s->add(CmdDef{"chain", "Chain information."}, createSectionFetchChain());
 		s->add(CmdDef{"nodes", "List of network nodes."}, createSectionFetchNodes());

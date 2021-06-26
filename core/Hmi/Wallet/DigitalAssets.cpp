@@ -33,13 +33,13 @@ namespace symbol { namespace core { namespace hmi {
 		delete m_privateKey;
 	}
 
-	bool c::handlerSign(const Params& p, ostream& os) {
+	bool c::handlerSign(Params& p, bool last, ostream& os) {
 		assert ( m_privateKey != nullptr );
 		os << *m_privateKey << "\n";
 		return false;
 	}
 
-	bool c::handlerDigest(const Params& p, ostream& os) {
+	bool c::handlerDigest(Params& p, bool last, ostream& os) {
 		pair<ko, symbol::core::Hash> r = core::DigitalAssets::digestFile(m_file);
 		if (is_ko(r.first)) {
 			os << r.first;
@@ -52,14 +52,14 @@ namespace symbol { namespace core { namespace hmi {
 	ptr<c::Section> c::createSectionSign() {
 		auto s=new Section(Params{});
 		/// Add a handler for command sign
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerSign(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return handlerSign(p, last, os); });
 		return s;
 	}
 
 	ptr<c::Section> c::createSectionDigest() {
 		auto s=new Section(Params{});
 		/// Add a handler for command sign
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerDigest(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return handlerDigest(p, last, os); });
 		s->ignoreFlags.insert(Keys::Privkey_Flag);
 		return s;
 	}
@@ -68,7 +68,7 @@ namespace symbol { namespace core { namespace hmi {
 		return FlagDef{File_Flag, "file", false, true, "", "Select file."};
 	}
 
-	bool c::handlerDA(const Params& p, ostream& os) {
+	bool c::handlerDA(Params& p, bool last, ostream& os) {
 		assert(p.is_set(File_Flag));
 		m_file = p.get(File_Flag);
 		
@@ -89,7 +89,7 @@ namespace symbol { namespace core { namespace hmi {
 		s->add(CmdDef{Digest_Command, Digest_Command_Desc}, createSectionDigest());
 		/// Add more commands here.
 		/// Add a handler for this command.
-		s->set_handler([&](const Params& p, ostream& os) -> bool { return handlerDA(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return handlerDA(p, last, os); });
 		/// s->set_handler([&](const Params& p, ostream& os) -> bool { return you_handler_function(p, os); });
 		s->ignoreFlags.insert(Network::Network_Flag);
 		s->ignoreFlags.insert(Network::Seed_Flag);

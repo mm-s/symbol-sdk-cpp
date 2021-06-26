@@ -41,11 +41,11 @@ namespace symbol { namespace core {
 		using Amount = catapult::Amount;
 		using Timestamp = catapult::Timestamp;
 		using TimeSpan = catapult::utils::TimeSpan;
-		using Msg = vector<uint8_t>;
+		using Msg = std::vector<uint8_t>;
 		using NetworkIdentifier = catapult::model::NetworkIdentifier;
 		using Blob = std::vector<uint8_t>;
 
-		/// Class Mosaic. Just making space for the comment.
+		/// Class Mosaic
 		class Mosaic: public catapult::model::Mosaic {
 			using b = catapult::model::Mosaic;
 
@@ -67,8 +67,7 @@ namespace symbol { namespace core {
 		template<typename t>
 		static bool parse(const string& input, t&o) {
 			try {
-				catapult::utils::TryParseValue(input, o);
-				return true;
+				return catapult::utils::TryParseValue(input, o);
 			}
 			catch(...) {
 				return false;

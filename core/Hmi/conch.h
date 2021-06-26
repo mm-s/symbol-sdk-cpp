@@ -88,6 +88,8 @@ namespace conch {
 		using b = vector<pair<cmddef, section*>>;
 
 	public:
+		using handler_t = function<bool(params&, bool last, ostream&)>;
+
 		/// Linear path over the tree. Sequence of choices.
 		struct param_path: vector<pair<section*, params*>> {
 			params* lookup(const vector<string>& cmdpath);
@@ -100,7 +102,7 @@ namespace conch {
 		/// Construction, Initialization, Destruction
 		section();
 		section(params&&);
-		section(function<bool(params&, ostream&)>);
+		section(handler_t);
 		void constructor();
 		virtual ~section();
 
@@ -113,7 +115,7 @@ namespace conch {
 		bool disable(const string& cmd);
 		void add(flagdef&&);
 		void add(params&&);
-		void set_handler(function<bool(params&, ostream&)>);
+		void set_handler(function<bool(params&, bool, ostream&)>);
 
 		/// Rewrite params and flags spec before excecuting command. Called before executing the first command. Writable ParamPath can be used to tweak the spec based on user choices. e.g. A flag A is optional only if flag B is set otherwise is mandatory.
 		virtual bool pass1(param_path&, ostream&);
@@ -158,7 +160,7 @@ namespace conch {
 		string m_desc;
 		params m_pdef;
 		bool enabled{true};
-		function<bool(params&, ostream&)> handler;
+		handler_t handler;
 		bool skip_handler{true};
 		section* parent{nullptr};
 	};

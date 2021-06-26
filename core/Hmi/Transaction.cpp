@@ -144,7 +144,7 @@ namespace symbol { namespace core { namespace hmi {
 		}
 */
 
-	bool c::cmdMain(Params& p, ostream& os) {
+	bool c::cmdMain(Params& p, bool last, ostream& os) {
 		if (blobOverriden()) {
 			if (!core::Transaction::isTransaction(blob())) {
 				remove(hmi::Transaction::Main_Command);
@@ -188,7 +188,7 @@ namespace symbol { namespace core { namespace hmi {
 		auto s=new Section(Params{});
 		s->add(CmdDef{Transfer_Command, Transfer_Command_Desc}, createSectionTransfer());
 //		s->add(CmdDef{TX_Info_Command, TX_Info_Command_Desc}, createSectionTxInfo());
-		s->set_handler([&](Params& p, ostream& os) -> bool { return cmdMain(p, os); });
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdMain(p, last, os); });
 		return s;
 	}
 
