@@ -297,8 +297,8 @@ namespace symbol { namespace core {
 		return Transaction::create(*this, mem);
 	}
 
-	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) const {
-		return Transfer::create(*this, rcpt, a, m, f, d, msg, encryptPrivateKey, encryptPublicKey);
+	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const MosaicValues& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) const {
+		return Transfer::create(*this, rcpt, m, f, d, msg, encryptPrivateKey, encryptPublicKey);
 	}
 
 }} // Namespaces

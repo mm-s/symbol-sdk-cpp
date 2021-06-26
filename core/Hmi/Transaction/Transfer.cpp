@@ -63,10 +63,12 @@ namespace symbol { namespace core { namespace hmi {
 		}
 		if (f.short_name == Amount_Flag) {
 			os << "Amount (uint64). Number of mosaics to transfer. Decimal value >=0. Example: 1234.\n";
+			os << "Separate with comma multiple amounts corresponding to multiple mosaics. Example: 123,456,789\n";
 			return;
 		}
 		if (f.short_name == Mosaic_Flag) {
 			os << "UnresolvedMosaicId (uint64). Value in Hex format starting with 0x\n";
+			os << "Separate with comma multiple mosaics corresponding to multiple amounts. Example: 0xA1A2A3A4A5A6A7A8,0xB1B2B3B4B5B6B7B8,0xC1C2C3C4C5C6C7C8\n";
 			return;
 		}
 		if (f.short_name == Deadline_Flag) {
@@ -85,6 +87,52 @@ namespace symbol { namespace core { namespace hmi {
 			return;
 		}
 		b::help_flag(f, os);
+	}
+
+	namespace {
+		template<typename T>
+		ko parse(std::string input, vector<T>& v, function<bool(const string&, T&)> p) {
+			int s{0};
+			for (auto& ch:input) {
+				if (ch==',') { ch=' '; ++s; }
+			}
+			v.reserve(s+1);
+			istringstream is(input);
+			while(is.good()) {
+				string a;
+				is >> a;
+				T r;
+				if (!p(a, r)) {
+					return "KO 66987";
+				}
+				v.emplace_back(move(r));
+			}
+			return ok;
+		}
+		
+		using MosaicValues = symbol::core::Transaction::MosaicValues;
+		pair<ko, MosaicValues> amounts(const vector<MosaicId>& m, const vector<Amount>& a) {
+			MosaicValues r;
+			if (m.empty()) return make_pair("KO 83352 At least one mosaic is required.", r);
+			if (a.empty()) return make_pair("KO 83353 At least one amount is required.", r);
+			if (a.size()!=m.size()) return make_pair("KO 83354 Number of amounts must match the number of mosaics.", r);
+			set<MosaicId> u;
+			for (auto&i:m) {
+				u.emplace(i);
+			}
+			if (u.size()!=m.size()) {
+				 return make_pair("KO 83355 Mosaics must be different.", r);
+			}
+			r.reserve(m.size());
+			auto im=m.begin();
+			auto ia=a.begin();
+			while(im!=m.end()) {
+				r.emplace_back(make_pair(*im, *ia));
+				++im;
+				++ia;
+			}
+			return make_pair(ok, move(r));
+		}
 	}
 
 	bool c::main(Params& p, bool last, ostream& os) {
@@ -119,21 +167,42 @@ namespace symbol { namespace core { namespace hmi {
 			
 		}
 		else {
-			Amount am;
-			if (!core::Transaction::parse(p.get(Amount_Flag), am)) {
-				os << "Invalid amount.";
-				return false;
-			}
-			if (am.unwrap()==0) {
-				os << "Invalid amount.";
-				return false;
-			}
+			using MosaicValues = symbol::core::Transaction::MosaicValues;
+			MosaicValues m;
+			{
+				vector<Amount> am;
+				{
+					auto r=parse<Amount>(p.get(Amount_Flag), am, [](const string& i, Amount& v)->bool { return core::Transaction::parse(i, v); });
+					if (is_ko(r)) {
+						os << r;
+						return false;
+					}
+				}
+				/*
+				if (am.unwrap()==0) {
+					os << "Invalid amount.";
+					return false;
+				}
+	*/
+				vector<MosaicId> mo;
+				{
+					auto r=parse<MosaicId>(p.get(Mosaic_Flag), mo, [](const string& i, MosaicId& v)->bool { return core::Transaction::parse(i, v); });
+					if (is_ko(r)) {
+						os << r;
+						return false;
+					}
+				}
 
-			MosaicId mo;
-			if (!core::Transaction::parse(p.get(Mosaic_Flag), mo)) {
-				os << "Invalid mosaic.";
-				return false;
+				{
+					auto r=amounts(mo, am);
+					if (is_ko(r.first)) {
+						os << r.first;
+						return false;
+					}
+					m=move(r.second);
+				}
 			}
+			assert(!m.empty());
 
 			Amount maxfee;
 			if (!core::Transaction::parse(p.get(Maxfee_Flag), maxfee)) {
@@ -170,7 +239,7 @@ namespace symbol { namespace core { namespace hmi {
 				return false;
 			}
 
-			auto r = root()->network().createTransfer(*addr, am, mo, maxfee, deadline, msg, encrypMsg?m_sk:nullptr, pk);
+			auto r = root()->network().createTransfer(*addr, m, maxfee, deadline, msg, encrypMsg?m_sk:nullptr, pk);
 			delete pk;
 			delete addr;
 			if (is_ko(r.first)) {

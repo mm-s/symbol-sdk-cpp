@@ -39,6 +39,7 @@ namespace symbol { namespace core {
 		using GenerationHashSeed = catapult::GenerationHashSeed;
 		using ResolverContext = catapult::model::ResolverContext;
 		using Blob = Transaction::Blob;
+		using MosaicValues = Transaction::MosaicValues;
 	public:
 		/// Address tied to a Network instance
 		class UnresolvedAddress: public catapult::UnresolvedAddress {
@@ -145,7 +146,7 @@ namespace symbol { namespace core {
 	public:	/// Transactions
 		/// Creates a Transfer transaction
 		pair<ko, ptr<Transaction>> createTransaction(const Blob& mem) const;
-		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const Amount& a, const MosaicId& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey=nullptr, const ptr<PublicKey>& encryptPublicKey=nullptr) const;
+		pair<ko, ptr<Transfer>> createTransfer(const UnresolvedAddress& rcpt, const MosaicValues&, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey=nullptr, const ptr<PublicKey>& encryptPublicKey=nullptr) const;
 
 
 	private:

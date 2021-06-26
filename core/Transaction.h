@@ -44,6 +44,7 @@ namespace symbol { namespace core {
 		using Msg = std::vector<uint8_t>;
 		using NetworkIdentifier = catapult::model::NetworkIdentifier;
 		using Blob = std::vector<uint8_t>;
+		using MosaicValues = std::vector<pair<catapult::MosaicId, Amount>>;
 
 		/// Class Mosaic
 		class Mosaic: public catapult::model::Mosaic {

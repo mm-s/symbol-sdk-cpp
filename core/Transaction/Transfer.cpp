@@ -146,7 +146,7 @@ std::generate_n(container.begin(), container.size(), []() {
 		return make_pair(ok, move(encrypted));
 	}
 
-	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) {
+	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const MosaicValues& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) {
 		PublicKey unused;
 		catapult::builders::TransferBuilder builder(n.identifier(), unused);
 
@@ -184,8 +184,10 @@ std::generate_n(container.begin(), container.size(), []() {
 	//		builder.addMosaic({ mosaicId, seed.Amount });
 	//	}
 //cout << "xXXXXXXXXXXXXXX " << m.unwrap() << endl;
-		UnresolvedMosaicId um(m.unwrap());
-		builder.addMosaic({ um, am });
+		//UnresolvedMosaicId um(m.unwrap());
+		for (auto& i: m) {
+			builder.addMosaic({ UnresolvedMosaicId{i.first.unwrap()}, i.second });
+		}
 		builder.setDeadline(Timestamp(deadline.millis()));
 		auto x = builder.build().release();
 //cout << "XXXXXXXXXXXXXXXXXXXX" << endl;
