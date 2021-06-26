@@ -54,8 +54,34 @@ namespace symbol { namespace core { namespace hmi {
 	}
 
 	void c::help_flag(const FlagDef& f, ostream& os) const {
+		if (f.short_name == Recipient_Flag) {
+			os << "Recipient. Either:\n";
+			os << " - A public Key: binary_fixed(32 bytes). Example: 8750670A44B937B57AECC706A73F734915D8A317BA83C10C58E584039BC938FB. (network type agnostic).\n";
+			os << " - An address: binary_fixed(24 bytes). Example: 9879AE2D834B2336F8586443D68735B21914936660BB4A13 (Includes the network type in the encoding).\n";
+			os << " - An account: Example: TB424LMDJMRTN6CYMRB5NBZVWIMRJE3GMC5UUEY (Exact format depends on the network type).\n";
+			return;
+		}
+		if (f.short_name == Amount_Flag) {
+			os << "Amount (uint64). Number of mosaics to transfer. Decimal value >=0. Example: 1234.\n";
+			return;
+		}
 		if (f.short_name == Mosaic_Flag) {
-			os << "Value in Hex format starting with 0x\n";
+			os << "UnresolvedMosaicId (uint64). Value in Hex format starting with 0x\n";
+			return;
+		}
+		if (f.short_name == Deadline_Flag) {
+			os << "Timestamp (uint64). Time elapsed since the creation of the nemesis block.\n";
+			os << "If a transaction does not get included in a block before the deadline is reached, it is deleted.\n";
+			os << "Deadlines are only allowed to lie up to 24 hours ahead.\n";
+			os << "Example of equivalent values: 3600000ms, 3600s, 60m, 1h.\n";
+			return;
+		}
+		if (f.short_name == Maxfee_Flag) {
+			os << "Amount (uint64). Maximum fee allowed to spend for the transaction.\n";
+			return;
+		}
+		if (f.short_name == Keys::Privkey_Flag) {
+			os << "Key. binary_fixed(32 bytes). Example: 3E8B6A5DDADFD3EAE9359C1FAEC17CCA5B6676D06EA625F0DF1393575488DF10.\n";
 			return;
 		}
 		b::help_flag(f, os);
