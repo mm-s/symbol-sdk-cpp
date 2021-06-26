@@ -24,6 +24,21 @@
 #include "../catapult/EntityIoUtils.h"
 #include "../Network.h"
 #include "../catapult/TransferBuilder.h"
+#include "../catapult/SharedKey.h"
+#include "../catapult/CryptoUtils.h"
+#include "../catapult/AesDecrypt.h"
+#include "../catapult/SecureRandomGenerator.h"
+#include "../catapult/OpensslContexts.h"
+#ifdef __clang__
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wold-style-cast"
+#pragma clang diagnostic ignored "-Wreserved-id-macro"
+#endif
+#include <openssl/evp.h>
+#ifdef __clang__
+#pragma clang diagnostic pop
+#endif
+
 
 namespace symbol { namespace core {
 	/// Implementation for the class c 
@@ -60,6 +75,77 @@ namespace symbol { namespace core {
 		return make_pair(ok, new Transfer(n, ptx.release()));
 	}
 
+/*
+        uint64_t Random() {
+                return utils::LowEntropyRandomGenerator()();
+        }
+
+        uint8_t RandomByte() {
+                return static_cast<uint8_t>(Random());
+        }
+
+
+std::generate_n(container.begin(), container.size(), []() {
+                                return static_cast<typename T::value_type>(RandomByte());
+                        });
+*/
+
+	namespace {
+		using namespace catapult;
+
+		void Prepend(std::vector<uint8_t>& buffer, RawBuffer prefix) {
+				buffer.resize(buffer.size() + prefix.Size);
+				std::memmove(buffer.data() + prefix.Size, buffer.data(), buffer.size() - prefix.Size);
+				std::memcpy(buffer.data(), prefix.pData, prefix.Size);
+		}
+
+		void AesGcmEncrypt(
+						const crypto::SharedKey& encryptionKey,
+						const crypto::AesGcm256::IV& iv,
+						const RawBuffer& input,
+						std::vector<uint8_t>& output) {
+			// encrypt input into output
+			output.resize(input.Size);
+			auto outputSize = static_cast<int>(output.size());
+			utils::memcpy_cond(output.data(), input.pData, input.Size);
+
+			crypto::OpensslCipherContext cipherContext;
+			cipherContext.dispatch(EVP_EncryptInit_ex, EVP_aes_256_gcm(), nullptr, encryptionKey.data(), iv.data());
+
+			if (0 != outputSize)
+					cipherContext.dispatch(EVP_EncryptUpdate, output.data(), &outputSize, output.data(), outputSize);
+
+			cipherContext.dispatch(EVP_EncryptFinal_ex, output.data() + outputSize, &outputSize);
+
+			// get tag
+			crypto::AesGcm256::Tag tag;
+			cipherContext.dispatch(EVP_CIPHER_CTX_ctrl, EVP_CTRL_GCM_GET_TAG, 16, tag.data());
+
+			// tag || iv || data
+			Prepend(output, iv);
+			Prepend(output, tag);
+		}
+	}
+
+
+	pair<ko, c::Msg> c::encrypt(const c::Msg& clearText, const PrivateKey& src, const PublicKey& rcpt) {
+		using namespace catapult::crypto;
+		Keys srcKeys(src); 
+		auto sharedKey = DeriveSharedKey(srcKeys, rcpt);
+		
+		Msg encrypted;
+		SecureRandomGenerator g;
+		AesGcm256::IV iv;
+		try {
+			g.fill(iv.data(), iv.size());
+		}
+		catch(...) {
+			return make_pair("KO 88119 Could not generate secure random bits.", move(encrypted));
+		}
+		AesGcmEncrypt(sharedKey, iv, clearText, encrypted);
+		return make_pair(ok, move(encrypted));
+	}
+
 	pair<ko, ptr<Transfer>> c::create(const Network& n, const UnresolvedAddress& rcpt, const Amount& am,  const Mosaic::Id& m, const Amount& maxfee, const TimeSpan& deadline, const Msg& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) {
 		PublicKey unused;
 		catapult::builders::TransferBuilder builder(n.identifier(), unused);
@@ -78,7 +164,12 @@ namespace symbol { namespace core {
 				return make_pair("KO 33092 Encryption Public Key must correspond to the recipient address.", nullptr); 
 			}
 			delete addr;
-			finalMsg=msg; //encrypt(msg, *encryptPrivateKey, *encryptPublicKey);
+			auto r = encrypt(msg, *encryptPrivateKey, *encryptPublicKey);
+			if (is_ko(r.first)) {
+				return make_pair(r.first, nullptr); 
+			}
+			finalMsg=move(r.second);
+			finalMsg.insert(finalMsg.begin(), '\1');
 		}
 		else {
 			finalMsg=msg;

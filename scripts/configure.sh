@@ -105,7 +105,7 @@ function catapult1 {
 	mv catapult-server/sdk/src/builders/* core/catapult/
 
 	grab_classes catapult-server/src/catapult core/catapult  preprocessor functions plugins exceptions types
-	grab_classes catapult-server/src/catapult/crypto core/catapult  SecureRandomGenerator SharedKey CryptoUtils Vrf Signer SecureZero SecureByteArray BasicKeyPair KeyPair OpensslContexts Hashes MerkleHashBuilder
+	grab_classes catapult-server/src/catapult/crypto core/catapult  AesDecrypt SecureRandomGenerator SharedKey CryptoUtils Vrf Signer SecureZero SecureByteArray BasicKeyPair KeyPair OpensslContexts Hashes MerkleHashBuilder
 
 	grab_classes catapult-server/src/catapult/utils core/catapult  MacroBasedEnum MacroBasedEnumIncludes ArraySet Hashers MemoryUtils ImmutableValue BaseValue ClampedBaseValue NonCopyable StreamFormatGuard HexFormatter HexParser FileSize IntegerMath TimeSpan Casting BlockSpan BitwiseEnum RawBuffer PathUtils Logging ConfigurationValueParsers Base32 ByteArray 
 	grab_classes catapult-server/src/catapult/utils/traits core/catapult  Traits
