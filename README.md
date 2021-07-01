@@ -10,6 +10,37 @@ TL; DR: Foundation C++ library for:
 
 The SDK Provides a foundation for C++ Application Development on the NEM's Symbol blockchain.
 
+## High level components
+```
+           SYMBOL SDK component overview
+┌────────────────────────────────────────────────┐
+│                                                │
+│           ┌──────────────────────────────────┐ │
+│           │                                  │ │
+│    core   │    ┌─────┐    use    ┌─────┐     │ │
+│ (offline) │    │ lib │◄──────────┤ HMI │     │ │
+│shared lib │    └─────┘           └─────┘     │ │
+│           │        ▲               ▲         │ │
+│           │        │               │         │ │
+│           └────────┼───────────────┼─────────┘ │
+│                    │  inheritance  │           │
+│           ┌────────┼───────────────┼─────────┐ │
+│           │        │               │         │ │
+│    rpc    │    ┌───┴─┐           ┌─┴───┐     │ │
+│ (online)  │    │ lib │◄──────────┤ HMI │     │ │
+│shared lib │    └─────┘   use     └─────┘     │ │
+│           │                                  │ │
+│           └──────────────────────────────────┘ │
+│                                                │
+└────────────────────────────────────────────────┘
+lib - core classes
+classes for building applications
+
+                   HMI Human-Machine-Interface
+                   clases for console interaction
+```
+
+
 ### Clone and configure:
 ```sh
 git clone https://github.com/nemtech/symbol-sdk-cpp
