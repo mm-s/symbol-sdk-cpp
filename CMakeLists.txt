@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
+
 if (DEFINED ENV{SYMBOLCORE_VERSION})
 	set(SYMBOLCORE_VERSION $ENV{SYMBOLCORE_VERSION})
 endif()
@@ -24,7 +25,11 @@ if (NOT DEFINED BUILD_SYMBOLCLI)
 endif()
 
 project(symbol_sdk VERSION ${SYMBOLRPC_VERSION} )
-message(STATUS "Building symbol_sdk version ${PROJECT_VERSION}")
+message(STATUS "symbol-sdk version ${PROJECT_VERSION}")
+
+option(ENABLE_CODE_COVERAGE "Enable code coverage" OFF)
+option(ENABLE_TESTS "Enable tests" ON)
+
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -56,6 +61,15 @@ message("OpenSSL  libs: ${OPENSSL_LIBRARIES}")
 message("ONLY_SYMBOLCORE: ${ONLY_SYMBOLCORE}")
 message("BUILD_SYMBOLCLI: ${BUILD_SYMBOLCLI}")
 
+#-------------jsoncpp
+find_package(RapidJSON 1.1.0 REQUIRED)
+
+#find_package(PkgConfig REQUIRED)
+#pkg_check_modules(JSONCPP jsoncpp)
+#link_libraries(${JSONCPP_LIBRARIES})
+#pkg_check_modules(RapidJSON rapidjson)
+
+#link_libraries(${RapidJSON_LIBRARIES})
 
 add_subdirectory(core)
 if (${ONLY_SYMBOLCORE})
@@ -72,6 +86,10 @@ else()
 	message (STATUS "Not building cli.")
 endif()
 
+if(ENABLE_TESTS)
+	find_package(GTest 1.10.0 EXACT REQUIRED)
+	add_subdirectory(test)
+endif()
 
 
 

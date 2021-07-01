@@ -29,6 +29,8 @@ add_compile_definitions("BOOST_ALL_DYN_LINK")
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(symbolcore ${Boost_LIBRARIES})
 
+target_link_libraries(symbolcore ${JSONCPP_LIBRARIES})
+
 set_property(TARGET symbolcore PROPERTY POSITION_INDEPENDENT_CODE ON)
 
 target_include_directories(symbolcore PUBLIC

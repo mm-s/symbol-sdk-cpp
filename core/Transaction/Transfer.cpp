@@ -168,8 +168,13 @@ std::generate_n(container.begin(), container.size(), []() {
 			if (is_ko(r.first)) {
 				return make_pair(r.first, nullptr); 
 			}
-			finalMsg=move(r.second);
-			finalMsg.insert(finalMsg.begin(), '\1');
+			Keys myKeys(*encryptPrivateKey);
+			finalMsg.resize(1+myKeys.publicKey().Size+r.second.size());
+			finalMsg[0]='\1';
+			auto dest=finalMsg.data()+1;
+			memcpy(dest, myKeys.publicKey().data(), myKeys.publicKey().Size);
+			dest+=myKeys.publicKey().Size;
+			memcpy(dest, r.second.data(), r.second.size());
 		}
 		else {
 			finalMsg=msg;

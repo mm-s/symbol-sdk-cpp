@@ -2,6 +2,7 @@
 #include <symbol/core.h>
 #include <iostream>
 #include <cassert>
+#include "catapult/TestHarness.h"
 
 using namespace std;
 using namespace symbol;
@@ -41,12 +42,13 @@ void test_core_hmi() {
 */
 
 void test_keys() {
-	auto k=keys::generate();
-	assert(k.first==ok);
-	cout << k.second << endl;
+//	auto k=Keys::generate();
+//	assert(k.first==ok);
+//	cout << k.second << endl;
 }
 
 void test_net() {
+/*
 	mainnet mn;
 	cout << "mainnet:" << mn << endl;
 	testnet tn;
@@ -60,6 +62,7 @@ void test_net() {
 	cout << "addr (testnet): " << tnaddr << " valid: " << tnaddr.is_valid() << endl;
 	delete &mnaddr;
 	delete &tnaddr;
+*/
 }
 
 void test_mosaic() {
@@ -73,12 +76,12 @@ void cli_account_info() {
 }
 
 void cli_account() {
-    cli_account_generate();
-    cli_account_info();
+	cli_account_generate();
+	cli_account_info();
 }
 
 void cli() {
-    cli_account();
+	cli_account();
 }
 
 void test_core() {

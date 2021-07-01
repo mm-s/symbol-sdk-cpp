@@ -54,7 +54,7 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Output_Flag{'o'};
 		static constexpr auto Output_Name{"output"};
 		static constexpr auto Output_Default{"text"};
-		static constexpr auto Output_Desc{"Output format. Value in (text json)"};
+		static constexpr auto Output_Desc{"Output format. -h for list of valid options."};
 
 		static constexpr auto HideLabels_Flag{'w'};
 		static constexpr auto HideLabels_Name{"hide-labels"};
@@ -97,6 +97,7 @@ namespace symbol { namespace core { namespace hmi {
 		}
 
 		virtual bool main(Params&, bool last, ostream&);
+		void help_flag(const FlagDef&, ostream&) const override;
 
 	protected:
 		/// Handler for empty command

@@ -67,7 +67,7 @@ namespace symbol { namespace core { namespace hmi {
 			return;
 		}
 		if (f.short_name == Mosaic_Flag) {
-			os << "UnresolvedMosaicId (uint64). Value in Hex format starting with 0x\n";
+			os << "MosaicId (uint64). Value in Hex format starting with 0x\n";
 			os << "Separate with comma multiple mosaics corresponding to multiple amounts. Example: 0xA1A2A3A4A5A6A7A8,0xB1B2B3B4B5B6B7B8,0xC1C2C3C4C5C6C7C8\n";
 			return;
 		}

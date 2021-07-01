@@ -41,6 +41,15 @@ namespace symbol { namespace hmi {
 		add(move(p));
 	}
 
+	void c::help_flag(const FlagDef& f, ostream& os) const {
+		if (f.short_name == Url_Flag) {
+			os << Url_Desc << '\n';
+			return;
+		}
+		b::help_flag(f, os);
+	}
+
+
 //	void c::chainInfo(Context& ctx) {    // Here we are in a co-routine, running in a worker-thread.
 /*
 		auto reply = ctx.Get(string(endpoint)+"/chain/info"); //http://jsonplaceholder.typicode.com/posts/1");
@@ -194,6 +203,17 @@ namespace symbol { namespace hmi {
 		return true;
 	}
 
+	bool c::cmdExplorer(Params& p, bool last, ostream& os) {
+		auto s = network().nodesUrl();
+		if ( !s.empty() ) {
+			os << "Explorer for network " << network() << " is at url: " << s << '\n';
+		}
+		else {
+			os << "Unknown Explorer url for network " << network() << '\n';
+		}
+		return true;
+	}
+
 	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(Params{});
 		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdMain(p, last, os); });
@@ -208,10 +228,16 @@ namespace symbol { namespace hmi {
 //		return b::mainHandler(p, os);
 //		return true;
 //	}
+	ptr<c::Section> c::createSectionExplorer() {
+		auto s=new Section(Params{});
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdExplorer(p, last, os); });
+		return s;
+	}
 
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
 		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
+		add(CmdDef{Explorer_Command, Explorer_Command_Desc}, createSectionExplorer());
 	}
 
 	bool c::pass1(ParamPath& v, ostream& os) {

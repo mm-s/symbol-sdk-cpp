@@ -81,6 +81,16 @@ namespace symbol { namespace core { namespace hmi {
 		return os.str();
 	}
 
+	void c::help_flag(const FlagDef& f, ostream& os) const {
+		if (f.short_name == Output_Flag) {
+		 	os << "Valid options for flag --output:\n";
+			os << "  text      Output data in text lines.\n";
+			os << "  json      Output data in json format.\n";
+			return;
+		}
+		b::help_flag(f, os);
+	}
+
 	bool c::main(Params& p, bool last, ostream& os) {
 		m_home = p.get(Home_Flag);
 		if (p.is_set(Verbose_Flag)) {

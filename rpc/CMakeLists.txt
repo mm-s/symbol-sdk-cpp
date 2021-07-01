@@ -30,13 +30,11 @@ include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(symbolrpc ${Boost_LIBRARIES})
 
 include_directories(${RESTCCPP_INCLUDE_DIRS})
-target_link_libraries (symbolrpc ${RESTCCPP_LIBRARIES})
-
-target_link_libraries (symbolrpc symbolcore)
-
+target_link_libraries(symbolrpc ${RESTCCPP_LIBRARIES})
+target_link_libraries(symbolrpc symbolcore)
 target_link_libraries(symbolrpc OpenSSL::SSL)
 target_link_libraries(symbolrpc ZLIB::ZLIB)
-
+target_link_libraries(symbolrpc ${JSONCPP_LIBRARIES})
 
 set_property(TARGET symbolrpc PROPERTY POSITION_INDEPENDENT_CODE ON)
 

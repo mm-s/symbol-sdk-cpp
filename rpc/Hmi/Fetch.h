@@ -40,6 +40,9 @@ namespace symbol { namespace hmi {
 		static constexpr auto Main_Command = "fetch";
 		static constexpr auto Main_Command_Desc = "Obtaing remote data from an API node.";
 
+		static constexpr auto Explorer_Command = "explorer";
+		static constexpr auto Explorer_Command_Desc = "Prints an explorer URL for the current network.";
+
 		static constexpr auto Offline_Flag{'x'};
 		static constexpr auto Offline_Name{"offline"};
 		static constexpr auto Offline_Default{""};
@@ -67,6 +70,9 @@ namespace symbol { namespace hmi {
 		/// menu command: fetch
 		ptr<Section> createSectionMain(); /// init
 		bool cmdMain(Params&, bool last, ostream&);
+
+		ptr<Section> createSectionExplorer(); /// init
+		bool cmdExplorer(Params&, bool last, ostream&);
 
 		/// menu command: fetch node
 		ptr<Section> createSectionFetchNode(); /// init
@@ -105,6 +111,7 @@ namespace symbol { namespace hmi {
 
 		///Opportunity to rewrite Params before command execution.
 		bool pass1(ParamPath&, ostream&) override;
+		void help_flag(const FlagDef&, ostream&) const override;
 
 	private:
 //		static FlagDef flagdefOffline();
