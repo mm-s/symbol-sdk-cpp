@@ -4,18 +4,19 @@ jobs=4
 if [[ -f /proc/cpuinfo ]]; then
 	jobs=`cat /proc/cpuinfo | grep "^processor" | wc -l`
 fi
-depsdir=""
+#depsdir=""
 hostaddr=`hostname -I | awk '{print $1'}`
-warn_env=0
-depsdir=$DEPS_DIR
-if [ "_$DEPS_DIR" == "_" ]; then
-	DEPS_DIR="$HOME/symbol_deps"
-	depsdir=$DEPS_DIR
-	echo "DEPS_DIR not found in env. Using default: $DEPS_DIR."
-	warn_env=1
-fi
-boost_output_dir=$depsdir/boost
-LD_LIBRARY_PATH_def="${depsdir}/boost/lib:${depsdir}/google/lib:./"
+#warn_env=0
+#depsdir=$DEPS_DIR
+#if [ "_$DEPS_DIR" == "_" ]; then
+#	DEPS_DIR="$HOME/symbol_deps"
+#	depsdir=$DEPS_DIR
+#	echo "DEPS_DIR not found in env. Using default: $DEPS_DIR."
+#	warn_env=1
+#fi
+#boost_output_dir=$depsdir/boost
+#LD_LIBRARY_PATH_def="${depsdir}/boost/lib:${depsdir}/google/lib:./"
+#LD_LIBRARY_PATH_def=""
 debs="git gcc g++ cmake curl libssl-dev ninja-build rapidjson-dev libgtest-dev libboost-all-dev"
 
 catapult_rep="https://github.com/nemtech/catapult-server"
@@ -67,16 +68,16 @@ EOF
 
 function exitok {
 	exit 0
-	if [ $warn_env -eq 1 ]; then
-cat << EOF
-Please export the environment variable DEPS_DIR
-
-  export DEPS_DIR=$depsdir
-
-Note: If you want the DEPS_DIR environment variable to persist across sessions make sure to include it in the ~/.profile or ~/.bashrc files.
-EOF
-	fi
-	exit 0
+#	if [ $warn_env -eq 1 ]; then
+#cat << EOF
+#Please export the environment variable DEPS_DIR
+#
+#  export DEPS_DIR=$depsdir
+#
+#Note: If you want the DEPS_DIR environment variable to persist across sessions make sure to include it in the ~/.profile or ~/.bashrc files.
+#EOF
+#	fi
+#	exit 0
 }
 
 #function download_git_dependency {
@@ -350,22 +351,22 @@ function catapult1 {
 
 }
 
-function _load_write_defs {
-	file=$1
-	if [[ ! -f $file ]]; then
-		cat << EOF > $file
-#uncomment to override
-#depsdir=""
-#hostaddr=$hostaddr
-#depsdir=$depsdir
-#LD_LIBRARY_PATH_def=$LD_LIBRARY_PATH_def
-#debs=$debs
-EOF
-		echo -n "First time run: I have created defaults at $file. continue? (or CTRL-Z to edit the file. (type fg to return back)): "
-		read x
-	fi
-	. $file
-}
+#function _load_write_defs {
+#	file=$1
+#	if [[ ! -f $file ]]; then
+#		cat << EOF > $file
+##uncomment to override
+##depsdir=""
+##hostaddr=$hostaddr
+##depsdir=$depsdir
+##LD_LIBRARY_PATH_def=$LD_LIBRARY_PATH_def
+##debs=$debs
+#EOF
+#		echo -n "First time run: I have created defaults at $file. continue? (or CTRL-Z to edit the file. (type fg to return back)): "
+#		read x
+#	fi
+#	. $file
+#}
 
 function prepare_sources2 {
 	#produce_catbuffer_sources
@@ -425,9 +426,10 @@ function make_builddir {
 			fi
 		fi
 		echo "Executing cmake with flags $cmakeflags $cxxflags"
-		BOOST_ROOT="${depsdir}/boost" cmake .. \
-		-DCMAKE_PREFIX_PATH="${depsdir}/google" \
-		-DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_PREFIX" \
+		#BOOST_ROOT="${depsdir}/boost"
+		#-DCMAKE_PREFIX_PATH="${depsdir}/google" \
+		#-DCMAKE_INSTALL_PREFIX="$CMAKE_INSTALL_PREFIX" \
+		cmake .. \
 		$cmakeflags \
 		-DCMAKE_CXX_FLAGS="$cxxflags" \
 		\
