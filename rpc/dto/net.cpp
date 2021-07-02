@@ -3,7 +3,11 @@
 #include <boost/fusion/adapted.hpp>
 #include <sstream>
 #include <string>
-#include <json/json.h>
+#include <rapidjson/reader.h>
+#include <rapidjson/document.h>
+#include <rapidjson/error/en.h>
+
+#include <iostream>
 
 using namespace symbol::dto;
 using namespace std;
@@ -75,6 +79,39 @@ BOOST_FUSION_ADAPT_STRUCT(
 	net_list,
 	(auto, nodes)
 )
+
+namespace {
+	using namespace rapidjson;
+	using namespace std;
+
+	struct MyHandler : public BaseReaderHandler<UTF8<>, MyHandler> {
+		bool Null() { cout << "Null()" << endl; return true; }
+		bool Bool(bool b) { cout << "Bool(" << boolalpha << b << ")" << endl; return true; }
+		bool Int(int i) { cout << "Int(" << i << ")" << endl; return true; }
+		bool Uint(unsigned u) { cout << "Uint(" << u << ")" << endl; return true; }
+		bool Int64(int64_t i) { cout << "Int64(" << i << ")" << endl; return true; }
+		bool Uint64(uint64_t u) { cout << "Uint64(" << u << ")" << endl; return true; }
+		bool Double(double d) { cout << "Double(" << d << ")" << endl; return true; }
+		bool String(const char* str, SizeType length, bool copy) { 
+			cout << "String(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
+			return true;
+		}
+		bool StartObject() {
+			 cout << "StartObject()" << endl;
+			 return true; 
+		}
+		
+		bool Key(const char* str, SizeType length, bool copy) { 
+			
+			cout << "Key(" << str << ", " << length << ", " << boolalpha << copy << ")" << endl;
+			return true;
+		}
+		bool EndObject(SizeType memberCount) { cout << "EndObject(" << memberCount << ")" << endl; return true; }
+		bool StartArray() { cout << "StartArray()" << endl; return true; }
+		bool EndArray(SizeType elementCount) { cout << "EndArray(" << elementCount << ")" << endl; return true; }
+	};
+}
+
 
 void net_node::peerStatus_t::dump_line(ostream& os) const {
 	os << isAvailable << ' ';
@@ -180,6 +217,20 @@ void net_list::dump(ostream& os) const {
 
 
 bool net_list::from_json(net_list& o, const string& json) {
+	using namespace rapidjson;
+	using namespace std;
+/*
+	MyHandler handler;
+	Reader reader;
+	StringStream ss(json.c_str());
+	reader.Parse(ss, handler);
+*/
+Document d;
+if (d.Parse(json.c_str()).HasParseError()) {
+	cerr << (unsigned)d.GetErrorOffset() << " " << GetParseError_En(d.GetParseError()) << endl;
+	return false;
+}
+	//o.from_json(d);
 /*
 	Json::Value root;
 	Json::Reader reader;

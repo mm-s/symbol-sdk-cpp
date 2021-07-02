@@ -16,7 +16,7 @@ if [ "_$DEPS_DIR" == "_" ]; then
 fi
 boost_output_dir=$depsdir/boost
 LD_LIBRARY_PATH_def="${depsdir}/boost/lib:${depsdir}/google/lib:./"
-debs="git gcc g++ cmake curl libssl-dev ninja-build rapidjson-dev libgtest-dev"
+debs="git gcc g++ cmake curl libssl-dev ninja-build rapidjson-dev libgtest-dev libboost-all-dev"
 
 catapult_rep="https://github.com/nemtech/catapult-server"
 catbuffer_rep="https://github.com/nemtech/catbuffer-generators"
@@ -103,8 +103,8 @@ function download_jsoncpp {
 
 function download_all {
 	download_boost 76
-	download_git_dependency google googletest release-1.10.0
-	download_git_dependency google benchmark v1.5.3
+#	download_git_dependency google googletest release-1.10.0
+#	download_git_dependency google benchmark v1.5.3
 #	download_jsoncpp
 }
 
@@ -114,7 +114,7 @@ function install_git_dependency {
 	cd _build
 #	cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
 	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
-	make -j "$jobs" && make install
+	make -j $jobs && make install
 }
 
 function install_jsoncpp {
@@ -122,7 +122,7 @@ function install_jsoncpp {
 		mkdir -p _build
 		cd _build
 		cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
-		make -j "$jobs" && make install
+		make -j $jobs && make install
 	popd > /dev/null
 }
 
@@ -446,15 +446,6 @@ function make_builddir {
 	echo "  ninja -v -j${jobs}"
 	echo "Success."
 	exitok
-}
-
-function install_system_reqs {
-	reqroot
-	set -e
-	apt update
-	apt -y upgrade
-	apt -y install "$debs"
-	set +e
 }
 
 force_download=0

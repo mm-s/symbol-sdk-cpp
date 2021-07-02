@@ -87,6 +87,7 @@ namespace symbol { namespace dto {
 		void dump(ostream&) const;
 
 		static bool from_json(net_list&, const string&);
+		//bool from_json(const rapidjson::Document&);
 		void to_json(ostream&) const;
 		bool fetch(const string& url);
 		
