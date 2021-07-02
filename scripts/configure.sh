@@ -35,9 +35,14 @@ Options:
 
 Available commands:
     make [release|debug]    Create and configure a new _build dir. Default RelWithDebInfo
+                            'importcat' will internally invoked if needed.
     importcat               Import catapult sources.
-    install system_reqs     Installs apt dependencies. Requires sudo.
-                              debian packages: $debs
+
+Commands requiring sudo:
+    install restc-cpp       Download, build and installs restc-cpp.
+                            Required for building the rpc lib.
+    install system_reqs     Installs apt dependencies.
+                            debian packages: $debs
 EOF
 #    install deps            Compile & install 3rd party libs.
 #    download deps           Obtain 3rd party libs.
@@ -163,6 +168,20 @@ function exitok {
 #		popd > /dev/null
 #	done
 #}
+
+function install_restc {
+#	reqroot
+	rm -rf restc-cpp
+	git clone https://github.com/mm-s/restc-cpp
+	pushd restc-cpp > /dev/null
+		git checkout marc-os
+		mkdir _build
+		cd _build
+		#-DRESTC_CPP_USE_CPP20=ON
+		cmake -DRESTC_CPP_PIC=ON ..
+		make install
+	popd > /dev/null
+}
 
 function reqroot {
 	if [ "_$(whoami)" != "_root" ]; then
@@ -498,10 +517,13 @@ function install_main {
 	if [ "_$cmd" == "_system_reqs" ]; then
 		install_system_reqs "$@"
 		exitok
+	elif [ "_$cmd" == "_restc-cpp" ]; then
+		install_restc "$@"
+		exitok
+	fi
 #	elif [ "_$cmd" == "_deps" ]; then
 #		install_deps "$@"
 #		exitok
-	fi
 }
 
 cmd=""
