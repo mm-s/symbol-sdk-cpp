@@ -16,7 +16,7 @@ if [ "_$DEPS_DIR" == "_" ]; then
 fi
 boost_output_dir=$depsdir/boost
 LD_LIBRARY_PATH_def="${depsdir}/boost/lib:${depsdir}/google/lib:./"
-debs="git gcc g++ cmake curl libssl-dev ninja-build libjsoncpp-dev libgtest-dev"
+debs="git gcc g++ cmake curl libssl-dev ninja-build rapidjson-dev libgtest-dev"
 
 catapult_rep="https://github.com/nemtech/catapult-server"
 catbuffer_rep="https://github.com/nemtech/catbuffer-generators"
@@ -174,11 +174,9 @@ function install_system_reqs {
 	reqroot
 	set -e
 	apt update
-	apt -y upgrade
-	apt -y install "$debs"
+	apt -y install $debs
 	set +e
 }
-
 
 function produce_catbuffer_sources {
 	rm -rf tmp

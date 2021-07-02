@@ -33,7 +33,7 @@ The SDK Provides a foundation for C++ Application Development on the NEM's Symbo
 │           └──────────────────────────────────┘ │
 │                                                │
 └────────────────────────────────────────────────┘
-lib - core classes
+lib - model classes
 classes for building applications
 
                    HMI Human-Machine-Interface
@@ -41,40 +41,37 @@ classes for building applications
 ```
 
 
-### Clone and configure:
+### Clone:
 ```sh
 git clone https://github.com/nemtech/symbol-sdk-cpp
 cd symbol-sdk-cpp
-scripts/configure.sh
 ```
 
 Configure will clone catapult-server and cherry-pick files from it.
 
-### Prerequisites on the supported Operating Systems
+### Configure
+The configure.sh script has been tested on Debian / Ubuntu Linux.
 
-The library shall build on any platform supported by CMake. Currently, the following systems have been tested:
-
-  * Debian / Ubuntu Linux
+install system-wide packages:
 ```
-apt install g++ cmake git libboost1.74-all-dev
-```
-
-### Run-time dependencies:
-
-Packages that are required before building symbol-sdk-core.
-
-#### Debian / Ubuntu
-
-```sh
-sudo apt install cmake git g++
+sudo scripts/configure.sh install system_reqs
 ```
 
-### Build-time dependencies:
+Install manually the following library: (it is not yet included ubn configure.sh)
+```
+https://github.com/mm-s/restc-cpp 
+```
 
-Once configured proceed to build the project.
+Create the _build directory
+builds and installs extra dependencies if needed.
+```
+scripts/configure.sh make
+```
 
-* nemtech/[catapult-server](https://github.com/nemtech/catapult-server "GitHub link")  -  Catapult core algorithms.
-* mm-s/[restc-cpp](https://github.com/mm-s/restc-cpp "GitHub link")  -  branch marc-os. Patched original jgaa/[restc-cpp](https://github.com/jgaa/restc-cpp.
+Note: For exploring more detailed functions access the main menu:
+```
+sudo scripts/configure.sh
+```
 
 ### Build:
 Once configured proceed to build the project.
@@ -88,10 +85,10 @@ You can pass options to cmake to specify alternative locations of the restc-cpp 
 ```
 cmake -DRESTCCPP_ROOT=<path_to_restc-cpp_cpp> ..
 ```
-Paths shall point to a directory containing standard directories bin, lib and include.
+Paths shall point to a prefix directory containing standard directories bin, lib and include.
 
 ## Install:
-In order to install the library and cliente application in the system type:
+In order to install the library and clients applications in the configured install prefix type:
 ```sh
 sudo make install
 ```
@@ -108,6 +105,7 @@ Ships:
 
 * branch dev:
   * developer marcos.mayorga@nem.software
-  * [apply^]
+  * developer mohammad.jowkar@nem.software
+  * you [apply^]
 
 
