@@ -35,11 +35,11 @@ Options:
 Available commands:
     make [release|debug]    Create and configure a new _build dir. Default RelWithDebInfo
     importcat               Import catapult sources.
-    install deps            Compile & install 3rd party libs.
-    download deps           Obtain 3rd party libs.
     install system_reqs     Installs apt dependencies. Requires sudo.
                               debian packages: $debs
 EOF
+#    install deps            Compile & install 3rd party libs.
+#    download deps           Obtain 3rd party libs.
 #    [dev|test|main]net
 #        create              Create new private-test network with 1 node at _build.
 #        node <cmd>          Node management. cmd one of:
@@ -56,13 +56,13 @@ EOF
 #                            If main or transport private keys are generated if not specified
 #    conf                    generates $conf_file and exits.
 
-	if [ "_$DEPS_DIR" == "_" ]; then
-		echo "Environment variable DEPS_DIR not set. Required for storing source dependencies."
-		echo "Default value is: $HOME/symbol_deps"
-	else
-		echo "Dependencies env var DEPS_DIR is set to $DEPS_DIR"
-	fi
-	echo "Reminder: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH_def"
+#	if [ "_$DEPS_DIR" == "_" ]; then
+#		echo "Environment variable DEPS_DIR not set. Required for storing source dependencies."
+#		echo "Default value is: $HOME/symbol_deps"
+#	else
+#		echo "Dependencies env var DEPS_DIR is set to $DEPS_DIR"
+#	fi
+#	echo "Reminder: export LD_LIBRARY_PATH=$LD_LIBRARY_PATH_def"
 }
 
 function exitok {
@@ -79,89 +79,89 @@ EOF
 	exit 0
 }
 
-function download_git_dependency {
-	git clone "git://github.com/${1}/${2}.git"
-	cd "${2}"
-	git checkout "${3}"
-	cd ..
-}
+#function download_git_dependency {
+#	git clone "git://github.com/${1}/${2}.git"
+#	cd "${2}"
+#	git checkout "${3}"
+#	cd ..
+#}
 
-function download_boost {
-	local boost_ver=1_${1}_0
-	local boost_ver_dotted=1.${1}.0
-	curl -o "boost_${boost_ver}.tar.gz" -SL "https://boostorg.jfrog.io/artifactory/main/release/${boost_ver_dotted}/source/boost_${boost_ver}.tar.gz"
-	tar -xzf "boost_${boost_ver}.tar.gz"
-	mv "boost_${boost_ver}" boost
-}
+#function download_boost {
+#	local boost_ver=1_${1}_0
+#	local boost_ver_dotted=1.${1}.0
+#	curl -o "boost_${boost_ver}.tar.gz" -SL "https://boostorg.jfrog.io/artifactory/main/release/${boost_ver_dotted}/source/boost_${boost_ver}.tar.gz"
+#	tar -xzf "boost_${boost_ver}.tar.gz"
+#	mv "boost_${boost_ver}" boost
+#}
 
-function download_jsoncpp {
-	wget https://github.com/open-source-parsers/jsoncpp/archive/1.9.4.tar.gz
-	tar -xzf 1.9.4.tar.gz
-	rm 1.9.4.tar.gz -r
-}
+#function download_jsoncpp {
+#	wget https://github.com/open-source-parsers/jsoncpp/archive/1.9.4.tar.gz
+#	tar -xzf 1.9.4.tar.gz
+#	rm 1.9.4.tar.gz -r
+#}
 
 
-function download_all {
-	download_boost 76
+#function download_all {
+#	download_boost 76
 #	download_git_dependency google googletest release-1.10.0
 #	download_git_dependency google benchmark v1.5.3
 #	download_jsoncpp
-}
+#}
 
-function install_git_dependency {
-	cd "${2}"
-	mkdir -p _build
-	cd _build
-#	cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
-	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
-	make -j $jobs && make install
-}
+#function install_git_dependency {
+#	cd "${2}"
+#	mkdir -p _build
+#	cd _build
+##	cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
+#	cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
+#	make -j $jobs && make install
+#}
 
-function install_jsoncpp {
-	pushd jsoncpp-1.9.4 > /dev/null
-		mkdir -p _build
-		cd _build
-		cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
-		make -j $jobs && make install
-	popd > /dev/null
-}
+#function install_jsoncpp {
+#	pushd jsoncpp-1.9.4 > /dev/null
+#		mkdir -p _build
+#		cd _build
+#		cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$depsdir/${1}" "${cmake_options[@]}" ..
+#		make -j $jobs && make install
+#	popd > /dev/null
+#}
 
-function install_boost {
-	pushd boost > /dev/null
-		./bootstrap.sh with-toolset=gcc --prefix="${boost_output_dir}"
-		b2_options=()
-		b2_options+=("--prefix=${boost_output_dir}")
-		./b2 "${b2_options[@]}" -j "$jobs" stage release
-		./b2 install "${b2_options[@]}"
-	popd > /dev/null
-}
+#function install_boost {
+#	pushd boost > /dev/null
+#		./bootstrap.sh with-toolset=gcc --prefix="${boost_output_dir}"
+#		b2_options=()
+#		b2_options+=("--prefix=${boost_output_dir}")
+#		./b2 "${b2_options[@]}" -j "$jobs" stage release
+#		./b2 install "${b2_options[@]}"
+#	popd > /dev/null
+#}
 
-function install_google_test {
-	cmake_options=()
-	cmake_options+=("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
-	install_git_dependency google googletest
-}
+#function install_google_test {
+#	cmake_options=()
+#	cmake_options+=("-DCMAKE_POSITION_INDEPENDENT_CODE=ON")
+#	install_git_dependency google googletest
+#}
 
-function install_google_benchmark {
-	cmake_options=()
-	cmake_options+=("-DBENCHMARK_ENABLE_GTEST_TESTS=OFF")
-	install_git_dependency google benchmark
-}
+#function install_google_benchmark {
+#	cmake_options=()
+#	cmake_options+=("-DBENCHMARK_ENABLE_GTEST_TESTS=OFF")
+#	install_git_dependency google benchmark
+#}
 
-function install_all {
-	declare -a installers=(
-		install_boost
-		install_google_test
-		install_google_benchmark
-#		install_jsoncpp
-	)
-	for install in "${installers[@]}"
-	do
-		pushd source > /dev/null
-			${install}
-		popd > /dev/null
-	done
-}
+#function install_all {
+#	declare -a installers=(
+#		install_boost
+#		install_google_test
+#		install_google_benchmark
+##		install_jsoncpp
+#	)
+#	for install in "${installers[@]}"
+#	do
+#		pushd source > /dev/null
+#			${install}
+#		popd > /dev/null
+#	done
+#}
 
 function reqroot {
 	if [ "_$(whoami)" != "_root" ]; then
@@ -389,11 +389,11 @@ function prepare_sources {
 
 function make_builddir {
 	echo "building using ${jobs} jobs"
-	echo "dependencies dir: ${depsdir}"
-	if [ ! -d "${boost_output_dir}" ]; then
-		install_deps
-	fi
-	echo "dependencies OK at: ${depsdir}"
+#	echo "dependencies dir: ${depsdir}"
+#	if [ ! -d "${boost_output_dir}" ]; then
+#		install_deps
+#	fi
+#	echo "dependencies OK at: ${depsdir}"
 
 	prepare_sources
 
@@ -450,44 +450,45 @@ function make_builddir {
 
 force_download=0
 
-function download_deps {
-	if [ -d "$depsdir" ]; then
-		echo -n "Warning: ${depsdir} already exists. "
-		if [ ${force_download} -eq 0 ]; then
-			echo "Download skipped."
-			return
-		fi
-		echo ""
-	fi
-	mkdir -p "$depsdir"
-	set -e
-	pushd "$depsdir" > /dev/null
-		mkdir -p source
-		pushd source > /dev/null
-			download_all
-		popd
-	popd
-	set +e
-}
 
-function download {
-	cmd=$1
-	shift
-	if [ "_$cmd" == "_deps" ]; then
-		force_download=1
-		download_deps "$@"
-		exitok
-	fi
-}
+#function download_deps {
+#	if [ -d "$depsdir" ]; then
+#		echo -n "Warning: ${depsdir} already exists. "
+#		if [ ${force_download} -eq 0 ]; then
+#			echo "Download skipped."
+#			return
+#		fi
+#		echo ""
+#	fi
+#	mkdir -p "$depsdir"
+#	set -e
+#	pushd "$depsdir" > /dev/null
+#		mkdir -p source
+#		pushd source > /dev/null
+#			download_all
+#		popd
+#	popd
+#	set +e
+#}
 
-function install_deps {
-	if [ ! -d "${boost_output_dir}" ]; then
-		download_deps
-	fi
-	pushd "$depsdir" > /dev/null
-		install_all
-	popd
-}
+#function download {
+#	cmd=$1
+#	shift
+#	if [ "_$cmd" == "_deps" ]; then
+#		force_download=1
+#		download_deps "$@"
+#		exitok
+#	fi
+#}
+
+#function install_deps {
+#	if [ ! -d "${boost_output_dir}" ]; then
+#		download_deps
+#	fi
+#	pushd "$depsdir" > /dev/null
+#		install_all
+#	popd
+#}
 
 function install_main {
 	cmd=$1
@@ -495,9 +496,9 @@ function install_main {
 	if [ "_$cmd" == "_system_reqs" ]; then
 		install_system_reqs "$@"
 		exitok
-	elif [ "_$cmd" == "_deps" ]; then
-		install_deps "$@"
-		exitok
+#	elif [ "_$cmd" == "_deps" ]; then
+#		install_deps "$@"
+#		exitok
 	fi
 }
 
@@ -518,8 +519,8 @@ done
 
 if [ "_$cmd" == "_install" ]; then
 	install_main "$@"
-elif [ "_$cmd" == "_download" ]; then
-	download $@
+#elif [ "_$cmd" == "_download" ]; then
+#	download $@
 elif [ "_$cmd" == "_importcat" ]; then
 	prepare_sources2 $@
 	exitok
