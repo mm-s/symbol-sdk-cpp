@@ -32,7 +32,8 @@ option(ENABLE_TESTS "Enable tests" ON)
 
 if (NOT DEFINED CMAKE_CXX_STANDARD)
 	set(CMAKE_CXX_STANDARD 20)
-endif
+endif()
+
 message(STATUS "C++ std version ${CXX_STD_VERSION}")
 
 set(CMAKE_CXX_STANDARD_REQUIRED True)
