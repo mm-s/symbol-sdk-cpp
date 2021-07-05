@@ -14,13 +14,13 @@ namespace symbol { namespace dto {
 			string apiNode;
 			string db;
 			void dump(ostream&) const;
-			static bool from_json(node_health::status_t&, const string&);
+			bool from_json(const string&);
 			void to_json(ostream&) const;
 		};
 		status_t status;
 
 		void dump(ostream&) const;
-		static bool from_json(node_health&, const string&);
+		bool from_json(const string&);
 		void to_json(ostream&) const;
 		bool fetch(const string& url);
 		static constexpr const char* uri{"/node/health"};
@@ -40,7 +40,7 @@ namespace symbol { namespace dto {
 		virtual void dump_table(ostream&) const;
 		virtual void dump_line(ostream&) const;
 
-		static bool from_json(node_peer&, const string&);
+		bool from_json(const string&);
 		void to_json(ostream&) const;
 	};
 
@@ -50,7 +50,7 @@ namespace symbol { namespace dto {
 		void dump(ostream&) const;
 
 
-		static bool from_json(node_peers&, const string&);
+		bool from_json(const string&);
 		void to_json(ostream&) const;
 		bool fetch(const string& url);
 		static constexpr const char* uri{"/node/peers"};
@@ -63,7 +63,7 @@ namespace symbol { namespace dto {
 		void dump_table(ostream&) const override;
 		void dump_line(ostream&) const override;
 
-		static bool from_json(node_info&, const string&);
+		bool from_json(const string&);
 		void to_json(ostream&) const;
 		bool fetch(const string& url);
 		static constexpr const char* uri{"/node/info"};

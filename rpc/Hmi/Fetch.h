@@ -82,6 +82,9 @@ namespace symbol { namespace hmi {
 		ptr<Section> createSectionFetchNodes(); /// init
 		bool fetchNodes(Params&, bool last, ostream&); /// Handler
 
+		ptr<Section> createSectionFetchNodesUrl();
+		bool fetchNodesUrl(Params& p, bool last, ostream& os);
+
 		/// menu command: fetch node health
 		ptr<Section> createSectionFetchNodeHealth(); /// init
 		bool fetchNodeHealth(Params&, bool last, ostream&); /// Handler

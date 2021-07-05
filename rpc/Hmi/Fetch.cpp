@@ -89,13 +89,21 @@ namespace symbol { namespace hmi {
 		return s;
 	}
 
+
+	bool c::fetchNodesUrl(Params& p, bool last, ostream& os) {
+		auto url = network().nodesUrl();
+		os << "Url for fetching nodes for the network '" << network() << "': " << url << '\n';
+		return true;
+	}
+
 	bool c::fetchNodes(Params& p, bool last, ostream& os) {
+		if (!last) return true;
 		auto url = network().nodesUrl();
 		if (url.empty()) {
 			os << "Unknown Url for network '" << network() << "'.";
 			return false;
 		}
-		dto::net_list o;
+		dto::nodes o;
 		auto r = o.fetch(url);
 		if (!r) return false;
 		if (json()) {
@@ -110,6 +118,7 @@ namespace symbol { namespace hmi {
 	ptr<c::Section> c::createSectionFetchNodes() {
 		auto s=new Section(Params{});
 		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodes(p, last, os); });
+		s->add(CmdDef{"url", "Shows nodes fetch url."}, createSectionFetchNodesUrl());
 		return s;
 	}
 
@@ -136,6 +145,12 @@ namespace symbol { namespace hmi {
 			o.dump(os);
 		}
 		return true;
+	}
+
+	ptr<c::Section> c::createSectionFetchNodesUrl() {
+		auto s=new Section(Params{});
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return fetchNodesUrl(p, last, os); });
+		return s;
 	}
 
 	ptr<c::Section> c::createSectionFetchNodePeers() {
@@ -237,7 +252,7 @@ namespace symbol { namespace hmi {
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
 		add(CmdDef{Main_Command, Main_Command_Desc}, createSectionMain());
-		add(CmdDef{Explorer_Command, Explorer_Command_Desc}, createSectionExplorer());
+		//add(CmdDef{Explorer_Command, Explorer_Command_Desc}, createSectionExplorer());
 	}
 
 	bool c::pass1(ParamPath& v, ostream& os) {

@@ -21,7 +21,7 @@ namespace symbol { namespace dto {
 		auto cli = restc_cpp::RestClient::Create();
 		auto f=cli->ProcessWithPromiseT<t>([url, json_transform](Context& ctx) {
 			t o;
-			t::from_json(o, json_transform(ctx.Get(url)->GetBodyAsString()));
+			o.from_json(json_transform(ctx.Get(url)->GetBodyAsString()));
 			return move(o);
 		});
 		bool r{true};

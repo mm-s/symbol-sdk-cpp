@@ -107,8 +107,8 @@ void node_health::status_t::dump(ostream& os) const {
 	os << "db " << db << '\n';
 }
 
-bool node_health::from_json(node_health& o, const string& json) {
-	return SerializeFromJson(o, json);
+bool node_health::from_json(const string& json) {
+	return SerializeFromJson(*this, json);
 }
 
 void node_health::to_json(ostream& os) const {
@@ -116,8 +116,8 @@ void node_health::to_json(ostream& os) const {
 	os << '\n';
 }
 
-bool node_health::status_t::from_json(node_health::status_t& o, const string& json) {
-	return SerializeFromJson(o, json);
+bool node_health::status_t::from_json(const string& json) {
+	return SerializeFromJson(*this, json);
 }
 
 void node_health::status_t::to_json(ostream& os) const {
@@ -125,8 +125,8 @@ void node_health::status_t::to_json(ostream& os) const {
 	os << '\n';
 }
 
-bool node_peer::from_json(node_peer& o, const string& json) {
-	return SerializeFromJson(o, json);
+bool node_peer::from_json(const string& json) {
+	return SerializeFromJson(*this, json);
 }
 
 void node_peer::to_json(ostream& os) const {
@@ -134,8 +134,8 @@ void node_peer::to_json(ostream& os) const {
 	os << '\n';
 }
 
-bool node_peers::from_json(node_peers& o, const string& json) {
-	return SerializeFromJson(o, json);
+bool node_peers::from_json(const string& json) {
+	return SerializeFromJson(*this, json);
 }
 
 void node_peers::to_json(ostream& os) const {
@@ -143,8 +143,8 @@ void node_peers::to_json(ostream& os) const {
 	os << '\n';
 }
 
-bool node_info::from_json(node_info& o, const string& json) {
-	return SerializeFromJson(o, json);
+bool node_info::from_json(const string& json) {
+	return SerializeFromJson(*this, json);
 }
 
 void node_info::to_json(ostream& os) const {

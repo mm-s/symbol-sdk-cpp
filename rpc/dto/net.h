@@ -3,6 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <rapidjson/document.h>
 
 namespace symbol { namespace dto {
 	using std::ostream;
@@ -11,13 +12,16 @@ namespace symbol { namespace dto {
 
 	struct net_node {
 		struct peerStatus_t {
+			static constexpr auto Json_Element="peerStatus";
 			bool isAvailable;
 			uint64_t lastStatusCheck;
 			
 			void dump_line(ostream&) const;
 			static void dump_fields(ostream&);
+			bool from_json(const rapidjson::Value&);
 		};
 		struct apiStatus_t {
+			static constexpr auto Json_Element="apiStatus";
 			bool isAvailable;
 			uint64_t chainHeight;
 			uint64_t finalizationHeight;
@@ -26,12 +30,17 @@ namespace symbol { namespace dto {
 			
 			void dump_line(ostream&) const;
 			static void dump_fields(ostream&);
+			bool from_json(const rapidjson::Value&);
 
 		};
 		struct hostDetail_t {
+			static constexpr auto Json_Element="hostDetail";
 			struct coordinates_t {
+				static constexpr auto Json_Element="coordinates";
 				double latitude;
 				double longitude;
+
+				bool from_json(const rapidjson::Value&);
 			};
 			string host;
 			coordinates_t coordinates;
@@ -45,9 +54,10 @@ namespace symbol { namespace dto {
 			string city;
 			string district;
 			string zip;
+
 			void dump_line(ostream&) const;
 			static void dump_fields(ostream&);
-			
+			bool from_json(const rapidjson::Value&);
 		};
 		
 		struct RewardProgram {
@@ -55,6 +65,7 @@ namespace symbol { namespace dto {
 			string name;
 			bool passed;
 
+			bool from_json(const rapidjson::Value&);
 			void dump_line(ostream&) const;
 			static void dump_fields(ostream&);
 		};
@@ -77,17 +88,19 @@ namespace symbol { namespace dto {
 		static void dump_fields(ostream&);
 		void dump_line(ostream&) const;
 
-		static bool from_json(net_node&, const string&);
+		bool from_json(const rapidjson::Value&);
+		bool from_json(const string&);
 		void to_json(ostream&) const;
 	};
 
-	struct net_list {
-		vector<net_node> nodes;
+	struct nodes: vector<net_node> {
+		static constexpr auto Json_Element="nodes";
+
 		static void dump_fields(ostream&);
 		void dump(ostream&) const;
 
-		static bool from_json(net_list&, const string&);
-		//bool from_json(const rapidjson::Document&);
+		bool from_json(const string&);
+		bool from_json(const rapidjson::Value&);
 		void to_json(ostream&) const;
 		bool fetch(const string& url);
 		
