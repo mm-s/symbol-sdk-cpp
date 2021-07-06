@@ -497,8 +497,16 @@ params::params(const params& fd, istream& is): b(fd) {
 		if (f->req_input) {
 			is >> f->value;
 			if (is.fail() || f->value.empty()) {
-				ko = string("Expected value after '") + flag + "' Try -h. ";
+				ko = string("Expected value for '") + flag + "' Try -h. ";
 				break;
+			}
+			if (f->value == "-") {
+				f->value.clear();
+				cin >> f->value;
+				if (cin.fail() || f->value.empty()) {
+					ko = string("Expected value in standard input for '") + flag + "' Try -h. ";
+					break;
+				}
 			}
 		}
 		f->overriden=true;
