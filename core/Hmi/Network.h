@@ -59,11 +59,6 @@ namespace symbol { namespace core { namespace hmi {
 
 	public:
 		/// Gettrs & Setters
-		/// User selectd JSON output
-		inline bool json() const { return m_json; }
-
-		/// User selected to hide labels in text output
-		inline bool hideLabels() const { return m_hideLabels; }
 
 		void help_flag(const FlagDef&, ostream&) const override;
 
@@ -99,10 +94,6 @@ namespace symbol { namespace core { namespace hmi {
 		static Params defParams();
 
 	private:
-		/// Output preferences
-		bool m_json{false};
-		bool m_hideLabels{false};
-
 		/// Network instance
 		ptr<core::Network> m_network{nullptr};
 		bool m_networkOverriden{false};

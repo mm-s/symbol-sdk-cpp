@@ -82,6 +82,7 @@ namespace symbol { namespace core { namespace hmi {
 		/// Gettrs & Setters
 		/// User selectd JSON output
 		inline bool json() const { return m_json; }
+		inline bool compact() const { return m_compact; }
 
 		/// User selected to hide labels in text output
 		inline bool hideLabels() const { return m_hideLabels; }
@@ -110,6 +111,7 @@ namespace symbol { namespace core { namespace hmi {
 	private:
 		/// Output preferences
 		bool m_json{false};
+		bool m_compact{false};
 		bool m_hideLabels{false};
 
 		/// Network instance

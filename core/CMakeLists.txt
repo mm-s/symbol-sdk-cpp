@@ -7,6 +7,7 @@ file(GLOB symbol_core_hmi_wallet_SRC "Hmi/Wallet/*.cpp")
 file(GLOB symbol_core_transaction_SRC "Transaction/*.cpp")
 file(GLOB symbol_core_hmi_transaction_SRC "Hmi/Transaction/*.cpp")
 file(GLOB symbol_core_donna_SRC "donna/*.c")
+file(GLOB symbol_dto_SRC "dto/*.cpp")
 
 add_definitions(-DNO_MISALIGNED_ACCESSES) # sha3
 
@@ -19,6 +20,7 @@ add_library(symbolcore SHARED
 	${symbol_core_hmi_wallet_SRC}
 	${symbol_core_transaction_SRC}
 	${symbol_core_hmi_transaction_SRC}
+	${symbol_dto_SRC}
 )
 
 #-------------Use OpenSSL, Boost

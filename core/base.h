@@ -18,27 +18,66 @@
 *** You should have received a copy of the GNU Lesser General Public License
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
-
 #pragma once
 #include "config.h"
 #include <string>
 #include <iostream>
 #include <sstream>
-
-//#ifndef BOOST_ALL_DYN_LINK
-//    error BOOST_ALL_DYN_LINK
-//#endif
+#include <functional>
+#include <vector>
+#include <map>
+#include <unordered_map>
+#include <utility>
 
 namespace symbol {
 	using string = std::string;
+	using ostream = std::ostream;
+	using std::vector;
+	using std::function;
+	using std::exception;
+	using std::move;
+	using std::istringstream;
+	using std::ostringstream;
+	using std::pair;
+	using std::map;
+	using std::unordered_map;
+	using std::make_pair;
+	using std::cout;
+	using std::cin;
+	using std::endl;
 
+	/// Error codes
 	using ko_t = char;
 	using ko = const ko_t*;
 	static constexpr ko ok=nullptr;
 	inline static bool is_ko(ko o) { return o!=ok; }
 	inline static bool is_ok(ko o) { return o==ok; }
 
+	/** Usage pattern for ko, ok, is_ko
+
+		static constexpr auto KO_57763="Value is <0";
+
+		ko foo(int i) { /// function returning error code
+			if (i<0)
+				return "Invalid";
+			elseif (i==0) 
+				return KO_57763;
+			return ok;
+		}
+
+		ko bar(int i) {
+			auto r=foo(i);
+			if (is_ko(r) { ///check for error
+				log(r);
+				return r;
+			}
+			return ok;
+		}
+	**/
+
+	/// Pointer type raw/smart
 	template<class T> using ptr = T*;
-	
+	//using ptr = unique_ptr;
+
 } /// Namespace
 

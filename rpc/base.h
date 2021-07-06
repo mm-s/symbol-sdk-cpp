@@ -21,5 +21,5 @@
 
 #pragma once
 
-#include <symbol/core/Hmi.h>
+#include <symbol/core/base.h>
 

@@ -21,7 +21,7 @@
 #pragma once
 
 #include "../base.h"
-#include "../dto/dto.h"
+#include <symbol/core/dto.h>
 #include <symbol/core/Hmi.h>
 #include <iostream>
 

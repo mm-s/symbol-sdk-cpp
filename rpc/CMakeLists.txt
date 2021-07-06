@@ -1,7 +1,6 @@
 configure_file(config.h.in config.h)
 
 file(GLOB symbol_SRC *.cpp)
-file(GLOB symbol_dto_SRC "dto/*.cpp")
 file(GLOB symbol_hmi_SRC "Hmi/*.cpp")
 file(GLOB symbol_hmi_transaction_SRC "Hmi/Transaction/*.cpp")
 
@@ -20,7 +19,6 @@ message("           libs: ${RESTCCPP_LIBRARIES}")
 #------------- libsymbolrpc.so
 add_library(symbolrpc SHARED
 	${symbol_SRC}
-	${symbol_dto_SRC}
 	${symbol_hmi_SRC}
 	${symbol_hmi_transaction_SRC}
 )

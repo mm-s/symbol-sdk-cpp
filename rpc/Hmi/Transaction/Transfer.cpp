@@ -19,8 +19,9 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "Transfer.h"
-#include "../../dto/dto.h"
+#include <symbol/core/dto.h>
 #include <symbol/core/Hmi/Network.h>
+#include "../../Fetch.h"
 
 namespace symbol { namespace hmi {
 
@@ -33,14 +34,12 @@ namespace symbol { namespace hmi {
 
 	bool c::main(Params& p, bool last, ostream& os) {
 		if (!b::main(p, last, os)) return false;
-//cout << "root()->offline() " << root()->offline() << endl;
 		if ( !root()->offline() ) {
-			dto::node_info o;
-			if ( !o.fetch( root()->url() ) ) {
-				os << "Unable to fetch from " << root()->url() << ".";
+			auto r=symbol::Fetch::ApiNode::info(root()->url());
+			if (is_ko(r.first)) {
+				os << r.first;
 				return false;
 			}
-			/// 
 		}
 		return true;
 	}

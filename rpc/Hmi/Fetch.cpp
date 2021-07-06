@@ -20,7 +20,8 @@
 **/
 #include "Fetch.h"
 #include <restc-cpp/restc-cpp.h>
-#include "../dto/dto.h"
+#include <symbol/core/dto.h>
+#include "../Fetch.h"
 ////http://explorer.testnet.symboldev.network/
 
 namespace symbol { namespace hmi {
@@ -69,14 +70,16 @@ namespace symbol { namespace hmi {
 		auto a=addr->formatAccount();
 		delete pk;
 		delete addr;
-		dto::account_t o;
-		auto r=o.fetch(m_url, a);
-		if (!r) return false;
+		auto r=symbol::Fetch::account(m_url, a);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
 		if (json()) {
-			o.to_json(os);
+			r.second.toJson(compact(), os);
 		}
 		else {
-			o.dump(os);
+			r.second.toText(compact(), os);
 		}
 		return true;
 	}
@@ -103,14 +106,16 @@ namespace symbol { namespace hmi {
 			os << "Unknown Url for network '" << network() << "'.";
 			return false;
 		}
-		dto::nodes o;
-		auto r = o.fetch(url);
-		if (!r) return false;
+		auto r=symbol::Fetch::netNodes(url);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
 		if (json()) {
-			o.to_json(os);
+			r.second.toJson(!compact(), os);
 		}
 		else {
-			o.dump(os);
+			r.second.dump(os);
 		}
 		return true;
 	}
@@ -134,15 +139,17 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodePeers(Params& p, bool last, ostream& os) {
-		dto::node_peers o;
-		auto r=o.fetch(m_url);
-		if (!r) return false;
+		auto r=symbol::Fetch::ApiNode::peers(m_url);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
 		if (json()) {
-			o.to_json(os);
+			r.second.toJson(!compact(), os);
 		}
 		else {
-			if (!hideLabels()) o.dump_fields(os);
-			o.dump(os);
+			if (!hideLabels()) r.second.dumpFields(os);
+			r.second.dump(os);
 		}
 		return true;
 	}
@@ -160,14 +167,16 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodeInfo(Params& p, bool last, ostream& os) {
-		dto::node_info o;
-		auto r=o.fetch(m_url);
-		if (!r) return false;
+		auto r=symbol::Fetch::ApiNode::info(m_url);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
 		if (json()) {
-			o.to_json(os);
+			r.second.toJson(!compact(), os);
 		}
 		else {
-			o.dump_table(os);
+			r.second.dumpTable(os);
 		}
 		return true;
 	}
@@ -179,14 +188,16 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodeHealth(Params& p, bool last, ostream& os) {
-		dto::node_health o;
-		auto r=o.fetch(m_url);
-		if (!r) return false;
+		auto r=symbol::Fetch::ApiNode::health(m_url);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
 		if (json()) {
-			o.to_json(os);
+			r.second.toJson(!compact(), os);
 		}
 		else {
-			o.dump(os);
+			r.second.dump(os);
 		}
 		return true;
 	}

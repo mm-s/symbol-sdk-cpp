@@ -19,7 +19,7 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "Transaction.h"
-#include "../dto/dto.h"
+#include <symbol/core/dto.h>
 #include "Transaction/Transfer.h"
 
 namespace symbol { namespace hmi {

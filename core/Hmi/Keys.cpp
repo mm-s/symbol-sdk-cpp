@@ -19,6 +19,7 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "Keys.h"
+#include "../dto/Keys.h"
 
 namespace symbol { namespace core { namespace hmi {
 
@@ -69,6 +70,20 @@ namespace symbol { namespace core { namespace hmi {
 		if ( pk == nullptr ) {
 			pk = resolvePublicKey(*addr);
 		}
+		dto::Keys o;
+		o.networkId = network().identifierDecHex();
+		o.network = toString(network().identifierStr());
+		o.privateKey = sk!=nullptr ? toString(*sk) : string("");
+		o.publicKey = pk!=nullptr ? toString(*pk) : string("");
+		o.address = toString(*addr);
+		o.account = addr->formatAccount();
+		if (json()) {
+			o.toJson(compact(), os);
+		}
+		else {
+			o.toText(compact(), os);
+		}
+		/*
 		//print
 		vector<pair<string, string>> v;
 		v.emplace_back(make_pair("network_id", network().identifierDecHex()));
@@ -78,6 +93,7 @@ namespace symbol { namespace core { namespace hmi {
 		v.emplace_back(make_pair("address", toString(*addr) ));
 		v.emplace_back(make_pair("account", addr->formatAccount() ));
 		json() ? kv_json(v, os) : kv_text(v, os);
+		*/
 		delete sk;
 		delete pk;
 		delete addr;

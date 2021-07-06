@@ -71,10 +71,10 @@ namespace symbol { namespace core { namespace hmi {
 			os << "Separate with comma multiple mosaics corresponding to multiple amounts. Example: 0xA1A2A3A4A5A6A7A8,0xB1B2B3B4B5B6B7B8,0xC1C2C3C4C5C6C7C8\n";
 			return;
 		}
-		if (f.short_name == Deadline_Flag) {
+		if (f.short_name == Deadline_Flag) { /// https://app.slack.com/client/T015F8ZGMJM/C01V1EVUW9M/thread/C01V1EVUW9M-1625568887.254200
 			os << "Timestamp (uint64). Time elapsed since the creation of the nemesis block.\n";
 			os << "If a transaction does not get included in a block before the deadline is reached, it is deleted.\n";
-			os << "Deadlines are only allowed to lie up to 24 hours ahead.\n";
+			os << "Deadlines are only allowed to line up to 24 hours ahead.\n";
 			os << "Example of equivalent values: 3600000ms, 3600s, 60m, 1h.\n";
 			return;
 		}

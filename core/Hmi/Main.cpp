@@ -81,11 +81,20 @@ namespace symbol { namespace core { namespace hmi {
 		return os.str();
 	}
 
+	namespace {
+		void help_flag_output(ostream& os) {
+		 	os << "Valid options for flag --output:\n";
+			os << "  text      Output data using text lines.\n";
+			os << "  etext     Output data using text lines (electronic processing).\n";
+			os << "  json      Output data using json format.\n";
+			os << "  ejson     Output data using json format (electronic processing).\n";
+		}
+	}
+
+
 	void c::help_flag(const FlagDef& f, ostream& os) const {
 		if (f.short_name == Output_Flag) {
-		 	os << "Valid options for flag --output:\n";
-			os << "  text      Output data in text lines.\n";
-			os << "  json      Output data in json format.\n";
+			help_flag_output(os);
 			return;
 		}
 		b::help_flag(f, os);
@@ -96,7 +105,14 @@ namespace symbol { namespace core { namespace hmi {
 		if (p.is_set(Verbose_Flag)) {
 			//catapult::utils::log::global_logger::set(trace);
 		}
-		m_json = p.get(Output_Flag) == "json";
+		if (p.get(Output_Flag)!="text" && p.get(Output_Flag)!="etext" && p.get(Output_Flag)!="json" && p.get(Output_Flag)!="ejson") {
+			os << "Invalid flag Output\n";
+			help_flag_output(os);
+			return false;
+		}
+		auto otype=p.get(Output_Flag);
+		m_json = (otype == "json" || otype == "ejson");
+		m_compact = (otype == "ejson" || otype == "etext");
 		m_hideLabels = p.is_set(HideLabels_Flag);
 		return true;
 	}

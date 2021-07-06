@@ -19,6 +19,7 @@
 *** along with Catapult. If not, see <http://www.gnu.org/licenses/>.
 **/
 #include "Keys.h"
+#include "../Fetch.h"
 
 namespace symbol { namespace hmi {
 
@@ -26,19 +27,20 @@ namespace symbol { namespace hmi {
 
 	ptr<symbol::PublicKey> c::resolvePublicKey(const symbol::UnresolvedAddress& addr0) const {
 		string a=addr0.formatAccount();
-		dto::account_t o;
-		auto r=o.fetch(url(), a);
-		if (!r) return nullptr;
-		
+		auto r=symbol::Fetch::account(url(), a);
+		if (is_ko(r.first)) {
+			return nullptr;
+		}
+
 		//public key, address
 		ptr<symbol::PublicKey> pk{nullptr};
 		ptr<symbol::UnresolvedAddress> addr{nullptr};
-		string e=network().parse(o.account.publicKey, pk, addr);
+		string e=network().parse(r.second.publicKey, pk, addr);
 		if (!e.empty()) {
 			return nullptr;
 		}
 		delete addr;
-		return pk;    
+		return pk;
 	}
 
 }}
