@@ -33,8 +33,11 @@ namespace symbol { namespace hmi {
 		using b::Transfer;
 
 		bool main(Params&, bool last, std::ostream&) override;
+		//ptr<symbol::PublicKey> resolvePublicKey(const symbol::UnresolvedAddress&) const override;
+		
 	protected:
 		Transaction* root();
+		const Transaction* root() const;
 
 		///Opportunity to rewrite Params before command execution.
 		bool pass1(ParamPath&, ostream&) override;

@@ -99,6 +99,9 @@ namespace symbol { namespace core { namespace hmi {
 		ptr<Section> createSectionSign();
 		
 		Transaction* root();
+		const Transaction* root() const;
+		//virtual ptr<PublicKey> resolvePublicKey(const UnresolvedAddress&) const { return nullptr; }
+		
 	private:
 		/// menu command: tx
 

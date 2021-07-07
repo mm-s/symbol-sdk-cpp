@@ -53,6 +53,10 @@ namespace symbol { namespace core { namespace hmi {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
+	const Transaction* c::root() const {
+		return dynamic_cast<const Transaction*>(b::root());
+	}
+
 	void c::help_flag(const FlagDef& f, ostream& os) const {
 		if (f.short_name == Recipient_Flag) {
 			os << "Recipient. Either:\n";
@@ -231,7 +235,10 @@ namespace symbol { namespace core { namespace hmi {
 				os << e;
 				return false;
 			}
-
+			assert(addr!=nullptr);
+			if (encrypMsg && pk == nullptr ) {
+				pk = root()->resolvePublicKey(*addr);
+			}
 			if (encrypMsg && (m_sk==nullptr || pk==nullptr)) {
 				os << "Cannot encrypt message.";
 				if (m_sk==nullptr) os << " Signer private key is required.";

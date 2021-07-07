@@ -32,6 +32,10 @@ namespace symbol { namespace hmi {
 		return dynamic_cast<Transaction*>(b::root());
 	}
 
+	const Transaction* c::root() const {
+		return dynamic_cast<const Transaction*>(b::root());
+	}
+
 	bool c::main(Params& p, bool last, ostream& os) {
 		if (!b::main(p, last, os)) return false;
 		if ( !root()->offline() ) {
