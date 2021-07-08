@@ -70,7 +70,7 @@ function testBuild {
 	pushd ${gitn} > /dev/null
 		if [[ -x scripts/configure.sh ]]; then
 			echo "Executing project's configure script."
-			scripts/configure.sh
+			scripts/configure.sh make release
 		fi
 		mkdir -p ${buildDir}
 		pushd ${buildDir} > /dev/null

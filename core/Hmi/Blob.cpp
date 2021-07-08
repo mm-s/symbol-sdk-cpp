@@ -77,7 +77,7 @@ namespace symbol { namespace core { namespace hmi {
 		{ //is Transaction
 			if (core::Transaction::isTransaction(m_blob)) {
 				if (core::Transaction::isTransferTransaction(m_blob)) {
-					os << "Blob is a Transfer Transaction\n";
+					if (last) os << "Blob is a Transfer Transaction\n";
 				}
 				else {
 					os << "The blob is an invalid transaction.\n";
