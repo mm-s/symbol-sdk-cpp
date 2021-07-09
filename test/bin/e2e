@@ -79,12 +79,13 @@ function testBuild {
 			echo "   with: $cmakeOpts"
 			echo "   from: `pwd`"
 			cmake $cmakeOpts ..
-			make -j${jobs} install
+			ninja -j${jobs} install
 			find fsroot -type f | sort > fsroot_files
 			echo `pwd`"/fsroot_files:"
 			cat fsroot_files
 		popd > /dev/null
 		echo "Comparing \"test/data/${gitn}/fsroot_files\" and \"${buildDir}/fsroot_files\"."
+		echo -n "pwd="
 		pwd
 		diff ${testpwd}/data/${gitn}/fsroot_files ${buildDir}/fsroot_files
 		er=$?
