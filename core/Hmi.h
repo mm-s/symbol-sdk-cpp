@@ -21,21 +21,18 @@
 #pragma once
 #include "Hmi/Wallet.h"
 
-namespace symbol { namespace core { namespace hmi {
-
+namespace symbol { namespace core {
+	namespace hmi {
 	/// Human-Machine Interface. All sections command processor (offline)
-	class Hmi : public hmi::Wallet {
-		using b = Hmi::Wallet;
+		class Hmi : public hmi::Wallet {
+			using b = Hmi::Wallet;
 
-	public:
-		using b::Wallet;
-		void init(const string& name, const string& desc) override;
+		public:
+			using b::Wallet;
+			void init(const string& name, const string& desc) override;
 
-	};
+		};
 
-}
-	/// Publish hmi::Hmi on parent namespace
-	using Hmi = hmi::Hmi;
-
+	}
 }}
 

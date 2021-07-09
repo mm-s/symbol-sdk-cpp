@@ -78,7 +78,7 @@ function testBuild {
 			echo "Invoking CMake"
 			echo "   with: $cmakeOpts"
 			echo "   from: `pwd`"
-			cmake $cmakeOpts ..
+			cmake $cmakeOpts .. -G Ninja
 			ninja -j${jobs} install
 			find fsroot -type f | sort > fsroot_files
 			echo `pwd`"/fsroot_files:"

@@ -21,5 +21,8 @@
 #pragma once
 #include "Keys.h"
 #include "Network.h"
+#include "Transaction.h"
+#include "Node.h"
+#include "Wallet.h"
 #include "Hmi.h"
 
