@@ -111,7 +111,7 @@ namespace symbol { namespace core { namespace hmi {
 		virtual bool main(Params&, bool last, ostream&); /// Command Handler
 	
 	private:
-		ptr<core::Transfer> m_tx;
+		ptr<core::Transfer> m_tx{nullptr};
 		ptr<PrivateKey> m_sk{nullptr};
 
 	};

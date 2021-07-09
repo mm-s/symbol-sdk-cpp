@@ -26,68 +26,6 @@ namespace symbol { namespace core { namespace hmi {
 
 	using c = symbol::core::hmi::Wallet;  /// Implementation for class c 
 
-/*
-	c::FlagDef c::flagdefPrivkey(bool mandatory) {
-		return FlagDef{Privkey_Flag, "private-key", !mandatory, true, "", "Use the supplied private key in HEX format."};
-	}
-
-	c::FlagDef c::flagdefAcc() {
-		return FlagDef{Privkey_Flag, "private-key", true, true, "", "Use the supplied private key in HEX format."};
-	}
-*/
-
-//	bool c::wallet(const Params& p, ostream& os) {
-/*
-		if( p.is_set(Privkey_Flag) && p.is_set(Acc_Flag) ) {
-			os << "Multiple inputs.";
-			return false;
-		}
-		//secret key
-		ptr<PrivateKey> sk{nullptr};
-		if( !p.is_set(Privkey_Flag) && !p.is_set(Acc_Flag) ) {
-			sk = symbol::Keys::newPrivateKey();
-		}
-		if ( p.is_set(Privkey_Flag) ) {
-			sk = symbol::Keys::createPrivateKey( p.get(Privkey_Flag) );
-			if (sk == nullptr) {
-				os << "Input is not a private key.\n";
-				return false;
-			}
-		}
-		//public key, address
-		ptr<PublicKey> pk{nullptr};
-		ptr<UnresolvedAddress> addr{nullptr};
-		if (sk != nullptr) {
-			pk = symbol::Keys::createPublicKey(*sk);
-			addr = network().newAddress(*pk);
-		}
-		else {
-			string e = network().parse(p.get(Acc_Flag), pk, addr, networkOverriden());
-			if ( !e.empty() ) {
-				os << e << '\n';
-				return false;
-			}
-		}
-		if ( pk == nullptr ) {
-			pk = resolvePublicKey(*addr);
-		}
-		//print
-		vector<pair<string, string>> v;
-		v.emplace_back(make_pair("network_id", toString(network().identifierHex())));
-		v.emplace_back(make_pair("network", toString(network().identifierStr())));
-		v.emplace_back(make_pair("private_key", sk!=nullptr ? toString(*sk) : string("unknown") ));
-		v.emplace_back(make_pair("public_key", pk!=nullptr ? toString(*pk) : string("unknown") ));
-		v.emplace_back(make_pair("address", toString(*addr) ));
-		v.emplace_back(make_pair("account", addr->formatAccount() ));
-		json() ? kv_json(v, os) : kv_text(v, os);
-		delete sk;
-		delete pk;
-		delete addr;
-		return true;
-*/
-//		return true;
-	//}
-
 	void c::init(const string& name, const string& desc) {
 		b::init(name, desc);
 

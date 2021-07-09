@@ -81,7 +81,8 @@ void Keys::toJson(bool compact, ostream& os) const {
 	doc.SetObject();
 	Document::AllocatorType& ator = doc.GetAllocator();
 	toJson(doc, ator);
-	os << toString(doc, !compact) << '\n';
+	os << toString(doc, !compact);
+	if (!compact) os << '\n';
 }
 
 string Keys::toJson(bool compact) const {

@@ -133,8 +133,8 @@ namespace conch {
 
 	private:
 		bool exec(const param_path&, param_path::const_iterator);
-		void help(const param_path&) const;
-		void help(const param_path&, param_path::const_iterator) const;
+		void help(const param_path&, ostream&) const;
+		void help(const param_path&, param_path::const_iterator, ostream&) const;
 		string scope() const;
 		bool fillv(param_path&, istream&);
 		section* lookup(const string&) const;

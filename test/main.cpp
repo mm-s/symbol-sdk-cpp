@@ -123,13 +123,8 @@ namespace {
 		using Cli = symbol::core::Hmi;
 		ostringstream out;
 		ostringstream err;
-		if (pipe.empty()) {
-			Cli::Section::init(out, err, cin, "0.0.0");
-		}
-		else {
-			istringstream in(pipe);
-			Cli::Section::init(out, err, in, "0.0.0");
-		}
+		istringstream in(pipe);
+		Cli::Section::init(out, err, in, "0.0.0");
 		Cli cli;
 		cli.init("symbol-offline", "Symbol wallet - offline.");
 		int r = cli.exec(cmdline)?0:1;
@@ -137,17 +132,18 @@ namespace {
 	}
 }
 
-tuple<int, string, string> test_keys_sk(const string& sk, bool pipe) {
-	string cmd;
+tuple<int, string, string> test_keys_sk(const string& sk, const string& output, bool pipe) {
+	ostringstream cmd;
+	if (!output.empty()) {
+		cmd << "-o " << output << ' ';
+	}
 	if (pipe) {
-		cmd="keys -s -";
+		cmd << "keys -s -";
 	}
 	else {
-		ostringstream os;
-		os << "keys -s " << sk;
-		cmd=os.str();
+		cmd << "keys -s " << sk;
 	}
-	return exec_offline(pipe?sk:"", cmd);
+	return exec_offline(pipe?sk:"", cmd.str());
 }
 
 
@@ -164,8 +160,8 @@ TEST(HMI_Keys, keys_sk_text) {
 	auto expected_cerr="";
 
 	/// Act
-	auto r1=test_keys_sk(sk, false);
-	auto r2=test_keys_sk(sk, true);
+	auto r1=test_keys_sk(sk, "", false);
+	auto r2=test_keys_sk(sk, "", true); //pipe sk
 
 	/// Assert
 	//cout << get<1>(r) << endl;
@@ -183,17 +179,22 @@ TEST(HMI_Keys, keys_sk_etext) {
 	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
 	ostringstream cmd;
 	cmd << "-o etext keys -s " << sk;
-
-	/// Act
-	auto r=exec_offline("", cmd.str());
-
-	/// Assert
 	auto expected_cout="152 public-test D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B 984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9 TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI ";
 	auto expected_cerr="";
+
+	/// Act
+	auto r1=test_keys_sk(sk, "etext", false);
+	auto r2=test_keys_sk(sk, "etext", true); //pipe sk
+
+	/// Assert
 	//cout << get<1>(r) << endl;
-	EXPECT_EQ(get<0>(r), 0);
-	EXPECT_EQ(get<1>(r), expected_cout);
-	EXPECT_EQ(get<2>(r), expected_cerr);
+	EXPECT_EQ(get<0>(r1), 0);
+	EXPECT_EQ(get<1>(r1), expected_cout);
+	EXPECT_EQ(get<2>(r1), expected_cerr);
+	
+	EXPECT_EQ(get<0>(r2), 0);
+	EXPECT_EQ(get<1>(r2), expected_cout);
+	EXPECT_EQ(get<2>(r2), expected_cerr);
 }
 
 TEST(HMI_Keys, keys_sk_ejson) {
@@ -201,17 +202,100 @@ TEST(HMI_Keys, keys_sk_ejson) {
 	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
 	ostringstream cmd;
 	cmd << "-o ejson keys -s " << sk;
+	auto expected_cout="{\"networkId\":152,\"network\":\"public-test\",\"privateKey\":\"D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD\",\"publicKey\":\"F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B\",\"address\":\"984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9\",\"account\":\"TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI\"}";
+	auto expected_cerr="";
 
 	/// Act
-	auto r=exec_offline("", cmd.str());
+	auto r1=test_keys_sk(sk, "ejson", false);
+	auto r2=test_keys_sk(sk, "ejson", true); //pipe sk
 
 	/// Assert
-	auto expected_cout="152 public-test D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B 984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9 TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI ";
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r1), 0);
+	EXPECT_EQ(get<1>(r1), expected_cout);
+	EXPECT_EQ(get<2>(r1), expected_cerr);
+	
+	EXPECT_EQ(get<0>(r2), 0);
+	EXPECT_EQ(get<1>(r2), expected_cout);
+	EXPECT_EQ(get<2>(r2), expected_cerr);
+}
+
+TEST(HMI_Keys, keys_sk_json) {
+	/// Arrange
+	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
+	ostringstream cmd;
+	cmd << "-o json keys -s " << sk;
+	auto expected_cout="{\n    \"networkId\": 152,\n    \"network\": \"public-test\",\n    \"privateKey\": \"D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD\",\n    \"publicKey\": \"F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B\",\n    \"address\": \"984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9\",\n    \"account\": \"TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI\"\n}\n";
 	auto expected_cerr="";
-	cout << get<1>(r) << endl;
-	EXPECT_EQ(get<0>(r), 0);
+
+	/// Act
+	auto r1=test_keys_sk(sk, "json", false);
+	auto r2=test_keys_sk(sk, "json", true); //pipe sk
+
+	/// Assert
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r1), 0);
+	EXPECT_EQ(get<1>(r1), expected_cout);
+	EXPECT_EQ(get<2>(r1), expected_cerr);
+	
+	EXPECT_EQ(get<0>(r2), 0);
+	EXPECT_EQ(get<1>(r2), expected_cout);
+	EXPECT_EQ(get<2>(r2), expected_cerr);
+}
+
+TEST(HMI_Keys, keys_malformed_sk) {
+	/// Arrange
+	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9B";
+	ostringstream cmd;
+	cmd << "keys -s " << sk;
+	auto expected_cout="";
+	auto expected_cerr="ERR Input is not a private key.\n";
+	auto expected_exit_code=1;
+
+	/// Act
+	auto r1=test_keys_sk(sk, "", false);
+	auto r2=test_keys_sk(sk, "", true); //pipe sk
+
+	/// Assert
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r1), expected_exit_code);
+	EXPECT_EQ(get<1>(r1), expected_cout);
+	EXPECT_EQ(get<2>(r1), expected_cerr);
+
+	EXPECT_EQ(get<0>(r2), expected_exit_code);
+	EXPECT_EQ(get<1>(r2), expected_cout);
+	EXPECT_EQ(get<2>(r2), expected_cerr);
+}
+
+TEST(HMI, empty_args) {
+	/// Arrange
+	auto expected_cout="";
+	auto expected_cerr="ERR Missing command.\n\nsymbol-offline  r0.0.0\n\nSymbol wallet - offline.\n\nusage:\n  symbol-offline [flags] <command> [-h]\n\nflags:\n  -H, --home (value='~/.symbol')     Home directory.\n  -v, --verbose                      Print extra information about what the program is doing.\n  -o, --output (value='text')        Output format. -h for list of valid options.\n  -n, --network (value='public-test')  Network type.\n  -s, --seed <value>                 Network generation hash seed.\n  -B, --blob <value>                 Memory representation. Hex string.\n  -h, --help                         Prints this help.\n\ncommands:\n  keys                               Keys/Address/Account generation/info.\n  tx                                 Operations with transactions.\n  wallet                             Private.\n";
+	auto expected_exit_code=1;
+
+	/// Act
+	auto r = exec_offline("", "");
+
+	/// Assert
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r), expected_exit_code);
 	EXPECT_EQ(get<1>(r), expected_cout);
 	EXPECT_EQ(get<2>(r), expected_cerr);
 }
 
+TEST(HMI, invoke_help) {
+	/// Arrange
+	auto expected_cout="symbol-offline  r0.0.0\n\nSymbol wallet - offline.\n\nusage:\n  symbol-offline [flags] <command> [-h]\n\nflags:\n  -H, --home (value='~/.symbol')     Home directory.\n  -v, --verbose                      Print extra information about what the program is doing.\n  -o, --output (value='text')        Output format. -h for list of valid options.\n  -n, --network (value='public-test')  Network type.\n  -s, --seed <value>                 Network generation hash seed.\n  -B, --blob <value>                 Memory representation. Hex string.\n  -h, --help (flag is set)           Prints this help.\n\ncommands:\n  keys                               Keys/Address/Account generation/info.\n  tx                                 Operations with transactions.\n  wallet                             Private.\n";
+	auto expected_cerr="";
+	auto expected_exit_code=0;
+
+	/// Act
+	auto r = exec_offline("", "-h");
+
+	/// Assert
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r), expected_exit_code);
+	EXPECT_EQ(get<1>(r), expected_cout);
+	EXPECT_EQ(get<2>(r), expected_cerr);
+}
 

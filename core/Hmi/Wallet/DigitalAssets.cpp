@@ -76,7 +76,7 @@ namespace symbol { namespace core { namespace hmi {
 		if(p.is_set(Keys::Privkey_Flag)) {
 			m_privateKey = core::Keys::createPrivateKey( p.get(Keys::Privkey_Flag) );
 			if (m_privateKey == nullptr) {
-				os << "Input is not a private key.\n";
+				os << "Input is not a private key.";
 				return false;
 			}
 		}

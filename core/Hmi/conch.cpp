@@ -138,14 +138,13 @@ string c::scope() const {
 	return parent->scope() + " " + m_name;
 }
 
-void c::help(const param_path& v) const {
+void c::help(const param_path& v, ostream& os) const {
 	assert(!v.empty());
-	help(v, --v.end());
+	help(v, --v.end(), os);
 }
 
-void c::help(const param_path& v, param_path::const_iterator i) const {
+void c::help(const param_path& v, param_path::const_iterator i, ostream& os) const {
 	assert(!v.empty());
-	auto& os = *pos;
 	params* pp = nullptr;
 	for (auto j = v.begin(); j != v.end(); ++j) { //override ancestor page if forced -h
 		if (j->second->is_set('h')) {
@@ -234,14 +233,14 @@ bool c::fillv(param_path& v, istream& is) {
 	v.emplace_back(make_pair(this, p));
 	if (!p->ko.empty()) {
 		print_error(p->ko);
-		help(v);
+		help(v, *peos);
 		return false;
 	}
 	{
 		auto f = p->flag_req_help();
 		if ( f != nullptr) {
 			//*pos << "Help for flag -" << f->short_name << " --" << f->name << ":\n";
-			help_flag(*f, *pos);
+			help_flag(*f, *peos);
 			return false;
 		}
 	}
@@ -252,7 +251,7 @@ bool c::fillv(param_path& v, istream& is) {
 	if (s == nullptr) {
 		if (!cmd.empty()) {
 			print_error(string("Unexpected command. '") + cmd + "'.");
-			help(v);
+			help(v, *peos);
 			return false;
 		}
 		return true; //ok
@@ -282,7 +281,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 		if (n != v.end()) {
 			print_error(string("Invoking help caused command '") + n->first->name() + "' to be ignored.");
 		}
-		help(v, i);
+		help(v, i, *pos);
 		return true;
 	}
 	{
@@ -291,7 +290,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 //		auto it = check_req(v, os);
 //		if (it != v.end() && it <= i) {
 			print_error(os.str());
-			help(v, i);
+			help(v, i, *peos);
 			return false;
 		}
 	}
@@ -315,7 +314,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 	if (i == v.end()) {
 		if (!gave_output && !empty()) {
 			print_error("Missing command.");
-			help(v);
+			help(v, *peos);
 			return false;
 		}
 		return true;
@@ -334,7 +333,7 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 		ostringstream os;
 		os << "Disabled function " << i->first->name() << '.';
 		print_error(os.str());
-		help(v, --i);
+		help(v, --i, *peos);
 		return false;
 	}
 	return i->first->exec(v, i);
@@ -469,7 +468,7 @@ const c* c::lookup(const param_path& v, param_path::const_iterator t) const {
 }
 
 void c::print_error(const string& msg) {
-	auto& os = *c::pos;
+	auto& os = *c::peos;
 	os << "ERR " << msg << "\n\n";
 }
 

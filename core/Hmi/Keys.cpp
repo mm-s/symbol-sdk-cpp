@@ -49,7 +49,7 @@ namespace symbol { namespace core { namespace hmi {
 		if ( p.is_set(Privkey_Flag) ) {
 			sk = symbol::Keys::createPrivateKey( p.get(Privkey_Flag) );
 			if (sk == nullptr) {
-				os << "Input is not a private key.\n";
+				os << "Input is not a private key.";
 				return false;
 			}
 		}
