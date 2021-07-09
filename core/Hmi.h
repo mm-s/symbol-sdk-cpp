@@ -34,5 +34,8 @@ namespace symbol { namespace core {
 		};
 
 	}
+	/// Publish hmi::Hmi on parent namespace
+	using Hmi = hmi::Hmi;
+
 }}
 
