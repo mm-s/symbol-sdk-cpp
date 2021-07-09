@@ -46,7 +46,7 @@ target_include_directories(symbolrpc PUBLIC
 install(TARGETS symbolrpc DESTINATION lib)
 
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/rpc/" # source directory
-	DESTINATION "include/symbol" # target directory
+	DESTINATION "include/symbol/rpc" # target directory
 	FILES_MATCHING # install only matched files
 	PATTERN "*.h" # select header files
 )

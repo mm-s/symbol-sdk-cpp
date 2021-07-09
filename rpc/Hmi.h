@@ -24,11 +24,9 @@
 
 // StackTest: Transaction -> 
 
-
-
 namespace symbol { 
 
-	using Hmi = symbol::hmi::Transaction;
+	using Hmi = symbol::hmi::Transaction; //Top level section
 
 }
 
