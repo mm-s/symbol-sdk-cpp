@@ -1,5 +1,6 @@
 fsroot/bin/symbol
 fsroot/bin/symbol-offline
+fsroot/include/symbol/config.h
 fsroot/include/symbol/core/base.h
 fsroot/include/symbol/core/catapult/AccountAddressRestrictionBuilder.h
 fsroot/include/symbol/core/catapult/AccountAddressRestrictionTransaction.h
