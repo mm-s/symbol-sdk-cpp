@@ -1,5 +1,3 @@
-configure_file(config.h.in config.h)
-
 file(GLOB symbol_SRC *.cpp)
 file(GLOB symbol_hmi_SRC "Hmi/*.cpp")
 file(GLOB symbol_hmi_transaction_SRC "Hmi/Transaction/*.cpp")
@@ -53,5 +51,4 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/rpc/" # source directory
 
 install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLRPC.cmake" DESTINATION "share/cmake/SYMBOLRPC")
 install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/rpc.h" DESTINATION "include/symbol/")
-install(FILES "${CMAKE_BINARY_DIR}/rpc/config.h" DESTINATION "include/symbol/rpc/")
 

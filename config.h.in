@@ -1,0 +1,10 @@
+#pragma once
+
+#define SYMBOL_SDK_VERSION_MAJOR @symbol_sdk_VERSION_MAJOR@
+#define SYMBOL_SDK_VERSION_MINOR @symbol_sdk_VERSION_MINOR@
+#define SYMBOL_SDK_VERSION_BUILD @symbol_sdk_VERSION_PATCH@
+
+#define SYMBOL_SDK_VERSION "@symbol_sdk_VERSION@"
+#define SYMBOL_SDK_OFFLINE_DESCRIPTION "Symbol-offline. https://symbolplatform.com"
+#define SYMBOL_SDK_DESCRIPTION "Symbol. https://symbolplatform.com"
+

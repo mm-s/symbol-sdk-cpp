@@ -7,7 +7,7 @@ namespace symbol { namespace core {namespace dto {
 
 	struct Keys {
 		static constexpr auto Json_Element="keys";
-		string networkId;
+		uint8_t networkId;
 		string network;
 		string privateKey;
 		string publicKey;

@@ -29,6 +29,7 @@ using namespace std;
 
 ostream* c::pos{nullptr};
 ostream* c::peos{nullptr};
+istream* c::pis{nullptr};
 string c::version;
 
 namespace {
@@ -43,9 +44,10 @@ namespace {
 	}
 }
 
-void c::init(ostream& out, ostream& err, const string& v) {
-	pos = &cout;
-	peos = &cerr;
+void c::init(ostream& out, ostream& err, istream& in, const string& v) {
+	pos = &out;
+	peos = &err;
+	pis = &in;
 	version = v;
 }
 
@@ -502,8 +504,8 @@ params::params(const params& fd, istream& is): b(fd) {
 			}
 			if (f->value == "-") {
 				f->value.clear();
-				cin >> f->value;
-				if (cin.fail() || f->value.empty()) {
+				*c::pis >> f->value;
+				if (c::pis->fail() || f->value.empty()) {
 					ko = string("Expected value in standard input for '") + flag + "' Try -h. ";
 					break;
 				}

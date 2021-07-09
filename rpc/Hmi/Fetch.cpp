@@ -148,7 +148,7 @@ namespace symbol { namespace hmi {
 			r.second.toJson(!compact(), os);
 		}
 		else {
-			if (!hideLabels()) r.second.dumpFields(os);
+			//if (!hideLabels()) r.second.dumpFields(os);
 			r.second.dump(os);
 		}
 		return true;

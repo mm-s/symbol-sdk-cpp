@@ -30,7 +30,7 @@ namespace symbol { namespace core { namespace hmi {
 			{Home_Flag, Home_Name, true, true, Home_Default, Home_Desc},
 			{Verbose_Flag, Verbose_Name, true, false, Verbose_Default, Verbose_Desc},
 			{Output_Flag, Output_Name, true, true, Output_Default, Output_Desc},
-			{HideLabels_Flag, HideLabels_Name, true, false, HideLabels_Default, HideLabels_Desc},
+//			{HideLabels_Flag, HideLabels_Name, true, false, HideLabels_Default, HideLabels_Desc},
 		};
 	}
 
@@ -58,6 +58,7 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr int f1w = 15;
 	}
 
+/*
 	void c::kv_text(const vector<pair<string, string>>& kv, ostream& os) {
 		for (auto&i:kv) {
 			os << fmt_field(i.first, f1w) << i.second << '\n';
@@ -75,11 +76,13 @@ namespace symbol { namespace core { namespace hmi {
 		os << "}\n";
 	}
 
+
 	template<> string c::toString(const uint8_t& o) {
 		ostringstream os;
 		os << +o;
 		return os.str();
 	}
+*/
 
 	namespace {
 		void help_flag_output(ostream& os) {
@@ -113,7 +116,7 @@ namespace symbol { namespace core { namespace hmi {
 		auto otype=p.get(Output_Flag);
 		m_json = (otype == "json" || otype == "ejson");
 		m_compact = (otype == "ejson" || otype == "etext");
-		m_hideLabels = p.is_set(HideLabels_Flag);
+//		m_hideLabels = p.is_set(HideLabels_Flag);
 		return true;
 	}
 

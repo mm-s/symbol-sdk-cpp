@@ -13,7 +13,7 @@ void Keys::dumpFields(ostream& os) {
 }
 
 void Keys::dumpLine(ostream& os) const {
-	os << networkId << ' ';
+	os << +networkId << ' ';
 	os << network << ' ';
 	os << privateKey << ' ';
 	os << publicKey << ' ';
@@ -44,7 +44,7 @@ void Keys::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator)
 
 void Keys::toText(bool compact, ostream& os) const {
 	if (compact) {
-		os << networkId << ' ';
+		os << +networkId << ' ';
 		os << network << ' ';
 		os << privateKey << ' ';
 		os << publicKey << ' ';
@@ -52,7 +52,7 @@ void Keys::toText(bool compact, ostream& os) const {
 		os << account << ' ';
 	}
 	else {
-		os << "networkId " << networkId << '\n';
+		os << "networkId " << std::dec << +networkId << " (0x" << std::hex << +(uint8_t)networkId << ")\n";
 		os << "network " << network << '\n';
 		os << "privateKey " << privateKey << '\n';
 		os << "publicKey " << publicKey << '\n';

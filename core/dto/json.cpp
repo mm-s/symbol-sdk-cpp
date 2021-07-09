@@ -85,6 +85,39 @@ namespace symbol { namespace core { namespace dto {
 	}
 
 	template<>
+	bool readField(uint8_t& dest, const rapidjson::Value& v, const char* jsonElement) {
+		rapidjson::Value::ConstMemberIterator itr = v.FindMember(jsonElement);
+		if (itr == v.MemberEnd()) {
+			dest=0;
+			return false;
+		}
+		dest = itr->value.GetInt() & 0xFF;
+		return true;
+	}
+
+	template<>
+	bool readField(uint16_t& dest, const rapidjson::Value& v, const char* jsonElement) {
+		rapidjson::Value::ConstMemberIterator itr = v.FindMember(jsonElement);
+		if (itr == v.MemberEnd()) {
+			dest=0;
+			return false;
+		}
+		dest = itr->value.GetUint() & 0xFFFF;
+		return true;
+	}
+
+	template<>
+	bool readField(uint32_t& dest, const rapidjson::Value& v, const char* jsonElement) {
+		rapidjson::Value::ConstMemberIterator itr = v.FindMember(jsonElement);
+		if (itr == v.MemberEnd()) {
+			dest=0;
+			return false;
+		}
+		dest = itr->value.GetUint();
+		return true;
+	}
+
+	template<>
 	bool readField(uint64_t& dest, const rapidjson::Value& v, const char* jsonElement) {
 		rapidjson::Value::ConstMemberIterator itr = v.FindMember(jsonElement);
 		if (itr == v.MemberEnd()) {
@@ -129,6 +162,27 @@ namespace symbol { namespace core { namespace dto {
 	void writeField(const char* jsonElement, const int& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) {
 		rapidjson::Value v;
 		v.SetInt(o);
+		parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
+	}
+
+	template<>
+	void writeField(const char* jsonElement, const uint8_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) {
+		rapidjson::Value v;
+		v.SetUint(o);
+		parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
+	}
+
+	template<>
+	void writeField(const char* jsonElement, const uint16_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) {
+		rapidjson::Value v;
+		v.SetUint(o);
+		parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
+	}
+
+	template<>
+	void writeField(const char* jsonElement, const uint32_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) {
+		rapidjson::Value v;
+		v.SetUint(o);
 		parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
 	}
 

@@ -6,5 +6,6 @@ target_include_directories(symbol-offline-test INTERFACE
 	# Headers used from installed location:
 	"$<INSTALL_INTERFACE:include>"
 )
-target_link_libraries(symbol-offline-test PUBLIC symbolcore)
+target_link_libraries(symbol-offline-test PUBLIC symbolcore gtest gtest_main)
+add_test( runUnitTests runUnitTests )
 

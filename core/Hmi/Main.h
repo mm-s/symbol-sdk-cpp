@@ -56,10 +56,12 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Output_Default{"text"};
 		static constexpr auto Output_Desc{"Output format. -h for list of valid options."};
 
+/*
 		static constexpr auto HideLabels_Flag{'w'};
 		static constexpr auto HideLabels_Name{"hide-labels"};
 		static constexpr auto HideLabels_Default{""};
 		static constexpr auto HideLabels_Desc{"Hide field names. (Only on text output mode)"};
+*/
 
 	public:
 		/// Construction, initialization, destruction
@@ -72,8 +74,8 @@ namespace symbol { namespace core { namespace hmi {
 	public: //hmi
 
 		/// Print key-value on output stream.
-		void kv_text(const vector<pair<string, string>>&, ostream&);
-		void kv_json(const vector<pair<string, string>>&, ostream&);
+		//void kv_text(const vector<pair<string, string>>&, ostream&);
+		//void kv_json(const vector<pair<string, string>>&, ostream&);
 
 	public: // Options related to this app.
 		inline const string& home() const { return m_home; }
@@ -85,7 +87,7 @@ namespace symbol { namespace core { namespace hmi {
 		inline bool compact() const { return m_compact; }
 
 		/// User selected to hide labels in text output
-		inline bool hideLabels() const { return m_hideLabels; }
+//		inline bool hideLabels() const { return m_hideLabels; }
 
 
 	public: /// Generic
@@ -112,7 +114,7 @@ namespace symbol { namespace core { namespace hmi {
 		/// Output preferences
 		bool m_json{false};
 		bool m_compact{false};
-		bool m_hideLabels{false};
+//		bool m_hideLabels{false};
 
 		/// Network instance
 		string m_home;

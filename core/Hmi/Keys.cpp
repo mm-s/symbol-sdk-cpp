@@ -71,7 +71,7 @@ namespace symbol { namespace core { namespace hmi {
 			pk = resolvePublicKey(*addr);
 		}
 		dto::Keys o;
-		o.networkId = network().identifierDecHex();
+		o.networkId = static_cast<uint8_t>(network().identifier());
 		o.network = toString(network().identifierStr());
 		o.privateKey = sk!=nullptr ? toString(*sk) : string("");
 		o.publicKey = pk!=nullptr ? toString(*pk) : string("");

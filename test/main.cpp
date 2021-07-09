@@ -2,7 +2,7 @@
 #include <symbol/core.h>
 #include <iostream>
 #include <cassert>
-#include "catapult/TestHarness.h"
+//#include "catapult/TestHarness.h"
 
 using namespace std;
 using namespace symbol;
@@ -101,9 +101,117 @@ void test_core() {
 void test_rpc() {
 }
 
-int main() {
-	test_core();
-	test_rpc();
-	return 0;
+//int main() {
+//	test_core();
+//	test_rpc();
+//	return 0;
+//}
+#include <gtest/gtest.h>
+#include <symbol/core.h>
+#include <tuple>
+using ::testing::EmptyTestEventListener;
+using ::testing::InitGoogleTest;
+using ::testing::Test;
+using ::testing::TestEventListeners;
+using ::testing::TestInfo;
+using ::testing::TestPartResult;
+using ::testing::UnitTest;
+using std::tuple;
+
+namespace {
+	tuple<int, string, string> exec_offline(const string& pipe, const string& cmdline) {
+		using Cli = symbol::core::Hmi;
+		ostringstream out;
+		ostringstream err;
+		if (pipe.empty()) {
+			Cli::Section::init(out, err, cin, "0.0.0");
+		}
+		else {
+			istringstream in(pipe);
+			Cli::Section::init(out, err, in, "0.0.0");
+		}
+		Cli cli;
+		cli.init("symbol-offline", "Symbol wallet - offline.");
+		int r = cli.exec(cmdline)?0:1;
+		return make_tuple(r, out.str(), err.str());
+	}
 }
+
+tuple<int, string, string> test_keys_sk(const string& sk, bool pipe) {
+	string cmd;
+	if (pipe) {
+		cmd="keys -s -";
+	}
+	else {
+		ostringstream os;
+		os << "keys -s " << sk;
+		cmd=os.str();
+	}
+	return exec_offline(pipe?sk:"", cmd);
+}
+
+
+TEST(HMI_Keys, keys_sk_text) {
+	/// Arrange
+	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
+	auto expected_cout=
+		"networkId 152 (0x98)\n" \
+		"network public-test\n" \
+		"privateKey D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD\n" \
+		"publicKey F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B\n" \
+		"address 984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9\n" \
+		"account TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI\n";
+	auto expected_cerr="";
+
+	/// Act
+	auto r1=test_keys_sk(sk, false);
+	auto r2=test_keys_sk(sk, true);
+
+	/// Assert
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r1), 0);
+	EXPECT_EQ(get<1>(r1), expected_cout);
+	EXPECT_EQ(get<2>(r1), expected_cerr);
+	
+	EXPECT_EQ(get<0>(r2), 0);
+	EXPECT_EQ(get<1>(r2), expected_cout);
+	EXPECT_EQ(get<2>(r2), expected_cerr);
+}
+
+TEST(HMI_Keys, keys_sk_etext) {
+	/// Arrange
+	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
+	ostringstream cmd;
+	cmd << "-o etext keys -s " << sk;
+
+	/// Act
+	auto r=exec_offline("", cmd.str());
+
+	/// Assert
+	auto expected_cout="152 public-test D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B 984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9 TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI ";
+	auto expected_cerr="";
+	//cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r), 0);
+	EXPECT_EQ(get<1>(r), expected_cout);
+	EXPECT_EQ(get<2>(r), expected_cerr);
+}
+
+TEST(HMI_Keys, keys_sk_ejson) {
+	/// Arrange
+	auto sk="D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD";
+	ostringstream cmd;
+	cmd << "-o ejson keys -s " << sk;
+
+	/// Act
+	auto r=exec_offline("", cmd.str());
+
+	/// Assert
+	auto expected_cout="152 public-test D09068D3706B1C94E29D23A012D93331440D208015C9F6F823DFEA9B77E1D9BD F6B15DE52C19649A397A3A8D38F8E7E10A7FA806FFD52D001319699C3509AB4B 984AFFFB78C25C0E1280DFA51A7CECDBBFA0C5D99CD932C9 TBFP763YYJOA4EUA36SRU7HM3O72BROZTTMTFSI ";
+	auto expected_cerr="";
+	cout << get<1>(r) << endl;
+	EXPECT_EQ(get<0>(r), 0);
+	EXPECT_EQ(get<1>(r), expected_cout);
+	EXPECT_EQ(get<2>(r), expected_cerr);
+}
+
 

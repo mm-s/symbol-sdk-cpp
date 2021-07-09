@@ -125,6 +125,11 @@ namespace symbol { namespace core {
 		return os.str();
 	}
 
+	c::Identifier c::identifier(uint8_t v) {
+		Identifier x = static_cast<Identifier>(v);
+		return x;
+	}
+
 	c::Identifier c::identifier(const string& s) {
 		Identifier x;
 		if (!catapult::model::TryParseValue(s, x)) {

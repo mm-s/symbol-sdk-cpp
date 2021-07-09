@@ -137,6 +137,7 @@ namespace symbol { namespace core {
 		static const char* identifierStr(Identifier t);
 		static Identifier identifier(const string& name); // can return Identifier::Zero
 		static Identifier identifier(const Blob&); // can return Identifier::Zero
+		static Identifier identifier(uint8_t); // can return Identifier::Zero
 		inline const Identifier& identifier() const { return m_identifier; }
 		inline const GenerationHashSeed& seed() const { return m_seed; }
 		inline const ResolverContext& resolver() const { return m_resolver; }

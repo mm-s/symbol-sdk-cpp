@@ -59,6 +59,9 @@ namespace symbol { namespace core { namespace dto {
 	template<> bool readField(bool& dest, const rapidjson::Value&, const char* jsonElement);
 	template<> bool readField(int& dest, const rapidjson::Value&, const char* jsonElement);
 	template<> bool readField(double& dest, const rapidjson::Value&, const char* jsonElement);
+	template<> bool readField(uint8_t& dest, const rapidjson::Value&, const char* jsonElement);
+	template<> bool readField(uint16_t& dest, const rapidjson::Value&, const char* jsonElement);
+	template<> bool readField(uint32_t& dest, const rapidjson::Value&, const char* jsonElement);
 	template<> bool readField(uint64_t& dest, const rapidjson::Value&, const char* jsonElement);
 
 	template<typename T>
@@ -87,6 +90,9 @@ namespace symbol { namespace core { namespace dto {
 	template<> void writeField(const char* jsonElement, const bool& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 	template<> void writeField(const char* jsonElement, const int& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 	template<> void writeField(const char* jsonElement, const double& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
+	template<> void writeField(const char* jsonElement, const uint8_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
+	template<> void writeField(const char* jsonElement, const uint16_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
+	template<> void writeField(const char* jsonElement, const uint32_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 	template<> void writeField(const char* jsonElement, const uint64_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 
 

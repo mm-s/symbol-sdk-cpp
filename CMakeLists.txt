@@ -1,19 +1,11 @@
 cmake_minimum_required(VERSION 3.14)
 
-if (DEFINED ENV{SYMBOLCORE_VERSION})
-	set(SYMBOLCORE_VERSION $ENV{SYMBOLCORE_VERSION})
+if (DEFINED ENV{SYMBOL_VERSION})
+	set(SYMBOL_VERSION $ENV{SYMBOLCORE_VERSION})
 endif()
 
-if (DEFINED ENV{SYMBOLRPC_VERSION})
-	set(SYMBOLRPC_VERSION $ENV{SYMBOLRPC_VERSION})
-endif()
-
-if (NOT DEFINED SYMBOLCORE_VERSION)
-	set(SYMBOLCORE_VERSION 0.1.0)
-endif()
-
-if (NOT DEFINED SYMBOLRPC_VERSION)
-	set(SYMBOLRPC_VERSION 0.1.0)
+if (NOT DEFINED SYMBOL_VERSION)
+	set(SYMBOL_VERSION 0.1.0)
 endif()
 
 if (NOT DEFINED ONLY_SYMBOLCORE)
@@ -24,7 +16,7 @@ if (NOT DEFINED BUILD_SYMBOLCLI)
 	set(BUILD_SYMBOLCLI ON)
 endif()
 
-project(symbol_sdk VERSION ${SYMBOLRPC_VERSION} )
+project(symbol_sdk VERSION ${SYMBOL_VERSION})
 message(STATUS "symbol-sdk version ${PROJECT_VERSION}")
 
 option(ENABLE_CODE_COVERAGE "Enable code coverage" OFF)
@@ -74,6 +66,7 @@ find_package(RapidJSON 1.1.0 REQUIRED)
 #pkg_check_modules(RapidJSON rapidjson)
 
 #link_libraries(${RapidJSON_LIBRARIES})
+configure_file(config.h.in symbol/config.h)
 
 add_subdirectory(core)
 if (${ONLY_SYMBOLCORE})
@@ -95,6 +88,5 @@ if(ENABLE_TESTS)
 	add_subdirectory(test)
 endif()
 
-
-
+install(FILES "${CMAKE_BINARY_DIR}/config.h" DESTINATION "include/symbol")
 

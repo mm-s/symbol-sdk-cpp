@@ -23,6 +23,7 @@
 #include <string>
 #include <functional>
 #include <set>
+#include <iostream>
 
 /// Shell program-options.
 /// This class encapsulates the console UI behaviour.
@@ -97,7 +98,7 @@ namespace conch {
 
 	public:
 		/// Static initialization
-		static void init(ostream& out, ostream& err, const string& version);
+		static void init(ostream&, ostream&, istream&, const string& version);
 
 		/// Construction, Initialization, Destruction
 		section();
@@ -152,6 +153,7 @@ namespace conch {
 		bool ignore(char flag) const;
 		set<char> ignoreFlags; /// Used to hide unused contextual flags (coming from inherited sections) in the help screen.
 		
+		static istream* pis;
 	private:
 		static ostream* pos;
 		static ostream* peos;

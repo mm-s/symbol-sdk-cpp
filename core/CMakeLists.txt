@@ -1,5 +1,3 @@
-configure_file(config.h.in config.h)
-
 file(GLOB symbol_core_SRC *.cpp)
 file(GLOB symbol_core_catapult_SRC "catapult/*.cpp")
 file(GLOB symbol_core_hmi_SRC "Hmi/*.cpp")
@@ -52,6 +50,5 @@ install(DIRECTORY "${CMAKE_SOURCE_DIR}/core/" # source directory
 
 install(FILES "${CMAKE_SOURCE_DIR}/cmake/Modules/FindSYMBOLCORE.cmake" DESTINATION "share/cmake/SYMBOLCORE/")
 install(FILES "${CMAKE_SOURCE_DIR}/include/symbol/core.h" DESTINATION "include/symbol/")
-install(FILES "${CMAKE_BINARY_DIR}/core/config.h" DESTINATION "include/symbol/core/")
 
 
