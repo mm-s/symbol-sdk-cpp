@@ -176,7 +176,6 @@ fsroot/include/symbol/core/catapult/Vrf.h
 fsroot/include/symbol/core/catapult/VrfKeyLinkBuilder.h
 fsroot/include/symbol/core/catapult/VrfKeyLinkTransaction.h
 fsroot/include/symbol/core/catapult/WeakEntityInfo.h
-fsroot/include/symbol/core/config.h
 fsroot/include/symbol/core/Config.h
 fsroot/include/symbol/core/core.h
 fsroot/include/symbol/core/DigitalAssets.h
@@ -220,7 +219,6 @@ fsroot/include/symbol/core/Transaction.h
 fsroot/include/symbol/core/Transaction/Transfer.h
 fsroot/include/symbol/core/Wallet.h
 fsroot/include/symbol/rpc/base.h
-fsroot/include/symbol/rpc/config.h
 fsroot/include/symbol/rpc/Fetch.h
 fsroot/include/symbol/rpc.h
 fsroot/include/symbol/rpc/Hmi/Fetch.h

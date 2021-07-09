@@ -88,5 +88,5 @@ if(ENABLE_TESTS)
 	add_subdirectory(test)
 endif()
 
-install(FILES "${CMAKE_BINARY_DIR}/config.h" DESTINATION "include/symbol")
+install(FILES "${CMAKE_BINARY_DIR}/symbol/config.h" DESTINATION "include/symbol")
 
