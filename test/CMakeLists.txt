@@ -1,5 +1,12 @@
 include_directories(SYSTEM ${GTEST_INCLUDE_DIR})
-add_executable(symbol-offline-test main.cpp)
+
+file(GLOB test_SRC "*.cpp")
+file(GLOB hmi_SRC "Hmi/*.cpp")
+
+add_executable(symbol-offline-test
+	${test_SRC}
+	${hmi_SRC}
+)
 target_include_directories(symbol-offline-test INTERFACE
 	# Headers used from source/build location:
 	"$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
