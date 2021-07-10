@@ -56,12 +56,12 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr auto Output_Default{"text"};
 		static constexpr auto Output_Desc{"Output format. -h for list of valid options."};
 
-/*
-		static constexpr auto HideLabels_Flag{'w'};
-		static constexpr auto HideLabels_Name{"hide-labels"};
-		static constexpr auto HideLabels_Default{""};
-		static constexpr auto HideLabels_Desc{"Hide field names. (Only on text output mode)"};
-*/
+		struct Output {
+			enum Format {
+				text, etext, json, ejson, bin, hex,
+			};
+			static pair<ko, Output::Format> from_string(const string&);
+		};
 
 	public:
 		/// Construction, initialization, destruction
@@ -83,8 +83,9 @@ namespace symbol { namespace core { namespace hmi {
 	public:
 		/// Gettrs & Setters
 		/// User selectd JSON output
-		inline bool json() const { return m_json; }
-		inline bool compact() const { return m_compact; }
+//		inline bool json() const { return m_json; }
+//		inline bool compact() const { return m_compact; }
+		inline Output::Format output() const { return m_output; }
 
 		/// User selected to hide labels in text output
 //		inline bool hideLabels() const { return m_hideLabels; }
@@ -99,9 +100,36 @@ namespace symbol { namespace core { namespace hmi {
 			return os.str();
 		}
 
+		static string toHex(const vector<uint8_t>&);
+
 		virtual bool main(Params&, bool last, ostream&);
 		void help_flag(const FlagDef&, ostream&) const override;
 
+		template<typename dto>
+		void print(const dto& o, ostream& os) const {
+			switch (m_output) {
+				case Output::json:
+					o.toJson(false, os);
+					break;
+				case Output::ejson:
+					o.toJson(true, os);
+					break;
+				case Output::text:
+					o.toText(false, os);
+					break;
+				case Output::etext:
+					o.toText(true, os);
+					break;
+				case Output::bin: {
+					auto v=o.toBin();
+					os.write(reinterpret_cast<const char*>(v.data()), v.size());
+					}
+					break;
+				case Output::hex:
+					os << toHex(o.toBin());
+					break;
+			}
+		}
 	protected:
 		/// Handler for empty command
 //		virtual bool mainHandler(Params& p, ostream& os);
@@ -112,8 +140,9 @@ namespace symbol { namespace core { namespace hmi {
 
 	private:
 		/// Output preferences
-		bool m_json{false};
-		bool m_compact{false};
+		Output::Format m_output;
+//		bool m_json{false};
+//		bool m_compact{false};
 //		bool m_hideLabels{false};
 
 		/// Network instance

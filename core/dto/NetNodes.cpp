@@ -317,5 +317,13 @@ string NetNodes::toJson(bool pretty) const {
 	return os.str();
 }
 
+void NetNodes::toText(bool compact, ostream& os) const {
+}
+
+vector<uint8_t> NetNodes::toBin() const {
+	vector<uint8_t> v;
+	return move(v);
+}
+
 }}}
 

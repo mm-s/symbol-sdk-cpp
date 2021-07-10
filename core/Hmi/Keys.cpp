@@ -77,12 +77,7 @@ namespace symbol { namespace core { namespace hmi {
 		o.publicKey = pk!=nullptr ? toString(*pk) : string("");
 		o.address = toString(*addr);
 		o.account = addr->formatAccount();
-		if (json()) {
-			o.toJson(compact(), os);
-		}
-		else {
-			o.toText(compact(), os);
-		}
+		print(o, os);
 		/*
 		//print
 		vector<pair<string, string>> v;

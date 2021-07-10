@@ -35,7 +35,7 @@ namespace symbol { namespace hmi {
 		//public key, address
 		ptr<symbol::PublicKey> pk{nullptr};
 		ptr<symbol::UnresolvedAddress> addr{nullptr};
-		string e=network().parse(r.second.publicKey, pk, addr);
+		string e=network().parse(r.second.account.publicKey, pk, addr);
 		if (!e.empty()) {
 			return nullptr;
 		}

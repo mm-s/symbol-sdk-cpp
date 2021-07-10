@@ -20,6 +20,7 @@
 **/
 #include "Main.h"
 #include "../catapult/LoggingConfiguration.h"
+#include "../catapult/HexFormatter.h"
 
 namespace symbol { namespace core { namespace hmi {
 	
@@ -88,9 +89,11 @@ namespace symbol { namespace core { namespace hmi {
 		void help_flag_output(ostream& os) {
 		 	os << "Valid options for flag --output:\n";
 			os << "  text      Output data using text lines.\n";
-			os << "  etext     Output data using text lines (electronic processing).\n";
 			os << "  json      Output data using json format.\n";
+			os << "  etext     Output data using text lines (electronic processing).\n";
 			os << "  ejson     Output data using json format (electronic processing).\n";
+			os << "  bin       Output data using binary format (electronic processing).\n";
+			os << "  hex       Output data using binary format. Hex encoded. (electronic processing).\n";
 		}
 	}
 
@@ -103,11 +106,54 @@ namespace symbol { namespace core { namespace hmi {
 		b::help_flag(f, os);
 	}
 
+	pair<ko, c::Output::Format> c::Output::from_string(const string& txt) {
+		Output::Format o=text;
+		if (txt=="text") {
+			o=text;
+		}
+		else if (txt=="etext") {
+			o=etext;
+		}
+		else if (txt=="json") {
+			o=json;
+		}
+		else if (txt=="ejson") {
+			o=ejson;
+		}
+		else if (txt=="bin") {
+			o=bin;
+		}
+		else if (txt=="hex") {
+			o=hex;
+		}
+		else if (txt.empty()) {
+			//default
+		}
+		else {
+			return make_pair("Invalid output format.", o);
+		}
+		return make_pair(ok, o);
+	}
+
+	string c::toHex(const vector<uint8_t>& v) {
+		ostringstream os;
+		os << catapult::utils::HexFormat(v);
+		return os.str();
+	}
+
 	bool c::main(Params& p, bool last, ostream& os) {
 		m_home = p.get(Home_Flag);
 		if (p.is_set(Verbose_Flag)) {
 			//catapult::utils::log::global_logger::set(trace);
 		}
+		auto r=Output::from_string(p.get(Output_Flag));
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
+		m_output=r.second;
+/*
+		if (p.get(Output_Flag)!="text"
 		if (p.get(Output_Flag)!="text" && p.get(Output_Flag)!="etext" && p.get(Output_Flag)!="json" && p.get(Output_Flag)!="ejson") {
 			os << "Invalid flag Output\n";
 			help_flag_output(os);
@@ -117,6 +163,7 @@ namespace symbol { namespace core { namespace hmi {
 		m_json = (otype == "json" || otype == "ejson");
 		m_compact = (otype == "ejson" || otype == "etext");
 //		m_hideLabels = p.is_set(HideLabels_Flag);
+*/
 		return true;
 	}
 

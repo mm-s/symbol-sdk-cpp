@@ -5,6 +5,8 @@
 
 namespace symbol { namespace core { namespace dto {
 
+#pragma pack(push, 1)
+
 	struct NetNode {
 		struct PeerStatus {
 			static constexpr auto Json_Element="peerStatus";
@@ -101,13 +103,17 @@ namespace symbol { namespace core { namespace dto {
 		static void dumpFields(ostream&);
 		void dump(ostream&) const;
 
+		void toText(bool compact, ostream&) const;
 		ko fromJson(const string&);
 		ko fromJson(const rapidjson::Value&);
 		void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 		void toJson(bool pretty, ostream&) const;
 		string toJson(bool pretty) const;
+		vector<uint8_t> toBin() const;
 
 	};
+
+#pragma pack(pop)
 
 }}} // namespaces
 

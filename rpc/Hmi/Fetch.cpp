@@ -75,12 +75,15 @@ namespace symbol { namespace hmi {
 			os << r.first;
 			return false;
 		}
+		print(r.second, os);
+/*
 		if (json()) {
 			r.second.toJson(compact(), os);
 		}
 		else {
 			r.second.toText(compact(), os);
 		}
+*/
 		return true;
 	}
 
@@ -111,13 +114,15 @@ namespace symbol { namespace hmi {
 			os << r.first;
 			return false;
 		}
+		print(r.second, os);
+/*
 		if (json()) {
 			r.second.toJson(!compact(), os);
 		}
 		else {
 			r.second.dump(os);
 		}
-		return true;
+*/		return true;
 	}
 
 	ptr<c::Section> c::createSectionFetchNodes() {
@@ -144,6 +149,8 @@ namespace symbol { namespace hmi {
 			os << r.first;
 			return false;
 		}
+		print(r.second, os);
+/*
 		if (json()) {
 			r.second.toJson(!compact(), os);
 		}
@@ -151,6 +158,7 @@ namespace symbol { namespace hmi {
 			//if (!hideLabels()) r.second.dumpFields(os);
 			r.second.dump(os);
 		}
+*/
 		return true;
 	}
 
@@ -172,12 +180,15 @@ namespace symbol { namespace hmi {
 			os << r.first;
 			return false;
 		}
+		print(r.second, os);
+/*
 		if (json()) {
 			r.second.toJson(!compact(), os);
 		}
 		else {
 			r.second.dumpTable(os);
 		}
+*/
 		return true;
 	}
 	
@@ -193,12 +204,15 @@ namespace symbol { namespace hmi {
 			os << r.first;
 			return false;
 		}
+		print(r.second, os);
+/*
 		if (json()) {
 			r.second.toJson(!compact(), os);
 		}
 		else {
 			r.second.dump(os);
 		}
+*/
 		return true;
 	}
 

@@ -91,5 +91,10 @@ string Keys::toJson(bool compact) const {
 	return os.str();
 }
 
+vector<uint8_t> Keys::toBin() const {
+	vector<uint8_t> v;
+	return move(v);
+}
+
 }}}
 

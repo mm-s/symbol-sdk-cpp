@@ -8,6 +8,8 @@
 
 namespace symbol { namespace core { namespace dto {
 
+	// ----------- write text
+
 	template<typename T>
 	void toText(bool compact, const vector<T>& v, ostream& os) {
 		if (compact) {
@@ -27,6 +29,8 @@ namespace symbol { namespace core { namespace dto {
 	void toText(bool compact, const vector<string>& v, ostream&);
 
 	string toString(const rapidjson::Value& v, bool pretty);
+
+	// ----------- read json
 
 	template<typename T>
 	bool readField(T&o, const rapidjson::Value& v, const char* jsonElement) {
@@ -64,6 +68,8 @@ namespace symbol { namespace core { namespace dto {
 	template<> bool readField(uint32_t& dest, const rapidjson::Value&, const char* jsonElement);
 	template<> bool readField(uint64_t& dest, const rapidjson::Value&, const char* jsonElement);
 
+	// ----------- write json
+
 	template<typename T>
 	void writeField(const char* jsonElement, const T& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) {
 		rapidjson::Value v(rapidjson::kObjectType);
@@ -94,6 +100,20 @@ namespace symbol { namespace core { namespace dto {
 	template<> void writeField(const char* jsonElement, const uint16_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 	template<> void writeField(const char* jsonElement, const uint32_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
 	template<> void writeField(const char* jsonElement, const uint64_t& o, rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator);
+
+
+	// ----------- write bin
+
+	template<typename T>
+	size_t binSize(const T& o) {
+		return 0;
+	}
+
+	template<> size_t binSize(const string& o);
+
+	template<typename T>
+	void writeBin(const T& o) {
+	}
 
 
 }}} // namespaces

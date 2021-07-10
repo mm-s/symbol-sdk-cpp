@@ -28,9 +28,17 @@ void ApiNode::Health::dump(ostream& os) const {
 	status.dump(os);
 }
 
+vector<uint8_t> ApiNode::Health::toBin() const {
+	vector<uint8_t> v;
+	return move(v);
+}
+
 ko ApiNode::Health::fromJson(const rapidjson::Value& v) {
 	readField(status, v, "status");
 	return ok;
+}
+
+void ApiNode::Health::toText(bool compact, ostream& os) const {
 }
 
 void ApiNode::Health::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator) const {
@@ -119,9 +127,17 @@ void ApiNode::Peers::dump(ostream& os) const {
 	}
 }
 
+void ApiNode::Peers::toText(bool compact, ostream& os) const {
+}
+
 ko ApiNode::Peers::fromJson(const rapidjson::Value& v) {
 	readField(static_cast<b&>(*this), v, Json_Element);
 	return ok;
+}
+
+vector<uint8_t> ApiNode::Peers::toBin() const {
+	vector<uint8_t> v;
+	return move(v);
 }
 
 ko ApiNode::Peers::fromJson(const string& json) {
@@ -171,6 +187,11 @@ void ApiNode::Info::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorTy
 	writeField("nodePublicKey", nodePublicKey, v, ator);
 }
 
+vector<uint8_t> ApiNode::Info::toBin() const {
+	vector<uint8_t> v;
+	return move(v);
+}
+
 ko ApiNode::Info::fromJson(const string& json) {
 //cout << json << endl;
 	using namespace rapidjson;
@@ -184,6 +205,8 @@ ko ApiNode::Info::fromJson(const string& json) {
 	return fromJson(doc);
 }
 
+void ApiNode::Info::toText(bool compact, ostream& os) const {
+}
 
 void ApiNode::Info::toJson(bool pretty, ostream& os) const {
 	using namespace rapidjson;

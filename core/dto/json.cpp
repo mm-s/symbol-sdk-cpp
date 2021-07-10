@@ -207,10 +207,12 @@ namespace symbol { namespace core { namespace dto {
 		for (auto&i:o) {
 			rapidjson::Value v;
 			v.SetString(rapidjson::StringRef(i.c_str()));
-			parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
+			//parent.AddMember(rapidjson::StringRef(jsonElement), v, ator);
 			array.PushBack(v, ator);
 		}
-		parent.AddMember(rapidjson::StringRef(jsonElement), array, ator);
+		if (strlen(jsonElement)>0) {
+			parent.AddMember(rapidjson::StringRef(jsonElement), array, ator);
+		}
 	}
 
 }}} // namespaces

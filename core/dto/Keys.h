@@ -5,6 +5,8 @@
 
 namespace symbol { namespace core {namespace dto {
 
+#pragma pack(push, 1)
+
 	struct Keys {
 		static constexpr auto Json_Element="keys";
 		uint8_t networkId;
@@ -24,7 +26,10 @@ namespace symbol { namespace core {namespace dto {
 		void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 		void toJson(bool compact, ostream&) const;
 		string toJson(bool compact) const;
+		vector<uint8_t> toBin() const;
 	};
+
+#pragma pack(pop)
 
 }}}
 

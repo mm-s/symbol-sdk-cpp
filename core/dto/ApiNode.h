@@ -5,6 +5,8 @@
 
 namespace symbol { namespace core { namespace dto {
 
+#pragma pack(push, 1)
+
 	struct ApiNode {
 		struct Health {
 			struct Status {
@@ -21,6 +23,8 @@ namespace symbol { namespace core { namespace dto {
 			ko fromJson(const rapidjson::Value&);
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			void toJson(bool pretty, ostream&) const;
+			vector<uint8_t> toBin() const;
+			void toText(bool compact, ostream&) const;
 		};
 
 		struct Peer {
@@ -52,6 +56,8 @@ namespace symbol { namespace core { namespace dto {
 			ko fromJson(const string&);
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			void toJson(bool pretty, ostream&) const;
+			vector<uint8_t> toBin() const;
+			void toText(bool compact, ostream&) const;
 		};
 
 		struct Info: Peer {
@@ -67,8 +73,12 @@ namespace symbol { namespace core { namespace dto {
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			void toJson(bool pretty, ostream&) const;
 			string toJson(bool pretty) const;
+			vector<uint8_t> toBin() const;
+			void toText(bool compact, ostream&) const;
 		};
 	};
+
+#pragma pack(pop)
 
 }}} // namespaces
 
