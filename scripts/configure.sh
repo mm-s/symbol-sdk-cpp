@@ -278,6 +278,12 @@ function append_h {
 #	grab_classes catapult-server/src/catapult/disruptor core/catapult  
 #}
 
+function catapult3 {
+	grab_classes catapult-server/src/catapult/state core/catapult  AccountPublicKeys AccountImportanceSnapshots CompactMosaicMap AccountBalances CompactArrayStack AccountActivityBuckets AccountState
+	grab_classes catapult-server/src/catapult/model core/catapult  PinnedVotingKey HeightGrouping
+	append_h catapult-server/src/catapult/constants.h core/catapult/constants.h
+}
+
 function catapult2 {
 	grab_classes catapult-server/src/catapult/extensions core/catapult  TransactionEvent BasicServerHooks ServerHooks ProcessBootstrapper
 	grab_classes catapult-server/src/catapult/local/server core/catapult  NodeContainerSubscriberAdapter NemesisBlockNotifier MemoryCounters LocalNode FileStateChangeStorage
@@ -395,6 +401,7 @@ function prepare_sources2 {
 
 	catapult1 #Network, Transactions, Crypto
 	#catapult2 #Server Process
+	catapult3 #Account
 
 	replace_includes
 }
