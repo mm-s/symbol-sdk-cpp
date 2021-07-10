@@ -36,43 +36,11 @@ namespace symbol { namespace core { namespace hmi {
 
 		static constexpr auto Info_Command = "info";
 		static constexpr auto Info_Command_Desc = "Info about transaction.";
-/*
+
 		static constexpr const char* Transfer_Command = "transfer";
 		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
 
-		/// Flags, Options
-		//static constexpr char Privkey_Flag{'s'};
-		static constexpr auto Recipient_Flag{'r'};
-		static constexpr auto Recipient_Name{"recipient"};
-		static constexpr auto Recipient_Default{""};
-		static constexpr auto Recipient_Desc{"Recipient address."};
-
-		static constexpr auto Amount_Flag{'a'};
-		static constexpr auto Amount_Name{"amount"};
-		static constexpr auto Amount_Default{"0"};
-		static constexpr auto Amount_Desc{"Amount of mosaics."};
-
-		static constexpr auto Mosaic_Flag{'m'};
-		static constexpr auto Mosaic_Name{"mosaic"};
-		static constexpr auto Mosaic_Default{""};
-		static constexpr auto Mosaic_Desc{"Mosaic id."};
-
-		static constexpr auto Maxfee_Flag{'f'};
-		static constexpr auto Maxfee_Name{"maxfee"};
-		static constexpr auto Maxfee_Default{""};
-		static constexpr auto Maxfee_Desc{"Maximum fee to pay."};
-
-		static constexpr auto Deadline_Flag{'d'};
-		static constexpr auto Deadline_Name{"deadline"};
-		static constexpr auto Deadline_Default{""};
-		static constexpr auto Deadline_Desc{"Deadline."};
-
-		static constexpr auto Message_Flag{'M'};
-		static constexpr auto Message_Name{"message"};
-		static constexpr auto Message_Default{""};
-		static constexpr auto Message_Desc{"Message."};
-*/
-	public:		
+	public:
 		/// Default constructors
 		using b::Blob;
 

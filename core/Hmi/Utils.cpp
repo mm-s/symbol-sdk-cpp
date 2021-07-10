@@ -20,6 +20,7 @@
 **/
 #include "Blob.h"
 #include "Network.h"
+#include "../Utils.h"
 
 namespace symbol { namespace core { namespace hmi {
 	
@@ -27,39 +28,69 @@ namespace symbol { namespace core { namespace hmi {
 
 	c::Params c::defParams() {
 		return Params{
-//			{Blob_Flag, Blob_Name, true, true, Blob_Default, Blob_Desc},
+			{Data_Flag, Data_Name, false, true, Data_Default, Data_Desc},
 		};
 	}
 
-	c::Utils(): b(defParams()) {
-	}
-
-	c::Utils(Params&&p): b(move(defParams())) {
-		add(move(p));
-	}
-
-	c::~Utils() {
-	}
-
 	void c::help_flag(const FlagDef& f, ostream& os) const {
-/*
-		if (f.short_name == Blob_Flag) {
-			os << "Input an Hex string representing a memory representation of a Symbol object (Transaction, Block, other)\n";
-			os << "Example: --blob B000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000009398F182AE4B7A91B1348D607BF6F0B01D62A0F9BA1965AC19EFA190BF3A0529000000000178544100000000000000000000000000000000781DECC1FAD08371CC057F4194697CE92D2838E20FDD67E8000001000000000000000000000000000100000000000000\n";
+		if (f.short_name == Data_Flag) {
+			os << "Input data.\n";
 			return;
 		}
-*/
 		b::help_flag(f, os);
 	}
 
-	bool c::cmdMain(Params& p, bool last, ostream& os) {
-		os << "Not implemented.";
+	bool c::cmdHexDecode(Params& p, bool last, ostream& os) {
+		auto r = core::Utils::fromHex(m_data);
+		if (is_ko(r.first)) {
+			os << r.first;
+			return false;
+		}
+		os.write(reinterpret_cast<const char*>(r.second.data()), r.second.size());
 		return true;
+	}
+
+	bool c::cmdHex(Params& p, bool last, ostream& os) {
+		if (last) {
+			os << "Input length: " << m_data.size() << " bytes.\n";
+			auto r = core::Utils::isHex(m_data);
+			if (is_ko(r)) {
+				os << "Input is not in Hex format.\n";
+			}
+			else {
+				os << "Input data is in Hex format. \n";
+				os << "Decoded length: " << m_data.size()/2 << " bytes.\n";
+			}
+		}
+		return true;
+	}
+
+	bool c::cmdMain(Params& p, bool last, ostream& os) {
+		m_data = p.get(Data_Flag);
+		if (m_data.empty()) {
+			os << "Empty input.";
+			return false;
+		}
+		return true;
+	}
+
+	ptr<c::Section> c::createSectionHexDecode() {
+		auto s=new Section(Params{});
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdHexDecode(p, last, os); });
+		return s;
+	}
+
+	ptr<c::Section> c::createSectionHex() {
+		auto s=new Section(Params{});
+		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdHex(p, last, os); });
+		s->add(CmdDef{Decode_Command, Decode_Command_Desc}, createSectionHexDecode());
+		return s;
 	}
 
 	ptr<c::Section> c::createSectionMain() {
 		auto s=new Section(defParams());
 		s->set_handler([&](Params& p, bool last, ostream& os) -> bool { return cmdMain(p, last, os); });
+		s->add(CmdDef{Hex_Command, Hex_Command_Desc}, createSectionHex());
 		return s;
 	}
 

@@ -33,9 +33,6 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr const char* Main_Command = "keys";
 		static constexpr const char* Main_Command_Desc = "Keys/Address/Account generation/info.";
 
-		static constexpr const char* Transfer_Command = "transfer";
-		static constexpr const char* Transfer_Command_Desc = "Transfer transaction.";
-
 	public:
 		/// Flags and Options
 		static constexpr char Privkey_Flag{'s'};

@@ -32,11 +32,24 @@ namespace symbol { namespace core { namespace hmi {
 		static constexpr const char* Main_Command = "utils";
 		static constexpr const char* Main_Command_Desc = "Generic utilily functions.";
 
+		static constexpr const char* Hex_Command = "hex";
+		static constexpr const char* Hex_Command_Desc = "Hex encoder/decoder.";
+
+		static constexpr const char* Decode_Command = "decode";
+		static constexpr const char* Decode_Command_Desc = "decode Hex data.";
+
+		static constexpr const char* Encode_Command = "encode";
+		static constexpr const char* Encode_Command_Desc = "encode Hex data.";
+
+		/// Flags and Options
+		static constexpr char Data_Flag{'d'};
+		static constexpr auto Data_Name{"data"};
+		static constexpr auto Data_Default{""};
+		static constexpr auto Data_Desc{"Input data."};
+
 	public:
 		/// Construction, initialization, destruction
-		Utils();
-		Utils(Params&&);
-		~Utils() override;
+		using b::Main;
 
 		void init(const string& name, const string& desc) override;
 
@@ -48,17 +61,19 @@ namespace symbol { namespace core { namespace hmi {
 		void help_flag(const FlagDef&, ostream&) const override;
 
 	public: /// Generic
-		/// String converter
-		//bool mainHandler(Params&, ostream&) override;
 		bool cmdMain(Params&, bool last, ostream&);
+		bool cmdHex(Params&, bool last, ostream&);
+		bool cmdHexDecode(Params&, bool last, ostream&);
 
 		bool pass1(ParamPath&, ostream&) override;
 
 	protected:
+		ptr<Section> createSectionHexDecode();
+		ptr<Section> createSectionHex();
 		ptr<Section> createSectionMain();
 
 	private:
-
+		string m_data;
 		static Params defParams();
 	};
 

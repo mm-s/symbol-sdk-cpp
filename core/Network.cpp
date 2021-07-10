@@ -20,6 +20,7 @@
 **/
 
 #include "Network.h"
+#include "Utils.h"
 #include "catapult/Address.h"
 #include "Transaction.h"
 #include "Transaction/Transfer.h"
@@ -288,7 +289,10 @@ namespace symbol { namespace core {
 	}
 
 	pair<ko, c::Blob> c::decodeBlob(const string& hex) {
+		return Utils::fromHex(hex);
+/*
 		Blob blob;
+		
 		if (hex.size()&1) {
 			return make_pair("KO 44932 malformed hex string.", blob);
 		}
@@ -298,6 +302,7 @@ namespace symbol { namespace core {
 			return make_pair("KO 50948 Cannot decode hex.", move(blob));
 		}
 		return make_pair(ok, move(blob));
+*/
 	}
 
 	pair<ko, ptr<Transaction>> c::createTransaction(const Blob& mem) const {
