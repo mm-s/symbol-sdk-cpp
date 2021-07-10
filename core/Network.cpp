@@ -28,6 +28,8 @@
 #include "catapult/TransferEntityType.h"
 #include "catapult/SizeChecker.h"
 #include "catapult/BufferInputStreamAdapter.h"
+#include "catapult/ConfigurationValueParsers.h"
+
 
 namespace symbol { namespace core {
 	/// Implementation for the class c 
@@ -305,6 +307,24 @@ namespace symbol { namespace core {
 	pair<ko, ptr<Transfer>> c::createTransfer(const UnresolvedAddress& rcpt, const MosaicValues& m, const Amount& f, const TimeSpan& d, const vector<uint8_t>& msg, const ptr<PrivateKey>& encryptPrivateKey, const ptr<PublicKey>& encryptPublicKey) const {
 		return Transfer::create(*this, rcpt, m, f, d, msg, encryptPrivateKey, encryptPublicKey);
 	}
+
+
+	c::AccountState::AccountState(b&& o): b(move(o)) {
+	}
+	
+	pair<ko, c::AccountState> c::AccountState::fromDTO(const dto::Account& o) {
+		catapult::Height h;
+		catapult::Address a;
+		if (!catapult::utils::TryParseValue(o.account.addressHeight, h)) {
+			return make_pair("Height is invalid", AccountState(AccountState::b(a, h)));
+		}
+		if (!catapult::model::TryParseValue(o.account.address, a)) {
+			return make_pair("Height is invalid", AccountState(AccountState::b(a, h)));
+		}
+		AccountState r(AccountState::b(a, h));
+		return make_pair(ok, move(r));
+	}
+
 
 }} // Namespaces
 

@@ -26,6 +26,8 @@
 #include "catapult/types.h"
 #include "catapult/Transaction.h"
 #include "catapult/ResolverContext.h"
+#include "catapult/AccountState.h"
+#include "dto/Account.h"
 #include <iostream>
 
 namespace symbol { namespace core {
@@ -68,6 +70,13 @@ namespace symbol { namespace core {
 	public:
 		class Account: UnresolvedAddress {
 			public:
+		};
+
+		class AccountState: catapult::state::AccountState {
+			using b = catapult::state::AccountState;
+			public:
+			explicit AccountState(b&&);
+			static pair<ko, AccountState> fromDTO(const dto::Account&);
 		};
 
 	public:

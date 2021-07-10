@@ -20,14 +20,14 @@
 **/
 
 #pragma once
-#include "Main.h"
+#include "Utils.h"
 
 namespace symbol { namespace core { namespace hmi {
 
 	/// Human-Machine Interface (HMI). Main-menu command processor (offline)
-	class Network: public hmi::Main {
+	class Network: public hmi::Utils {
 		/// Base class b
-		using b = hmi::Main;
+		using b = hmi::Utils;
 	public:
 		static constexpr auto Network_Flag{'n'};
 		static constexpr auto Network_Name{"network"};
