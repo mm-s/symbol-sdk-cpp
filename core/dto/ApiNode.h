@@ -15,6 +15,7 @@ namespace symbol { namespace core { namespace dto {
 				void dump(ostream&) const;
 				ko fromJson(const rapidjson::Value&);
 				void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
+				void toText(const string& name, bool compact, const string& indent, ostream&) const;
 			};
 			Status status;
 
@@ -24,7 +25,7 @@ namespace symbol { namespace core { namespace dto {
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			void toJson(bool pretty, ostream&) const;
 			vector<uint8_t> toBin() const;
-			void toText(bool compact, ostream&) const;
+			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		};
 
 		struct Peer {
@@ -43,6 +44,7 @@ namespace symbol { namespace core { namespace dto {
 
 			ko fromJson(const rapidjson::Value&);
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
+			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		};
 
 		struct Peers: vector<Peer> {
@@ -57,7 +59,7 @@ namespace symbol { namespace core { namespace dto {
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			void toJson(bool pretty, ostream&) const;
 			vector<uint8_t> toBin() const;
-			void toText(bool compact, ostream&) const;
+			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		};
 
 		struct Info: Peer {
@@ -74,7 +76,7 @@ namespace symbol { namespace core { namespace dto {
 			void toJson(bool pretty, ostream&) const;
 			string toJson(bool pretty) const;
 			vector<uint8_t> toBin() const;
-			void toText(bool compact, ostream&) const;
+			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		};
 	};
 

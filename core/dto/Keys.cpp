@@ -41,7 +41,16 @@ void Keys::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator)
 	writeField("account", account, v, ator);
 }
 
+void Keys::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("networkId", networkId, compact, indent, os);
+	writeField("network", network, compact, indent, os);
+	writeField("privateKey", privateKey, compact, indent, os);
+	writeField("publicKey", publicKey, compact, indent, os);
+	writeField("address", address, compact, indent, os);
+	writeField("account", account, compact, indent, os);
+}
 
+/*
 void Keys::toText(bool compact, ostream& os) const {
 	if (compact) {
 		os << +networkId << ' ';
@@ -60,6 +69,7 @@ void Keys::toText(bool compact, ostream& os) const {
 		os << "account " << account << '\n';
 	}
 }
+*/
 
 ko Keys::fromJson(const string& json) {
 	using namespace rapidjson;

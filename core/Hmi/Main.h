@@ -115,10 +115,10 @@ namespace symbol { namespace core { namespace hmi {
 					o.toJson(true, os);
 					break;
 				case Output::text:
-					o.toText(false, os);
+					o.toText("", false, "", os);
 					break;
 				case Output::etext:
-					o.toText(true, os);
+					o.toText("", true, "", os);
 					break;
 				case Output::bin: {
 					auto v=o.toBin();

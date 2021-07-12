@@ -33,13 +33,16 @@ void AccountData::SupplementalPublicKeys::dumpLine(ostream& os) const {
 }
 */
 
-void AccountData::SupplementalPublicKeys::toText(bool compact, ostream& os) const {
+void AccountData::SupplementalPublicKeys::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("", static_cast<const b&>(*this), compact, indent, os);
+/*
 	if (compact) {
 		dto::toText(compact, static_cast<const b&>(*this), os);
 	}
 	else {
 		dto::toText(compact, static_cast<const b&>(*this), os);
 	}
+*/
 }
 
 ///--------------Mosaic
@@ -66,7 +69,11 @@ void AccountData::Mosaic::dumpLine(ostream& os) const {
 }
 */
 
-void AccountData::Mosaic::toText(bool compact, ostream& os) const {
+void AccountData::Mosaic::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("id", id, compact, indent, os);
+	writeField("amount", amount, compact, indent, os);
+/*
+
 	if (compact) {
 		os << id << ' ';
 		os << amount << ' ';
@@ -75,6 +82,7 @@ void AccountData::Mosaic::toText(bool compact, ostream& os) const {
 		os << "id " << id << '\n';
 		os << "amount " << amount << '\n';
 	}
+*/
 }
 
 ///--------------AccountData
@@ -142,7 +150,19 @@ void AccountData::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType
 }
 
 
-void AccountData::toText(bool compact, ostream& os) const {
+void AccountData::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("version", version, compact, indent, os);
+	writeField("address", address, compact, indent, os);
+	writeField("addressHeight", addressHeight, compact, indent, os);
+	writeField("publicKey", publicKey, compact, indent, os);
+	writeField("publicKeyHeight", publicKeyHeight, compact, indent, os);
+	writeField("supplementalPublicKeys", supplementalPublicKeys, compact, indent, os);
+	writeField("accountType", accountType, compact, indent, os);
+	writeField("activityBuckets", activityBuckets, compact, indent, os);
+	writeField("mosaics", mosaics, compact, indent, os);
+	writeField("importance", importance, compact, indent, os);
+	writeField("importanceHeight", importanceHeight, compact, indent, os);
+/*
 	if (compact) {
 		os << version << ' ';
 		os << address << ' ';
@@ -172,6 +192,7 @@ void AccountData::toText(bool compact, ostream& os) const {
 		os << "importance " << importance << '\n';
 		os << "importanceHeight " << importanceHeight << '\n';
 	}
+*/
 }
 
 
@@ -195,7 +216,10 @@ void Account::dumpFields(ostream& os) {
 	os << '\n';
 }
 
-void Account::toText(bool compact, ostream& os) const {
+void Account::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField(AccountData::Json_Element, account, compact, indent, os);
+	writeField("id", id, compact, indent, os);
+/*
 	if (compact) {
 		account.toText(compact, os);
 		os << id << ' ';
@@ -204,6 +228,7 @@ void Account::toText(bool compact, ostream& os) const {
 		account.toText(compact, os);
 		os << "id " << id << '\n';
 	}
+*/
 }
 
 void Account::toJson(bool compact, ostream& os) const {

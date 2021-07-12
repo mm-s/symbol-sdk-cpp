@@ -26,6 +26,11 @@ ko NetNode::PeerStatus::fromJson(const rapidjson::Value& v) {
 	return ok;
 }
 
+void NetNode::PeerStatus::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("isAvailable", isAvailable, compact, indent, os);
+	writeField("lastStatusCheck", lastStatusCheck, compact, indent, os);
+}
+
 void NetNode::PeerStatus::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) const {
 	writeField("isAvailable", isAvailable, parent, ator);
 	writeField("lastStatusCheck", lastStatusCheck, parent, ator);
@@ -48,6 +53,15 @@ ko NetNode::ApiStatus::fromJson(const rapidjson::Value& v) {
 	return ok;
 }
 
+void NetNode::ApiStatus::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("isAvailable", isAvailable, compact, indent, os);
+	writeField("chainHeight", chainHeight, compact, indent, os);
+	writeField("finalizationHeight", finalizationHeight, compact, indent, os);
+	writeField("nodePublicKey", nodePublicKey, compact, indent, os);
+	writeField("finalizationHeight", finalizationHeight, compact, indent, os);
+	writeField("lastStatusCheck", lastStatusCheck, compact, indent, os);
+}
+
 void NetNode::ApiStatus::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) const {
 	writeField("isAvailable", isAvailable, parent, ator);
 	writeField("chainHeight", chainHeight, parent, ator);
@@ -65,6 +79,11 @@ void NetNode::ApiStatus::dumpFields(ostream& os) {
 void NetNode::HostDetail::Coordinates::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) const {
 	writeField("latitude", latitude, parent, ator);
 	writeField("longitude", longitude, parent, ator);
+}
+
+void NetNode::HostDetail::Coordinates::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("latitude", latitude, compact, indent, os);
+	writeField("longitude", longitude, compact, indent, os);
 }
 
 ko NetNode::HostDetail::Coordinates::fromJson(const rapidjson::Value& v) {
@@ -91,6 +110,22 @@ void NetNode::HostDetail::dumpLine(ostream& os) const {
 
 void NetNode::HostDetail::dumpFields(ostream& os) {
 	os << "host latitude longitude location ip organization as continent country region city district zip ";
+}
+
+void NetNode::HostDetail::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("host", host, compact, indent, os);
+	writeField(Coordinates::Json_Element, coordinates, compact, indent, os);
+	writeField("location", location, compact, indent, os);
+	writeField("ip", ip, compact, indent, os);
+	writeField("organization", organization, compact, indent, os);
+	writeField("as", as, compact, indent, os);
+	writeField("continent", continent, compact, indent, os);
+	writeField("country", country, compact, indent, os);
+	writeField("region", region, compact, indent, os);
+	writeField("city", city, compact, indent, os);
+	writeField("region", region, compact, indent, os);
+	writeField("district", district, compact, indent, os);
+	writeField("zip", zip, compact, indent, os);
 }
 
 void NetNode::HostDetail::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) const {
@@ -129,11 +164,17 @@ ko NetNode::HostDetail::fromJson(const rapidjson::Value& v) {
 void NetNode::RewardProgram::dumpFields(ostream& os) {
 	os << "id name passed";
 }
-
+/*
 void NetNode::RewardProgram::dumpLine(ostream& os) const {
 	os << _id << ' ';
 	os << name << ' ';
 	os << passed << ' ';
+}
+*/
+void NetNode::RewardProgram::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("_id", _id, compact, indent, os);
+	writeField("name", name, compact, indent, os);
+	writeField("passed", passed, compact, indent, os);
 }
 
 void NetNode::RewardProgram::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType& ator) const {
@@ -159,6 +200,7 @@ void NetNode::dumpFields(ostream& os) {
 	os << " __v ";
 }
 
+/*
 void NetNode::dumpLine(ostream& os) const {
 	peerStatus.dumpLine(os);
 	apiStatus.dumpLine(os);
@@ -178,6 +220,7 @@ void NetNode::dumpLine(ostream& os) const {
 	hostDetail.dumpLine(os);
 	os << __v << ' ';
 }
+*/
 
 ko NetNode::fromJson(const rapidjson::Value& v) {
 	readField(peerStatus, v, PeerStatus::Json_Element);
@@ -224,50 +267,45 @@ void NetNode::toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorTyp
 	writeField("rewardPrograms", rewardPrograms, parent, ator);
 	writeField("hostDetail", hostDetail, parent, ator);
 	writeField("__v", __v, parent, ator);
-
-
-/*
-	readField(peerStatus, v, PeerStatus::Json_Element);
-	readField(apiStatus, v, ApiStatus::Json_Element);
-	readField(_id, v, "_id");
-	readField(version, v, "version");
-	readField(publicKey, v, "publicKey");
-	readField(networkGenerationHashSeed, v, "networkGenerationHashSeed");
-	readField(roles, v, "roles");
-	readField(port, v, "port");
-	readField(networkIdentifier, v, "networkIdentifier");
-	readField(host, v, "host");
-	readField(friendlyName, v, "friendlyName");
-	auto& rp=v["rewardPrograms"];
-	if (!rp.IsNull()) {
-		rewardPrograms.clear();
-		rewardPrograms.reserve(rp.Size());
-		for (rapidjson::Value::ConstValueIterator itr = rp.Begin(); itr != rp.End(); ++itr) {
-			RewardProgram o;
-			o.fromJson(*itr);
-			rewardPrograms.push_back(o);
-		}
-	}
-	readField(hostDetail, v, HostDetail::Json_Element);
-	readField(__v, v, "__v");
-*/
-//	Value v;
-//	v.SetString(StringRef(_id.c_str()));
-//	parent.AddMember("_id", v, ator);
 }
 
+void NetNode::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField(PeerStatus::Json_Element, peerStatus, compact, indent, os);
+	writeField(ApiStatus::Json_Element, apiStatus, compact, indent, os);
+	writeField("_id", _id, compact, indent, os);
+	writeField("version", version, compact, indent, os);
+	writeField("publicKey", publicKey, compact, indent, os);
+	writeField("networkGenerationHashSeed", networkGenerationHashSeed, compact, indent, os);
+	writeField("roles", roles, compact, indent, os);
+	writeField("port", roles, compact, indent, os);
+	writeField("networkIdentifier", networkIdentifier, compact, indent, os);
+	writeField("host", host, compact, indent, os);
+	writeField("friendlyName", friendlyName, compact, indent, os);
+	writeField("rewardPrograms", rewardPrograms, compact, indent, os);
+	writeField("hostDetail", hostDetail, compact, indent, os);
+	writeField("__v", __v, compact, indent, os);
+}
+/*
+void NetNode::toText(bool compact, ostream& os) const {
+	if (compact) {
+	}
+	else {
+	}
+}
+*/
 
 void NetNodes::dumpFields(ostream& os) {
 	NetNode::dumpFields(os);
 	os << '\n';
 }
-
+/*
 void NetNodes::dump(ostream& os) const {
 	for (auto&i:*this) {
 		i.dumpLine(os);
 		os << '\n';
 	}
 }
+*/
 
 ko NetNodes::fromJson(const rapidjson::Value& v) {
 	readField(static_cast<b&>(*this), v, Json_Element);
@@ -283,6 +321,10 @@ ko NetNodes::fromJson(const rapidjson::Value& v) {
 	}
 */
 	return ok;
+}
+
+void NetNodes::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField(Json_Element, static_cast<const b&>(*this), compact, indent, os);
 }
 
 void NetNodes::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator) const {
@@ -302,24 +344,28 @@ ko NetNodes::fromJson(const string& json) {
 	return fromJson(doc);
 }
 
-void NetNodes::toJson(bool pretty, ostream& os) const {
+void NetNodes::toJson(bool compact, ostream& os) const {
 	using namespace rapidjson;
 	Document doc;
 	doc.SetObject();
 	Document::AllocatorType& ator = doc.GetAllocator();
 	toJson(doc, ator);
-	os << toString(doc, pretty) << endl;
+	os << toString(doc, !compact) << '\n';
 }
 
-string NetNodes::toJson(bool pretty) const {
+string NetNodes::toJson(bool compact) const {
 	ostringstream os;
-	toJson(pretty, os);
+	toJson(compact, os);
 	return os.str();
 }
 
+/*
 void NetNodes::toText(bool compact, ostream& os) const {
+	for (auto& i: *this) {
+		i.toText(compact, os);
+	}
 }
-
+*/
 vector<uint8_t> NetNodes::toBin() const {
 	vector<uint8_t> v;
 	return move(v);

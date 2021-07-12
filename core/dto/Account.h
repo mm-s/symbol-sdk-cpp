@@ -13,7 +13,7 @@ namespace symbol { namespace core {namespace dto {
 				string amount;
 				//void dumpLine(ostream&) const;
 				static void dumpFields(ostream&);
-				void toText(bool compact, ostream&) const;
+				void toText(const string& name, bool compact, const string& indent, ostream&) const;
 				ko fromJson(const rapidjson::Value&);
 				void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			};
@@ -21,7 +21,7 @@ namespace symbol { namespace core {namespace dto {
 				using b = vector<string>;
 				//void dumpLine(ostream&) const;
 				static void dumpFields(ostream&);
-				void toText(bool compact, ostream&) const;
+				void toText(const string& name, bool compact, const string& indent, ostream&) const;
 				ko fromJson(const rapidjson::Value&);
 				void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			};
@@ -38,7 +38,8 @@ namespace symbol { namespace core {namespace dto {
 			string importanceHeight;
 
 			static void dumpFields(ostream&);
-			void toText(bool compact, ostream&) const;
+
+			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 			ko fromJson(const rapidjson::Value&);
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 		};
@@ -47,7 +48,7 @@ namespace symbol { namespace core {namespace dto {
 		string id;
 
 		static void dumpFields(ostream&);
-		void toText(bool compact, ostream&) const;
+		void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		ko fromJson(const rapidjson::Value&);
 		void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 		void toJson(bool compact, ostream&) const;

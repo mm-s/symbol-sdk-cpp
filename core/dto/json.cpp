@@ -8,16 +8,68 @@
 
 namespace symbol { namespace core { namespace dto {
 
+	namespace {
+		template<typename T>
+		void writeFieldBasic(const string& name, const T& v, bool compact, const string& indent, ostream& os) {
+			if (compact) {
+				os << v << ' ';
+			}
+			else {
+				os << indent << name << ' ' << v << '\n';
+			}
+		}
+	}
+
+	template<> void writeField(const string& name, const bool& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const double& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const int& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const string& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const uint16_t& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const uint32_t& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const uint64_t& v, bool compact, const string& indent, ostream& os) {
+		writeFieldBasic(name, v, compact, indent, os);
+	}
+
+	template<> void writeField(const string& name, const uint8_t& v, bool compact, const string& indent, ostream& os) {
+		if (compact) {
+			os << +v << ' ';
+		}
+		else {
+			os << indent << name << ' ' << +v << '\n';
+		}
+	}
+
 	template<>
-	void toText(bool compact, const vector<string>& v, ostream& os) {
+	void writeField(const string& name, const vector<string>& v, bool compact, const string& indent, ostream& os) {
 		if (compact) {
 			os << v.size() << ' ';
 			for (auto&i:v) os << i << ' ';
 		}
 		else {
+			string ind=indent+"  ";
 			int n=0;
+			os << indent << name << '\n';
 			for (auto&i:v) {
-				os << "  #" << n++ << ": " << i << '\n';
+				writeField("", i, compact, ind, os);
+//				os << indent << "#" << n++ << ": " << i << '\n';
 			}
 		}
 	}

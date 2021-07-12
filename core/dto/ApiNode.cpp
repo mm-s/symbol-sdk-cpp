@@ -19,6 +19,11 @@ ko ApiNode::Health::Status::fromJson(const rapidjson::Value& v) {
 	return ok;
 }
 
+void ApiNode::Health::Status::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("apiNode", apiNode, compact, indent, os);
+	writeField("db", db, compact, indent, os);
+}
+
 void ApiNode::Health::Status::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator) const {
 	writeField("apiNode", apiNode, v, ator);
 	writeField("db", db, v, ator);
@@ -38,7 +43,8 @@ ko ApiNode::Health::fromJson(const rapidjson::Value& v) {
 	return ok;
 }
 
-void ApiNode::Health::toText(bool compact, ostream& os) const {
+void ApiNode::Health::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("status", status, compact, indent, os);
 }
 
 void ApiNode::Health::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator) const {
@@ -115,6 +121,17 @@ void ApiNode::Peer::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorTy
 	writeField("friendlyName", friendlyName, v, ator);
 }
 
+void ApiNode::Peer::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField("version", version, compact, indent, os);
+	writeField("publicKey", publicKey, compact, indent, os);
+	writeField("networkGenerationHashSeed", networkGenerationHashSeed, compact, indent, os);
+	writeField("roles", roles, compact, indent, os);
+	writeField("port", port, compact, indent, os);
+	writeField("networkIdentifier", networkIdentifier, compact, indent, os);
+	writeField("host", host, compact, indent, os);
+	writeField("friendlyName", friendlyName, compact, indent, os);
+}
+
 void ApiNode::Peers::dumpFields(ostream& os) {
 	Peer::dumpFields(os);
 	os << '\n';
@@ -125,9 +142,6 @@ void ApiNode::Peers::dump(ostream& os) const {
 		i.dumpLine(os);
 		os << '\n';
 	}
-}
-
-void ApiNode::Peers::toText(bool compact, ostream& os) const {
 }
 
 ko ApiNode::Peers::fromJson(const rapidjson::Value& v) {
@@ -150,6 +164,10 @@ ko ApiNode::Peers::fromJson(const string& json) {
 	}
 	if (doc.IsNull()) return "KO 11823 Invalid json.";
 	return fromJson(doc);
+}
+
+void ApiNode::Peers::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	writeField(Json_Element, static_cast<const b&>(*this), compact, indent, os);
 }
 
 void ApiNode::Peers::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& ator) const {
@@ -187,6 +205,11 @@ void ApiNode::Info::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorTy
 	writeField("nodePublicKey", nodePublicKey, v, ator);
 }
 
+void ApiNode::Info::toText(const string& name, bool compact, const string& indent, ostream& os) const {
+	b::toText("", compact, indent, os);
+	writeField("nodePublicKey", nodePublicKey, compact, indent, os);
+}
+
 vector<uint8_t> ApiNode::Info::toBin() const {
 	vector<uint8_t> v;
 	return move(v);
@@ -203,9 +226,6 @@ ko ApiNode::Info::fromJson(const string& json) {
 	}
 	if (doc.IsNull()) return "KO 11823 Invalid json.";
 	return fromJson(doc);
-}
-
-void ApiNode::Info::toText(bool compact, ostream& os) const {
 }
 
 void ApiNode::Info::toJson(bool pretty, ostream& os) const {

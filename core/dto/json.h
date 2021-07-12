@@ -11,22 +11,47 @@ namespace symbol { namespace core { namespace dto {
 	// ----------- write text
 
 	template<typename T>
-	void toText(bool compact, const vector<T>& v, ostream& os) {
+	void writeField(const string& name, const T& v, bool compact, const string& indent, ostream& os) {
+		if (compact) {
+			v.toText(name, compact, indent, os);
+//			os << v << ' ';
+		}
+		else {
+			string ind=indent+"  ";
+			os << indent << name << '\n';
+			v.toText("", compact, ind, os);
+//			os << indent << name << ' ' << v << '\n';
+		}
+	}
+
+	template<> void writeField(const string& name, const string& v, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const bool&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const int&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const double&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const uint8_t&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const uint16_t&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const uint32_t&, bool compact, const string& indent, ostream&);
+	template<> void writeField(const string& name, const uint64_t&, bool compact, const string& indent, ostream&);
+
+	template<typename T>
+	void writeField(const string& name, const vector<T>& v, bool compact, const string& indent, ostream& os) {
 		if (compact) {
 			os << v.size() << ' ';
-			for (auto&i:v) i.toText(compact, os);
+			for (auto&i:v) i.toText("", compact, indent, os);
 		}
 		else {
 			int n=0;
+			os << indent << name << '\n';
+			string ind=indent+"  ";
+			string ind2=ind+"  ";
 			for (auto&i:v) {
-				os << "  #" << n++ << ": \n";
-				i.toText(compact, os);
+				os << ind << "#" << n++ << ": \n";
+				i.toText("", compact, ind2, os);
 			}
 		}
 	}
 
-	template<>
-	void toText(bool compact, const vector<string>& v, ostream&);
+	template<> void writeField(const string& name, const vector<string>& v, bool compact, const string& indent, ostream&);
 
 	string toString(const rapidjson::Value& v, bool pretty);
 

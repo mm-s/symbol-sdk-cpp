@@ -45,6 +45,10 @@ namespace symbol { namespace hmi {
 	void c::help_flag(const FlagDef& f, ostream& os) const {
 		if (f.short_name == Url_Flag) {
 			os << Url_Desc << '\n';
+			os << "Example\n";
+			os << "    http://.\n";
+			os << "Special values:\n";
+			os << "    auto                    Selects a random node.\n";
 			return;
 		}
 		b::help_flag(f, os);
