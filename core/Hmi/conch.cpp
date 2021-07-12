@@ -319,15 +319,6 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 		}
 		return true;
 	}
-	
-	/*
-	auto s = lookup(i->first->name);
-	if (s == nullptr) {
-		print_error(i->first.empty() ? "Missing command." : string("Invalid command '") + i->first + "'.");
-		help(v);
-		return false;
-	}
-	*/
 	assert(i->first != nullptr);
 	if (!i->first->enabled) {
 		ostringstream os;
@@ -337,25 +328,12 @@ bool c::exec(const param_path& v, param_path::const_iterator i) {
 		return false;
 	}
 	return i->first->exec(v, i);
-	//return s->exec(v, i);
 }
 
 bool c::exec(const string& cmdline) { 
 	istringstream is(cmdline);
 	return exec(is);
 }
-
-/*
-c::param_path::const_iterator c::check_req(const param_path& v, ostream&os) const {
-	auto it = v.end();
-	for (auto i = v.begin(); i!=v.end(); ++i) {
-		if (!i->second->check_req(os)) {
-			if (it == v.end()) it = i;
-		}
-	}
-	return it;
-}
-*/
 
 params* c::param_path::lookup(const vector<string>& cmdpath) {
 	if (empty()) return nullptr;
@@ -381,11 +359,7 @@ bool c::pass1(param_path&, ostream&) {
 
 bool c::pass2(param_path& v, ostream& os) {
 	if (!pass1(v, os)) return false;
-//	cout << "conch pass1. \"" << name() << "\".";
-//	if (!empty()) cout << "Calling children.";
-//	cout << endl;
 	for (auto& i: *this) {
-//		cout << "  conch pass1.\"" << name() << "\". calling child \"" << i.second->name() << "\"" << endl;
 		if (!i.second->pass2(v, os)) return false;
 	}
 	return true;
@@ -403,6 +377,12 @@ bool c::exec(istream& is) {
 //		help(v, i);
 		return false;
 	} /// rewrite v and let specializations have a first look.
+	else {
+		auto out=os.str();
+		if (!out.empty()) {
+			*pos << out;
+		}
+	}
 	r = exec(v, v.begin());
 	for (auto& i: v) delete i.second;
 	return r;

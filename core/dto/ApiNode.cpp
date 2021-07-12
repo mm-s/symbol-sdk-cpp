@@ -63,13 +63,13 @@ ko ApiNode::Health::fromJson(const string& json) {
 	return fromJson(doc);
 }
 
-void ApiNode::Health::toJson(bool pretty, ostream& os) const {
+void ApiNode::Health::toJson(bool compact, ostream& os) const {
 	using namespace rapidjson;
 	Document doc;
 	doc.SetObject();
 	Document::AllocatorType& ator = doc.GetAllocator();
 	toJson(doc, ator);
-	os << toString(doc, pretty) << endl;
+	os << toString(doc, !compact) << endl;
 }
 
 void ApiNode::Peer::dumpFields(ostream& os) {
@@ -174,13 +174,13 @@ void ApiNode::Peers::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorT
 	writeField(Json_Element, static_cast<const b&>(*this), v, ator);
 }
 
-void ApiNode::Peers::toJson(bool pretty, ostream& os) const {
+void ApiNode::Peers::toJson(bool compact, ostream& os) const {
 	using namespace rapidjson;
 	Document doc;
 	doc.SetObject();
 	Document::AllocatorType& ator = doc.GetAllocator();
 	toJson(doc, ator);
-	os << toString(doc, pretty) << endl;
+	os << toString(doc, !compact) << endl;
 }
 
 
@@ -228,18 +228,18 @@ ko ApiNode::Info::fromJson(const string& json) {
 	return fromJson(doc);
 }
 
-void ApiNode::Info::toJson(bool pretty, ostream& os) const {
+void ApiNode::Info::toJson(bool compact, ostream& os) const {
 	using namespace rapidjson;
 	Document doc;
 	doc.SetObject();
 	Document::AllocatorType& ator = doc.GetAllocator();
 	toJson(doc, ator);
-	os << toString(doc, pretty) << endl;
+	os << toString(doc, !compact) << endl;
 }
 
-string ApiNode::Info::toJson(bool pretty) const {
+string ApiNode::Info::toJson(bool compact) const {
 	ostringstream os;
-	toJson(pretty, os);
+	toJson(compact, os);
 	return os.str();
 }
 

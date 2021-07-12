@@ -36,6 +36,12 @@ void NetNode::PeerStatus::toJson(rapidjson::Value& parent, rapidjson::Document::
 	writeField("lastStatusCheck", lastStatusCheck, parent, ator);
 }
 
+string NetNode::url() const {
+	ostringstream os;
+	os << "http://" << host << ":3000"; // << port;
+	return os.str();
+}
+
 void NetNode::ApiStatus::dumpLine(ostream& os) const {
 	os << isAvailable << ' ';
 	os << chainHeight << ' ';
@@ -164,13 +170,7 @@ ko NetNode::HostDetail::fromJson(const rapidjson::Value& v) {
 void NetNode::RewardProgram::dumpFields(ostream& os) {
 	os << "id name passed";
 }
-/*
-void NetNode::RewardProgram::dumpLine(ostream& os) const {
-	os << _id << ' ';
-	os << name << ' ';
-	os << passed << ' ';
-}
-*/
+
 void NetNode::RewardProgram::toText(const string& name, bool compact, const string& indent, ostream& os) const {
 	writeField("_id", _id, compact, indent, os);
 	writeField("name", name, compact, indent, os);
@@ -200,28 +200,6 @@ void NetNode::dumpFields(ostream& os) {
 	os << " __v ";
 }
 
-/*
-void NetNode::dumpLine(ostream& os) const {
-	peerStatus.dumpLine(os);
-	apiStatus.dumpLine(os);
-	os << _id << ' ';
-	os << version << ' ';
-	os << publicKey << ' ';
-	os << networkGenerationHashSeed << ' ';
-	os << roles << ' ';
-	os << port << ' ';
-	os << +networkIdentifier << ' ';
-	os << host << ' ';
-	os << friendlyName << ' ';
-	os << rewardPrograms.size() << ' ';
-	os << '{';
-	for (auto&i:rewardPrograms) { i.dumpLine(os); }
-	os << "} ";
-	hostDetail.dumpLine(os);
-	os << __v << ' ';
-}
-*/
-
 ko NetNode::fromJson(const rapidjson::Value& v) {
 	readField(peerStatus, v, PeerStatus::Json_Element);
 	readField(apiStatus, v, ApiStatus::Json_Element);
@@ -235,18 +213,6 @@ ko NetNode::fromJson(const rapidjson::Value& v) {
 	readField(host, v, "host");
 	readField(friendlyName, v, "friendlyName");
 	readField(rewardPrograms, v, "rewardPrograms");
-/*	
-	auto& rp=v["rewardPrograms"];
-	if (!rp.IsNull()) {
-		rewardPrograms.clear();
-		rewardPrograms.reserve(rp.Size());
-		for (rapidjson::Value::ConstValueIterator itr = rp.Begin(); itr != rp.End(); ++itr) {
-			RewardProgram o;
-			o.fromJson(*itr);
-			rewardPrograms.push_back(o);
-		}
-	}
-*/
 	readField(hostDetail, v, HostDetail::Json_Element);
 	readField(__v, v, "__v");
 	return ok;
@@ -285,41 +251,14 @@ void NetNode::toText(const string& name, bool compact, const string& indent, ost
 	writeField("hostDetail", hostDetail, compact, indent, os);
 	writeField("__v", __v, compact, indent, os);
 }
-/*
-void NetNode::toText(bool compact, ostream& os) const {
-	if (compact) {
-	}
-	else {
-	}
-}
-*/
 
 void NetNodes::dumpFields(ostream& os) {
 	NetNode::dumpFields(os);
 	os << '\n';
 }
-/*
-void NetNodes::dump(ostream& os) const {
-	for (auto&i:*this) {
-		i.dumpLine(os);
-		os << '\n';
-	}
-}
-*/
 
 ko NetNodes::fromJson(const rapidjson::Value& v) {
 	readField(static_cast<b&>(*this), v, Json_Element);
-/*
-	reserve(v.Size());
-	for (rapidjson::Value::ConstValueIterator itr = v.Begin(); itr != v.End(); ++itr) { // Ok
-		NetNode o;
-		auto r=o.fromJson(*itr);
-		if (is_ko(r)) {
-			return r;
-		}
-		push_back(o);
-	}
-*/
 	return ok;
 }
 

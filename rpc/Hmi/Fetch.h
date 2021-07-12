@@ -48,15 +48,9 @@ namespace symbol { namespace hmi {
 		static constexpr auto Offline_Default{""};
 		static constexpr auto Offline_Desc{"Work offline."};
 
-		#ifndef NDEBUG
-			static constexpr auto Def_Url="http://nem.mm-studios.com:3000";
-		#else
-			static constexpr auto Def_Url="http://127.0.0.1:3000";
-		#endif
-
 		static constexpr char Url_Flag{'r'};
 		static constexpr auto Url_Name{"url"};
-		static constexpr auto Url_Default{Def_Url};
+		static constexpr auto Url_Default{"auto"};
 		static constexpr auto Url_Desc{"API node URL."};
 
 	public:
@@ -107,7 +101,7 @@ namespace symbol { namespace hmi {
 
 	public:
 		/// Getters & Setters
-		inline const string& url() const { return m_url; }
+		const string& url() const;
 		inline bool offline() const { return m_offline; }
 
 	protected:
@@ -117,8 +111,9 @@ namespace symbol { namespace hmi {
 		void help_flag(const FlagDef&, ostream&) const override;
 
 	private:
-//		static FlagDef flagdefOffline();
-//		static FlagDef flagdefUrl();
+		pair<ko, string> selectApiNode() const;
+		pair<ko, symbol::core::dto::NetNodes> dtoNodes() const;
+
 		static Params defParams();
 
 	private:

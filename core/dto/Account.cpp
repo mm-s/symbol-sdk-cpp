@@ -22,27 +22,8 @@ void AccountData::SupplementalPublicKeys::toJson(rapidjson::Value& v, rapidjson:
 	writeField("", static_cast<const b&>(*this), v, ator);
 }
 
-void AccountData::SupplementalPublicKeys::dumpFields(ostream& os) {
-	os << "publicKey ";
-}
-
-/*
-void AccountData::SupplementalPublicKeys::dumpLine(ostream& os) const {
-	os << size() << ' ';
-	for (auto&i:*this) os << i << ' ';
-}
-*/
-
 void AccountData::SupplementalPublicKeys::toText(const string& name, bool compact, const string& indent, ostream& os) const {
 	writeField("", static_cast<const b&>(*this), compact, indent, os);
-/*
-	if (compact) {
-		dto::toText(compact, static_cast<const b&>(*this), os);
-	}
-	else {
-		dto::toText(compact, static_cast<const b&>(*this), os);
-	}
-*/
 }
 
 ///--------------Mosaic
@@ -58,67 +39,12 @@ void AccountData::Mosaic::toJson(rapidjson::Value& v, rapidjson::Document::Alloc
 	writeField("amount", amount, v, ator);
 }
 
-void AccountData::Mosaic::dumpFields(ostream& os) {
-	os << "id amount ";
-}
-
-/*
-void AccountData::Mosaic::dumpLine(ostream& os) const {
-	os << id << ' ';
-	os << amount << ' ';
-}
-*/
-
 void AccountData::Mosaic::toText(const string& name, bool compact, const string& indent, ostream& os) const {
 	writeField("id", id, compact, indent, os);
 	writeField("amount", amount, compact, indent, os);
-/*
-
-	if (compact) {
-		os << id << ' ';
-		os << amount << ' ';
-	}
-	else {
-		os << "id " << id << '\n';
-		os << "amount " << amount << '\n';
-	}
-*/
 }
 
 ///--------------AccountData
-
-void AccountData::dumpFields(ostream& os) {
-	os << "version address addressHeight publicKey publicKeyHeight accountType ";
-	os << "[ ";
-	SupplementalPublicKeys::dumpFields(os);
-	os << "] ";
-	os << "activityBuckets ";
-	os << "[ ";
-	Mosaic::dumpFields(os);
-	os << "] ";
-	os << "importance importanceHeight ";
-	os << '\n';
-}
-
-/*
-void AccountData::dumpLine(ostream& os) const {
-	os << version << ' ';
-	os << address << ' ';
-	os << addressHeight << ' ';
-	os << publicKey << ' ';
-	os << publicKeyHeight << ' ';
-	os << accountType << ' ';
-	supplementalPublicKeys.dumpLine(os);
-	os << activityBuckets.size() << ' ';
-	for (auto&i:activityBuckets) os << i << ' ';
-	os << mosaics.size() << ' ';
-	for (auto&i:mosaics) i.dumpLine(os);
-	os << importance << ' ';
-	os << importanceHeight << ' ';
-	os << id << ' ';
-	os << '\n';
-}
-*/
 
 ko AccountData::fromJson(const rapidjson::Value& v) {
 	readField(version, v, "version");
@@ -127,7 +53,6 @@ ko AccountData::fromJson(const rapidjson::Value& v) {
 	readField(publicKey, v, "publicKey");
 	readField(publicKeyHeight, v, "publicKeyHeight");
 	readField(supplementalPublicKeys, v, "supplementalPublicKeys");
-	readField(accountType, v, "accountType");
 	readField(activityBuckets, v, "activityBuckets");
 	readField(mosaics, v, "mosaics");
 	readField(importance, v, "importance");
@@ -162,40 +87,7 @@ void AccountData::toText(const string& name, bool compact, const string& indent,
 	writeField("mosaics", mosaics, compact, indent, os);
 	writeField("importance", importance, compact, indent, os);
 	writeField("importanceHeight", importanceHeight, compact, indent, os);
-/*
-	if (compact) {
-		os << version << ' ';
-		os << address << ' ';
-		os << addressHeight << ' ';
-		os << publicKey << ' ';
-		os << publicKeyHeight << ' ';
-		os << +accountType << ' ';
-		dto::toText(compact, supplementalPublicKeys, os);
-		dto::toText(compact, activityBuckets, os);
-		dto::toText(compact, mosaics, os);
-		os << importance << ' ';
-		os << importanceHeight << ' ';
-	}
-	else {
-		os << "version " << version << '\n';
-		os << "address " << address << '\n';
-		os << "addressHeight " << addressHeight << '\n';
-		os << "publicKey " << publicKey << '\n';
-		os << "publicKeyHeight " << publicKeyHeight << '\n';
-		os << "supplementalPublicKeys " << supplementalPublicKeys.size() << '\n';
-		os << "accountType " << +accountType << '\n';
-		dto::toText(compact, supplementalPublicKeys, os);
-		os << "activityBuckets " << activityBuckets.size() << '\n';
-		dto::toText(compact, activityBuckets, os);
-		os << "mosaics " << mosaics.size() << '\n';
-		dto::toText(compact, mosaics, os);
-		os << "importance " << importance << '\n';
-		os << "importanceHeight " << importanceHeight << '\n';
-	}
-*/
 }
-
-
 
 ///-------------------------Account
 
@@ -210,25 +102,9 @@ void Account::toJson(rapidjson::Value& v, rapidjson::Document::AllocatorType& at
 	writeField("id", id, v, ator);
 }
 
-void Account::dumpFields(ostream& os) {
-	AccountData::dumpFields(os);
-	os << "id ";
-	os << '\n';
-}
-
 void Account::toText(const string& name, bool compact, const string& indent, ostream& os) const {
 	writeField(AccountData::Json_Element, account, compact, indent, os);
 	writeField("id", id, compact, indent, os);
-/*
-	if (compact) {
-		account.toText(compact, os);
-		os << id << ' ';
-	}
-	else {
-		account.toText(compact, os);
-		os << "id " << id << '\n';
-	}
-*/
 }
 
 void Account::toJson(bool compact, ostream& os) const {

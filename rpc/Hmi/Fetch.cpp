@@ -22,6 +22,7 @@
 #include <restc-cpp/restc-cpp.h>
 #include <symbol/core/dto.h>
 #include "../Fetch.h"
+#include <random>
 ////http://explorer.testnet.symboldev.network/
 
 namespace symbol { namespace hmi {
@@ -45,8 +46,8 @@ namespace symbol { namespace hmi {
 	void c::help_flag(const FlagDef& f, ostream& os) const {
 		if (f.short_name == Url_Flag) {
 			os << Url_Desc << '\n';
-			os << "Example\n";
-			os << "    http://.\n";
+			os << "Input example:\n";
+			os << "    http://nem.mm-studios.com:3000\n";
 			os << "Special values:\n";
 			os << "    auto                    Selects a random node.\n";
 			return;
@@ -74,20 +75,12 @@ namespace symbol { namespace hmi {
 		auto a=addr->formatAccount();
 		delete pk;
 		delete addr;
-		auto r=symbol::Fetch::account(m_url, a);
+		auto r=symbol::Fetch::account(url(), a);
 		if (is_ko(r.first)) {
 			os << r.first;
 			return false;
 		}
 		print(r.second, os);
-/*
-		if (json()) {
-			r.second.toJson(compact(), os);
-		}
-		else {
-			r.second.toText(compact(), os);
-		}
-*/
 		return true;
 	}
 
@@ -106,27 +99,39 @@ namespace symbol { namespace hmi {
 		return true;
 	}
 
-	bool c::fetchNodes(Params& p, bool last, ostream& os) {
-		if (!last) return true;
+	pair<ko, string> c::selectApiNode() const {
+		using namespace std;
+		auto r = dtoNodes();
+		if (is_ko(r.first)) {
+			return make_pair(r.first, "");
+		}
+		static mt19937_64 rng{random_device{}()};
+		const core::dto::NetNodes& n=r.second;
+		if (n.empty()) {
+			return make_pair("KO 50499 Empty node list.", "");
+		}
+		uniform_int_distribution<> d(0, n.size()-1);
+		auto i=next(n.begin(), d(rng));
+		return make_pair(ok, i->url());
+	}
+
+	pair<ko, core::dto::NetNodes> c::dtoNodes() const {
 		auto url = network().nodesUrl();
 		if (url.empty()) {
-			os << "Unknown Url for network '" << network() << "'.";
-			return false;
+			return make_pair("KO 11927 Unknown Url for network node list.", core::dto::NetNodes());
 		}
-		auto r=symbol::Fetch::netNodes(url);
+		return symbol::Fetch::netNodes(url);
+	}
+
+	bool c::fetchNodes(Params& p, bool last, ostream& os) {
+		if (!last) return true;
+		auto r = dtoNodes();
 		if (is_ko(r.first)) {
 			os << r.first;
 			return false;
 		}
 		print(r.second, os);
-/*
-		if (json()) {
-			r.second.toJson(!compact(), os);
-		}
-		else {
-			r.second.dump(os);
-		}
-*/		return true;
+		return true;
 	}
 
 	ptr<c::Section> c::createSectionFetchNodes() {
@@ -148,21 +153,12 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodePeers(Params& p, bool last, ostream& os) {
-		auto r=symbol::Fetch::ApiNode::peers(m_url);
+		auto r=symbol::Fetch::ApiNode::peers(url());
 		if (is_ko(r.first)) {
 			os << r.first;
 			return false;
 		}
 		print(r.second, os);
-/*
-		if (json()) {
-			r.second.toJson(!compact(), os);
-		}
-		else {
-			//if (!hideLabels()) r.second.dumpFields(os);
-			r.second.dump(os);
-		}
-*/
 		return true;
 	}
 
@@ -179,20 +175,12 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodeInfo(Params& p, bool last, ostream& os) {
-		auto r=symbol::Fetch::ApiNode::info(m_url);
+		auto r=symbol::Fetch::ApiNode::info(url());
 		if (is_ko(r.first)) {
 			os << r.first;
 			return false;
 		}
 		print(r.second, os);
-/*
-		if (json()) {
-			r.second.toJson(!compact(), os);
-		}
-		else {
-			r.second.dumpTable(os);
-		}
-*/
 		return true;
 	}
 	
@@ -203,20 +191,12 @@ namespace symbol { namespace hmi {
 	}
 
 	bool c::fetchNodeHealth(Params& p, bool last, ostream& os) {
-		auto r=symbol::Fetch::ApiNode::health(m_url);
+		auto r=symbol::Fetch::ApiNode::health(url());
 		if (is_ko(r.first)) {
 			os << r.first;
 			return false;
 		}
 		print(r.second, os);
-/*
-		if (json()) {
-			r.second.toJson(!compact(), os);
-		}
-		else {
-			r.second.dump(os);
-		}
-*/
 		return true;
 	}
 
@@ -268,6 +248,19 @@ namespace symbol { namespace hmi {
 		return s;
 	}
 
+	const string& c::url() const {
+		static string empty;
+		if (m_url=="auto") {
+			auto r=selectApiNode();
+			if (is_ko(r.first)) {
+				return empty;
+			}
+			const_cast<string&>(m_url) = r.second;
+		}
+		return m_url; 
+	
+	}
+
 //	bool c::main(Params& p, ostream& os) {
 //		return b::mainHandler(p, os);
 //		return true;
@@ -288,10 +281,10 @@ namespace symbol { namespace hmi {
 		if (!b::pass1(v, os)) return false;
 		auto p = v.lookup({});
 		assert(p!=nullptr);
-		m_url = p->get(Url_Flag);
 		if ( p->is_set(Offline_Flag) ) {
 			m_offline = true;
 		}
+		m_url = p->get(Url_Flag);
 		return true;
 	}
 

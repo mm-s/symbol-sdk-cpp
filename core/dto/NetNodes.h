@@ -93,6 +93,7 @@ namespace symbol { namespace core { namespace dto {
 		HostDetail hostDetail;
 		int __v;
 
+		string url() const;
 		static void dumpFields(ostream&);
 //		void dumpLine(ostream&) const;
 		void toText(const string& name, bool compact, const string& indent, ostream&) const;

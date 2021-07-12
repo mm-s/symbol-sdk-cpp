@@ -11,16 +11,12 @@ namespace symbol { namespace core {namespace dto {
 			struct Mosaic {
 				string id;
 				string amount;
-				//void dumpLine(ostream&) const;
-				static void dumpFields(ostream&);
 				void toText(const string& name, bool compact, const string& indent, ostream&) const;
 				ko fromJson(const rapidjson::Value&);
 				void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
 			};
 			struct SupplementalPublicKeys: vector<string> {
 				using b = vector<string>;
-				//void dumpLine(ostream&) const;
-				static void dumpFields(ostream&);
 				void toText(const string& name, bool compact, const string& indent, ostream&) const;
 				ko fromJson(const rapidjson::Value&);
 				void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
@@ -37,8 +33,6 @@ namespace symbol { namespace core {namespace dto {
 			string importance;
 			string importanceHeight;
 
-			static void dumpFields(ostream&);
-
 			void toText(const string& name, bool compact, const string& indent, ostream&) const;
 			ko fromJson(const rapidjson::Value&);
 			void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;
@@ -47,7 +41,6 @@ namespace symbol { namespace core {namespace dto {
 		AccountData account;
 		string id;
 
-		static void dumpFields(ostream&);
 		void toText(const string& name, bool compact, const string& indent, ostream&) const;
 		ko fromJson(const rapidjson::Value&);
 		void toJson(rapidjson::Value& parent, rapidjson::Document::AllocatorType&) const;

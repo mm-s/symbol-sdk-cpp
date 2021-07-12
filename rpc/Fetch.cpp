@@ -14,6 +14,7 @@ namespace {
 	ko ufetch(t&o, const string& url, function<string(const string&)> jsonTransform=[](const string& i) -> string { return i; }) {
 		auto cli = restc_cpp::RestClient::Create();
 		auto f=cli->ProcessWithPromiseT<t>([url, jsonTransform](restc_cpp::Context& ctx) {
+			std::clog << "[Accessing content from: " << url << "]\n";
 			t o;
 			o.fromJson(jsonTransform(ctx.Get(url)->GetBodyAsString()));
 			return move(o);
